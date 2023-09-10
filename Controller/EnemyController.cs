@@ -3,14 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-몬스터 전용 스크립트이다.
-몬스터는 정해진 장소로 이동하게 된다.
-
-좌표는 몬스터 생성 스크립트(SpawningPool)에서 받을 수 있다.
-*/
-
-/*
- * File :   MonsterController.cs
+ * File :   EnemyController.cs
  * Desc :   Monster 기본 기능
  *
  & Functions
@@ -18,8 +11,8 @@ using UnityEngine;
  &  : SetUp()       - 기능 설정
  &
  &  [Protected]
- &  : UpdateWalk()  - 움직일 때 (지정된 위치로 이동)
- &  : UpdateDead()  - 죽었을 때
+ &  : UpdateWalk()      - 움직일 때 (지정된 위치로 이동)
+ &  : DeadCoroutine()   - 죽었을 때
  &
  &  [Private]
  &  : NextMoveTo()  - 다음 위치 설정
@@ -34,21 +27,25 @@ public class EnemyController : BaseController
     private int             currentWayPointIndex;   // 현재 이동 위치 번호
     private Transform[]     _wayPoints;             // 이동할 위치들
 
-    private MonsterStat     _stat;                  // 스탯
+    private EnemyStat       _stat;                  // 스탯
 
-    // 세팅
+    // 생성 세팅
     public void SetUp(Transform[] wayPoints)
     {
+        // 이동 위치 받기
         _wayPoints = new Transform[wayPoints.Length];
         _wayPoints = wayPoints;
 
+        // 첫번째 위치로 이동
         currentWayPointIndex = 0;
         transform.position = _wayPoints[currentWayPointIndex].position;
 
-        _moveSpeed = GetComponent<MonsterStat>().MoveSpeed;
+        _stat = GetComponent<EnemyStat>();
+
+        _moveSpeed = _stat.MoveSpeed;
 
         if (_anim.IsNull() == true)
-            _anim = GetComponent<SPUM_Prefabs>()._anim;
+            _anim = GetComponent<Animator>();
 
         State = Define.State.Walk;
     }
@@ -67,11 +64,17 @@ public class EnemyController : BaseController
         }
     }
 
-    protected override void UpdateDead()
+    protected override IEnumerator DeadCoroutine()
     {
-        /*
-        1초 뒤에 없애기
-        */
+        GetComponent<Collider>().enabled = false;
+
+        yield return new WaitForSeconds(0.7f);
+
+        // TODO : Pool 적용되면 콜라이더 다시 키고 Walk 상태로 변경
+        // GetComponent<Collider>().enabled = true;
+        // State = Define.State.Walk;
+
+        Managers.Resource.Destroy(this.gameObject);
     }
 
     // 다음 위치 설정
@@ -89,8 +92,8 @@ public class EnemyController : BaseController
 
         // 이동 방향 바라보기
         if (_direction == Vector3.left || _direction == Vector3.up)
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        else if (_direction == Vector3.right || _direction == Vector3.down)
             transform.rotation = Quaternion.Euler(0, 180, 0);
+        else if (_direction == Vector3.right || _direction == Vector3.down)
+            transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }

@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-모든 컨트롤러의 부모이다. (몬스터, 플레이어, 용병 등..)
-기본적인 상태와 필요한 변수를 가지고 있다.
-*/
+ * File :   BaseController.cs
+ * Desc :   캐릭터의 기본 기능
+ *
+ & Functions
+ &  [Protected]
+ &  : Init()            - 초기 설정
+ &  : UpdateIdle()      - 멈춤일 때 Update
+ &  : UpdateWalk()      - 움직일 때 Update
+ &  : UpdateAttack()    - 공격할 때 Update
+ &  : DeadCoroutine()   - 죽었을 때 Coroutine
+ *
+ */
 
 public abstract class BaseController : MonoBehaviour
 {
@@ -37,9 +46,11 @@ public abstract class BaseController : MonoBehaviour
         }
     }
 
+    private Coroutine coDead;       // 죽었을 때 코루틴 실행 확인용
+
     protected virtual void Init()
     {
-        _anim = GetComponent<SPUM_Prefabs>()._anim;
+        _anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -61,7 +72,10 @@ public abstract class BaseController : MonoBehaviour
                 UpdateAttack();
                 break;
             case Define.State.Dead:
-                UpdateDead();
+            {
+                if (coDead.IsNull() == true)
+                    coDead = StartCoroutine(DeadCoroutine());
+            }
                 break;
         }
     }
@@ -69,5 +83,5 @@ public abstract class BaseController : MonoBehaviour
     protected virtual void UpdateIdle() {}
     protected virtual void UpdateWalk() {}
     protected virtual void UpdateAttack() {}
-    protected virtual void UpdateDead() {}
+    protected virtual IEnumerator DeadCoroutine() { yield return null; }
 }
