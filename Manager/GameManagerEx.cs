@@ -26,6 +26,9 @@ public class GameManagerEx
 	GameData _gameData = new GameData();
 	public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
+	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
+	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
+
 	#region 스탯
 	public string Name
 	{
@@ -77,6 +80,83 @@ public class GameManagerEx
 	public void Init()
 	{
 	}
+
+	/*
+	캐릭터 생성 과정 및 관리
+	1. 캐릭터를 Spawn하면 HashSet에 해당 객체를 저장한다.
+	2. 생성된 후 각 스포너에 개수를 업데이트 해준다.
+	*/
+
+    // 캐릭터 소환
+	public Action<int> OnEnemySpawnEvent;
+	public Action<int> OnMercenarySpawnEvent;
+    public GameObject Spawn(Define.WorldObject type, GameObject obj, Transform parent = null)
+    {
+        GameObject go = Managers.Resource.Instantiate(obj, parent);
+
+        switch(type)
+        {
+            case Define.WorldObject.Enemy:
+				{
+					_enemys.Add(go);
+					if (OnEnemySpawnEvent.IsNull() == false)
+						OnEnemySpawnEvent.Invoke(1);
+				}
+                break;
+            case Define.WorldObject.Mercenary:
+				{
+					_mercenarys.Add(go);
+					if (OnMercenarySpawnEvent.IsNull() == false)
+						OnMercenarySpawnEvent.Invoke(1);
+				}
+                break;
+            default:
+                Debug.Log("GameManager : Null Type");
+                break;
+        }
+
+        return go;
+    }
+
+    // 객체 타입 확인
+    public Define.WorldObject GetWorldObjectType(GameObject go)
+    {
+        BaseController bc = go.GetComponent<BaseController>();
+        if (bc.IsNull() == true)
+            return Define.WorldObject.Unknown;
+
+        return bc.WorldObjectType;
+    }
+
+    // 캐릭터 삭제
+    public void Despawn(GameObject go)
+    {
+        switch(GetWorldObjectType(go))
+        {
+            case Define.WorldObject.Enemy:
+                {
+                    if (_enemys.Contains(go))
+                    { 
+                        _enemys.Remove(go);
+                        if (OnEnemySpawnEvent.IsNull() == false)
+                            OnEnemySpawnEvent.Invoke(-1);
+                    }
+                }
+                break;
+            case Define.WorldObject.Mercenary:
+                {
+                    if (_mercenarys.Contains(go))
+                    {
+                        _mercenarys.Remove(go);
+                        if (OnMercenarySpawnEvent.IsNull() == false)
+                            OnMercenarySpawnEvent.Invoke(-1);
+                    }
+                }
+                break;
+        }
+
+        Managers.Resource.Destroy(go);
+    }
 
 	#region Save & Load	
 	public string _path = Application.persistentDataPath + "/SaveData.json";

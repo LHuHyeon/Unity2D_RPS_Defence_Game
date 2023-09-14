@@ -24,17 +24,7 @@ public class TowerSpawner : MonoBehaviour
         tile.IsBuildTower = true;
 
         // 선택한 타일의 위치에 타워 건설
-        Instantiate(towerPrefab, tileTransform.position, Quaternion.identity);
+        GameObject go = Managers.Game.Spawn(Define.WorldObject.Mercenary, towerPrefab);
+        go.transform.position = tileTransform.position;
     }
 }
-
-
-
-/*
- * File :   TowerSpawner.cs
- * Desc :   타워 생성 제어
- *
- * Functions
- *  : SpawnTower() - 매개변수의 위치에 타워 생성
- *
- */

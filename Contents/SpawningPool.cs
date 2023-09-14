@@ -27,7 +27,7 @@ public class SpawningPool : MonoBehaviour
         while (true)
         {
             // 몬스터 생성 후 컴포넌트 받기
-            GameObject          clone   = Instantiate(monsterPrefab);
+            GameObject          clone   = Managers.Game.Spawn(Define.WorldObject.Enemy, monsterPrefab);
             EnemyController     monster = clone.GetComponent<EnemyController>();
 
             // 몬스터의 이동 경로 세팅

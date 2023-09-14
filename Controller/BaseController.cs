@@ -18,7 +18,13 @@ using UnityEngine;
 
 public abstract class BaseController : MonoBehaviour
 {
-    protected Animator _anim;
+    public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.Unknown;
+
+    protected bool              isInit  = false;    // 초기 설정 여부
+
+    protected Coroutine         coDead;             // 죽었을 때 코루틴 실행 확인용
+
+    protected Animator          _anim;
 
     [SerializeField]
     private Define.State _state = Define.State.Idle;    // 캐릭터 상태
@@ -34,19 +40,18 @@ public abstract class BaseController : MonoBehaviour
                     _anim.CrossFade("Idle", 0.4f);
                     break;
                 case Define.State.Walk:
-                    _anim.CrossFade("Walk", 0.1f);
+                    _anim.CrossFade("Walk", 0.1f, -1, 0);
                     break;
                 case Define.State.Attack:
                     _anim.CrossFade("Attack", 0.1f, -1, 0);
                     break;
                 case Define.State.Dead:
-                    _anim.CrossFade("Dead", 0.1f, -1, 0);
+                    if (coDead.IsNull() == true)
+                        _anim.CrossFade("Dead", 0.1f, -1, 0);
                     break;
             }
         }
     }
-
-    private Coroutine coDead;       // 죽었을 때 코루틴 실행 확인용
 
     protected virtual void Init()
     {
@@ -56,6 +61,7 @@ public abstract class BaseController : MonoBehaviour
     void Start()
     {
         Init();
+        isInit = true;
     }
 
     void FixedUpdate()

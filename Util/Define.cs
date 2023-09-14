@@ -43,6 +43,13 @@ public class Define
 		Enemy		= 7,
 	}
 
+	public enum WorldObject
+	{
+		Unknown,
+		Mercenary,
+		Enemy,
+	}
+
 	public enum StatType
 	{
 		MaxHp,

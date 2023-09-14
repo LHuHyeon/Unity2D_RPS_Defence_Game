@@ -13,6 +13,7 @@ public class Managers : MonoBehaviour
     private static GameManagerEx s_gameManager = new GameManagerEx();
     private static DataManager s_dataManager = new DataManager();
     private static UIManager s_uiManager = new UIManager();
+    private static PoolManager s_poolManager = new PoolManager();
     private static ResourceManager s_resourceManager = new ResourceManager();
     private static SceneManagerEx s_sceneManager = new SceneManagerEx();
     private static SoundManager s_soundManager = new SoundManager();
@@ -20,6 +21,7 @@ public class Managers : MonoBehaviour
     public static GameManagerEx Game { get { Init(); return s_gameManager; } }
     public static DataManager Data { get { Init(); return s_dataManager; } }
     public static UIManager UI { get { Init(); return s_uiManager; } }
+    public static PoolManager Pool { get { Init(); return s_poolManager; } }
     public static ResourceManager Resource { get { Init(); return s_resourceManager; } }
     public static SceneManagerEx Scene { get { Init(); return s_sceneManager; } }
     public static SoundManager Sound {  get { Init(); return s_soundManager; } }
@@ -50,10 +52,14 @@ public class Managers : MonoBehaviour
 
             s_dataManager.Init();
             s_resourceManager.Init();
-            s_sceneManager.Init();
             s_soundManager.Init();
             
             Application.targetFrameRate = 60;
         }
+    }
+
+    public static void Clear()
+    {
+
     }
 }

@@ -1,43 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
+/*
+ * File :   SceneManagerEx.cs
+ * Desc :   씬 로드 매니저
+ *          [ Rookiss의 MMORPG Game Part 3 참고. ]
+ */
 
 public class SceneManagerEx
 {
-    private Define.Scene _curSceneType = Define.Scene.Unknown;
+    public BaseScene CurrentScene { get { return GameObject.FindObjectOfType<BaseScene>(); } }
 
-    public Define.Scene CurrentSceneType
+    public void LoadScene(Define.Scene type)
     {
-        get
-        {
-            if (_curSceneType != Define.Scene.Unknown)
-                return _curSceneType;
-            return CurrentScene.SceneType;
-        }
-        set {  _curSceneType = value; }
-    }
-
-    public BaseScene CurrentScene { get { return GameObject.Find("Scene").GetComponent<BaseScene>(); } }
-
-    public void Init()
-    {
-
-    }
-
-    public void ChangeScene(Define.Scene type)
-    {
-        CurrentScene.Clear();
-
-        _curSceneType = type;
+        Managers.Clear();
         SceneManager.LoadScene(GetSceneName(type));
+    }
+
+    public AsyncOperation LoadAsynScene(Define.Scene type)
+    {
+        AsyncOperation operation = SceneManager.LoadSceneAsync(Managers.Scene.GetSceneName(type));
+        operation.allowSceneActivation = false;
+
+        return operation;
     }
 
     string GetSceneName(Define.Scene type)
     {
         string name = System.Enum.GetName(typeof(Define.Scene), type);
-        char[] letters = name.ToLower().ToCharArray();
-        letters[0] = char.ToUpper(letters[0]);
-        return new string(letters);
+        return name;
+    }
+
+    public void Clear()
+    {
+        CurrentScene.Clear();
     }
 }

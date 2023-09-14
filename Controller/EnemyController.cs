@@ -8,9 +8,10 @@ using UnityEngine;
  *
  & Functions
  &  [Public]
- &  : SetUp()       - 기능 설정
+ &  : SetUp()       - 생성 위치 설정
  &
  &  [Protected]
+ &  : Init()            - 초기 설정
  &  : UpdateWalk()      - 움직일 때 (지정된 위치로 이동)
  &  : DeadCoroutine()   - 죽었을 때
  &
@@ -25,11 +26,12 @@ public class EnemyController : BaseController
     private Vector3         _direction;             // 방향
 
     private int             currentWayPointIndex;   // 현재 이동 위치 번호
+
     private Transform[]     _wayPoints;             // 이동할 위치들
 
     private EnemyStat       _stat;                  // 스탯
 
-    // 생성 세팅
+    // 생성 위치 설정
     public void SetUp(Transform[] wayPoints)
     {
         // 이동 위치 받기
@@ -39,15 +41,24 @@ public class EnemyController : BaseController
         // 첫번째 위치로 이동
         currentWayPointIndex = 0;
         transform.position = _wayPoints[currentWayPointIndex].position;
+    }
+
+    protected override void Init()
+    {
+        base.Init();
+
+        WorldObjectType = Define.WorldObject.Enemy;
 
         _stat = GetComponent<EnemyStat>();
-
         _moveSpeed = _stat.MoveSpeed;
 
-        if (_anim.IsNull() == true)
-            _anim = GetComponent<Animator>();
-
         State = Define.State.Walk;
+    }
+
+    protected override void UpdateIdle()
+    {
+        if (isInit == true)
+            State = Define.State.Walk;
     }
 
     protected override void UpdateWalk()
@@ -70,11 +81,13 @@ public class EnemyController : BaseController
 
         yield return new WaitForSeconds(0.7f);
 
-        // TODO : Pool 적용되면 콜라이더 다시 키고 Walk 상태로 변경
-        // GetComponent<Collider>().enabled = true;
-        // State = Define.State.Walk;
+        GetComponent<Collider>().enabled = true;
 
-        Managers.Resource.Destroy(this.gameObject);
+        Clear();
+
+        Managers.Game.Despawn(this.gameObject);
+
+        coDead = null;
     }
 
     // 다음 위치 설정
@@ -95,5 +108,14 @@ public class EnemyController : BaseController
             transform.rotation = Quaternion.Euler(0, 180, 0);
         else if (_direction == Vector3.right || _direction == Vector3.down)
             transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    private void Clear()
+    {
+        _stat.Hp = _stat.MaxHp;
+
+        _direction = Vector3.zero;
+        
+        State = Define.State.Idle;
     }
 }

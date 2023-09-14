@@ -34,6 +34,8 @@ public class MercenaryController : BaseController
     {
         base.Init();
 
+        WorldObjectType = Define.WorldObject.Mercenary;
+
         _stat = GetComponent<MercenaryStat>();
     }
 
