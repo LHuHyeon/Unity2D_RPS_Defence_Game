@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 /*
  * File :   EnemyController.cs
@@ -22,6 +23,8 @@ using UnityEngine;
 
 public class EnemyController : BaseController
 {
+    public SpriteLibrary    spriteLibrary;          // 캐릭터 파츠
+
     private float           _moveSpeed;             // 속도
     private Vector3         _direction;             // 방향
 
@@ -31,8 +34,15 @@ public class EnemyController : BaseController
 
     private EnemyStat       _stat;                  // 스탯
 
+    // Wave에 맞게 몬스터 정보 수정
+    public void SetWave(WaveData waveData)
+    {
+        _stat.SetWaveStat(waveData);
+        spriteLibrary = waveData.spriteLibrary;
+    }
+
     // 생성 위치 설정
-    public void SetUp(Transform[] wayPoints)
+    public void SetWayPoint(Transform[] wayPoints)
     {
         // 이동 위치 받기
         _wayPoints = new Transform[wayPoints.Length];
@@ -48,6 +58,8 @@ public class EnemyController : BaseController
         base.Init();
 
         WorldObjectType = Define.WorldObject.Enemy;
+
+        spriteLibrary = Utils.FindChild<SpriteLibrary>(this.gameObject);
 
         _stat = GetComponent<EnemyStat>();
         _moveSpeed = _stat.MoveSpeed;

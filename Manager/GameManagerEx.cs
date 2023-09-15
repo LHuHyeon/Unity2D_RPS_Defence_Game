@@ -90,6 +90,13 @@ public class GameManagerEx
     // 캐릭터 소환
 	public Action<int> OnEnemySpawnEvent;
 	public Action<int> OnMercenarySpawnEvent;
+	public GameObject Spawn(Define.WorldObject type, string path, Transform parent = null)
+    {
+        GameObject go = Managers.Resource.Instantiate(path, parent);
+
+		return Spawn(type, go, parent);
+    }
+
     public GameObject Spawn(Define.WorldObject type, GameObject obj, Transform parent = null)
     {
         GameObject go = Managers.Resource.Instantiate(obj, parent);

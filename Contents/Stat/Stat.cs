@@ -9,9 +9,11 @@ using UnityEngine;
 
 public class Stat : MonoBehaviour
 {
-    [SerializeField] protected int      _id;
-    [SerializeField] protected string   _name = "NoName";
+    [SerializeField] protected int              _id;
+    [SerializeField] protected string           _name = "NoName";
+    [SerializeField] protected Define.RaceType  _race;
 
-    public int      Id      { get { return _id; }    set { _id = value; } }
-    public string   Name    { get { return _name; }  set { _name = value; } }
+    public int              Id      { get { return _id; }    set { _id = value; } }
+    public string           Name    { get { return _name; }  set { _name = value; } }
+    public Define.RaceType  Race    { get { return _race; }  set { _race = value; } }
 }

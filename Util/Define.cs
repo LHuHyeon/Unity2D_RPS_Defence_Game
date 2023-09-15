@@ -50,6 +50,13 @@ public class Define
 		Enemy,
 	}
 
+	public enum RaceType
+	{
+		Unknown	= 0,
+		Goblin	= 1,
+		Undead	= 2,
+	}
+
 	public enum StatType
 	{
 		MaxHp,
@@ -71,4 +78,6 @@ public class Define
 		SalaryIncrease,
 		Promotion
 	}
+
+	public const string WaveDataNumber = "0";
 }

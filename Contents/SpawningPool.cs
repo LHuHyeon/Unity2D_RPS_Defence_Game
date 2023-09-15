@@ -10,30 +10,40 @@ using UnityEngine;
 
 public class SpawningPool : MonoBehaviour
 {
-    [SerializeField]
     private GameObject  monsterPrefab;      // 몬스터 프리펩
-    [SerializeField]
     private float       spawnTime;          // 생성 주기
+
+    private WaveData    currentWave;
+
     [SerializeField]
     private Transform[] wayPoints;          // 이동 경로
 
-    void Awake()
+    public void StartWave(WaveData waveData)
     {
+        currentWave = waveData;
         StartCoroutine(SpawnMonster());
     }
 
     private IEnumerator SpawnMonster()
     {
-        while (true)
+        int spawnEnemyCount = 0;
+
+        // 적 생성 최대치 만큼 생성
+        while (spawnEnemyCount < currentWave.maxEnemyCount)
         {
             // 몬스터 생성 후 컴포넌트 받기
             GameObject          clone   = Managers.Game.Spawn(Define.WorldObject.Enemy, monsterPrefab);
             EnemyController     monster = clone.GetComponent<EnemyController>();
 
-            // 몬스터의 이동 경로 세팅
-            monster.SetUp(wayPoints);
+            // Wave 정보 부여
+            monster.SetWave(currentWave);
 
-            yield return new WaitForSeconds(spawnTime);
+            // 몬스터의 이동 경로 세팅
+            monster.SetWayPoint(wayPoints);
+
+            spawnEnemyCount++;
+
+            yield return new WaitForSeconds(currentWave.spawnTime);
         }
     }
 }

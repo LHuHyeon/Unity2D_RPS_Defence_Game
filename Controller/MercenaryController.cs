@@ -37,6 +37,8 @@ public class MercenaryController : BaseController
         WorldObjectType = Define.WorldObject.Mercenary;
 
         _stat = GetComponent<MercenaryStat>();
+
+        Debug.Log("data : " + Managers.Data.Wave[1].waveLevel);
     }
 
     protected override void UpdateIdle()
