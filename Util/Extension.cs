@@ -27,4 +27,8 @@ public static class Extension
 
     // 객체 유효성 확인
     public static bool isValid(this GameObject go) { return go.IsNull() == false && go.activeSelf == true; }
+	/*
+	transform.gameObject.activeSelf &&
+    transform.gameObject.activeInHierarchy;
+	*/
 }

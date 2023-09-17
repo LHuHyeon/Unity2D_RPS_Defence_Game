@@ -16,5 +16,5 @@ public class WaveData
 
     public float            spawnTime;          // 생성 주기
 
-    public SpriteLibrary    spriteLibrary;      // 캐릭터 파츠
+    public SpriteLibraryAsset   spriteLibrary;      // 캐릭터 파츠
 }

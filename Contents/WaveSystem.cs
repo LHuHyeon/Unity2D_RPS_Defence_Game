@@ -4,19 +4,54 @@ using UnityEngine;
 
 public class WaveSystem : MonoBehaviour
 {
-    [SerializeField]
-    private SpawningPool    enemySpawner;
     private int             currentWaveIndex = 0;
 
-    // TODO : 웨이브 게임 적용시키기
-    public void StartWave()
-    {
-        currentWaveIndex++;
+    [SerializeField]
+    private float           waveTime = 20f;
 
-        // 다음 Wave가 존재한다면
-        if (Managers.Data.Wave.TryGetValue(currentWaveIndex, out WaveData waveData) == true)
+    [SerializeField]
+    private float           currentWaveTime = 0;
+
+    [SerializeField]
+    private SpawningPool    enemySpawner;
+
+    void Start()
+    {
+        StartCoroutine(WaveCheckCoroutine());
+    }
+
+    // Next Wave Check
+    private IEnumerator WaveCheckCoroutine()
+    {
+        while (Managers.Data.IsData() == false)
+            yield return null;
+
+        // 다음 Wave 존재 확인
+        currentWaveIndex++;
+        if (Managers.Data.Wave.TryGetValue(currentWaveIndex, out WaveData waveData) == false)
         {
-            enemySpawner.StartWave(waveData);
+            Debug.Log("No Next Wave");
+            yield break;
         }
+
+        // 적 소환 시작
+        enemySpawner.StartWave(waveData);
+
+        StartCoroutine(WaveTimeCoroutine());
+    }
+
+    // Wave Time Check
+    private IEnumerator WaveTimeCoroutine()
+    {
+        currentWaveTime = 0f;
+
+        while (currentWaveTime < waveTime)
+        {
+            currentWaveTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        StartCoroutine(WaveCheckCoroutine());
     }
 }

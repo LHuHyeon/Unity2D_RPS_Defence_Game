@@ -23,8 +23,6 @@ using UnityEngine.U2D.Animation;
 
 public class EnemyController : BaseController
 {
-    public SpriteLibrary    spriteLibrary;          // 캐릭터 파츠
-
     private float           _moveSpeed;             // 속도
     private Vector3         _direction;             // 방향
 
@@ -32,13 +30,14 @@ public class EnemyController : BaseController
 
     private Transform[]     _wayPoints;             // 이동할 위치들
 
+    private SpriteLibrary   _spriteLibrary;          // 캐릭터 파츠
     private EnemyStat       _stat;                  // 스탯
 
     // Wave에 맞게 몬스터 정보 수정
     public void SetWave(WaveData waveData)
     {
         _stat.SetWaveStat(waveData);
-        spriteLibrary = waveData.spriteLibrary;
+        _spriteLibrary.spriteLibraryAsset = waveData.spriteLibrary;
     }
 
     // 생성 위치 설정
@@ -59,23 +58,18 @@ public class EnemyController : BaseController
 
         WorldObjectType = Define.WorldObject.Enemy;
 
-        spriteLibrary = Utils.FindChild<SpriteLibrary>(this.gameObject);
-
         _stat = GetComponent<EnemyStat>();
-        _moveSpeed = _stat.MoveSpeed;
-
-        State = Define.State.Walk;
+        _spriteLibrary = Utils.FindChild<SpriteLibrary>(this.gameObject);
     }
 
     protected override void UpdateIdle()
     {
-        if (isInit == true)
-            State = Define.State.Walk;
+        State = Define.State.Walk;
     }
 
     protected override void UpdateWalk()
     {
-        transform.position += _direction * _moveSpeed * Time.deltaTime;
+        transform.position += _direction * _stat.MoveSpeed * Time.deltaTime;
 
         // 도착할 위치에 0.1f 만큼 가까워지면 다음 위치 설정
         if ((_wayPoints[currentWayPointIndex].position - transform.position).magnitude < 0.01f)

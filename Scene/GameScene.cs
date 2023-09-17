@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/*
+TODO : Stage 맵 생성
+*/
+
 public class GameScene : BaseScene
 {
     protected override bool Init()
@@ -12,7 +16,7 @@ public class GameScene : BaseScene
 
         SceneType = Define.Scene.Game;
 		// Managers.UI.ShowPopupUI<UI_TitlePopup>();
-		Debug.Log("Init");
+		Debug.Log("GameScene Init");
 		return true;
 	}
 }

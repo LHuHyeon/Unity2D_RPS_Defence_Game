@@ -58,7 +58,7 @@ public abstract class BaseController : MonoBehaviour
         _anim = GetComponent<Animator>();
     }
 
-    void Start()
+    void Awake()
     {
         Init();
         isInit = true;

@@ -81,26 +81,25 @@ public class GameManagerEx
 	{
 	}
 
-	/*
-	캐릭터 생성 과정 및 관리
-	1. 캐릭터를 Spawn하면 HashSet에 해당 객체를 저장한다.
-	2. 생성된 후 각 스포너에 개수를 업데이트 해준다.
-	*/
-
     // 캐릭터 소환
 	public Action<int> OnEnemySpawnEvent;
 	public Action<int> OnMercenarySpawnEvent;
 	public GameObject Spawn(Define.WorldObject type, string path, Transform parent = null)
     {
-        GameObject go = Managers.Resource.Instantiate(path, parent);
+		GameObject go = Managers.Resource.Instantiate(path, parent);
 
-		return Spawn(type, go, parent);
+		return CharacterSpawn(type, go);
     }
 
     public GameObject Spawn(Define.WorldObject type, GameObject obj, Transform parent = null)
     {
         GameObject go = Managers.Resource.Instantiate(obj, parent);
 
+        return CharacterSpawn(type, go);
+    }
+
+	private GameObject CharacterSpawn(Define.WorldObject type, GameObject go)
+	{
         switch(type)
         {
             case Define.WorldObject.Enemy:
@@ -123,7 +122,7 @@ public class GameManagerEx
         }
 
         return go;
-    }
+	}
 
     // 객체 타입 확인
     public Define.WorldObject GetWorldObjectType(GameObject go)

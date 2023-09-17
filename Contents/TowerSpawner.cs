@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-TODO : UI -> 타워 생성 예정
+TODO : UI가 완성되면 용병 저장 용도로 변경 (스크립트 옮기기)
 */
 
 public class TowerSpawner : MonoBehaviour

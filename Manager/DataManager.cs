@@ -17,6 +17,14 @@ public class DataManager : MonoBehaviour
         StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
     }
 
+    public bool IsData()
+    {
+        if (Wave.IsNull() == true)
+            return false;
+
+        return true;
+    }
+
     // 구글 스프레드시트 가져오기
     private IEnumerator DataRequest(Action<string> onRequest, string dataNumber)
     {
@@ -28,6 +36,8 @@ public class DataManager : MonoBehaviour
         
         onRequest.Invoke(dataText);
     }
+
+
 
 #region 데이터 파싱
 
@@ -55,7 +65,7 @@ public class DataManager : MonoBehaviour
                 waveGold = int.Parse(row[6]),
                 maxEnemyCount = int.Parse(row[7]),
                 spawnTime = float.Parse(row[8]),
-                spriteLibrary = Managers.Resource.Load<SpriteLibrary>("SpriteLibrary/"+row[9]),
+                spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("SpriteLibrary/"+row[9]),
             };
 
             Wave.Add(waveData.waveLevel, waveData);

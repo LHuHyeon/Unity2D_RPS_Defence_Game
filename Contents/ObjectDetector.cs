@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+TODO : UI가 완성되면 용병을 UI -> object 옮기도록 변경하기
+*/
+
 public class ObjectDetector : MonoBehaviour
 {
     [SerializeField]

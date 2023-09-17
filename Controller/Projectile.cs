@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour
     // 대상 추격
     private void TargetChase()
     {
-        if (_attackTarget.IsFakeNull() == true)
+        if (_attackTarget.gameObject.isValid() == false)
         {
             Managers.Resource.Destroy(this.gameObject);
             return;
