@@ -37,6 +37,7 @@ public class MercenaryController : BaseController
         WorldObjectType = Define.WorldObject.Mercenary;
 
         _stat = GetComponent<MercenaryStat>();
+        _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
     }
 
     protected override void UpdateIdle()

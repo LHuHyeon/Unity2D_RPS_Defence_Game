@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D.Animation;
 
 /*
  * File :   EnemyController.cs
@@ -30,7 +29,6 @@ public class EnemyController : BaseController
 
     private Transform[]     _wayPoints;             // 이동할 위치들
 
-    private SpriteLibrary   _spriteLibrary;          // 캐릭터 파츠
     private EnemyStat       _stat;                  // 스탯
 
     // Wave에 맞게 몬스터 정보 수정
@@ -59,7 +57,6 @@ public class EnemyController : BaseController
         WorldObjectType = Define.WorldObject.Enemy;
 
         _stat = GetComponent<EnemyStat>();
-        _spriteLibrary = Utils.FindChild<SpriteLibrary>(this.gameObject);
     }
 
     protected override void UpdateIdle()

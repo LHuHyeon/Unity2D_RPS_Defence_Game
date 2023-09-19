@@ -50,11 +50,32 @@ public class Define
 		Enemy,
 	}
 
+	public enum GradeType
+	{
+		Basic		= 0,	// E 기본
+		Common		= 1,	// D 일반
+		UnCommon	= 2,	// C 고급
+		Rare		= 3,	// B 희귀
+		Epic		= 4,	// A 영웅
+		Legendary	= 5,	// S 전설
+	}
+
+	public enum JobType
+	{
+		Unknown	= 0,
+		Warrior	= 1,	// 전사
+		Archer	= 2,	// 궁수
+		Wizard	= 3,	// 마법사
+	}
+
 	public enum RaceType
 	{
 		Unknown	= 0,
-		Goblin	= 1,
-		Undead	= 2,
+		Human	= 1,	// 인간
+		Elf		= 2,	// 엘프
+		Goblin	= 3,	// 고블린
+		Undead	= 4,	// 언데드
+		Devil	= 5,	// 악마
 	}
 
 	public enum StatType
@@ -79,5 +100,5 @@ public class Define
 		Promotion
 	}
 
-	public const string WaveDataNumber = "0";
+	public const string WaveDataNumber = "1279670946";
 }

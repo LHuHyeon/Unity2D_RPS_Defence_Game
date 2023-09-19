@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 /*
  * File :   BaseController.cs
@@ -25,6 +26,7 @@ public abstract class BaseController : MonoBehaviour
     protected Coroutine         coDead;             // 죽었을 때 코루틴 실행 확인용
 
     protected Animator          _anim;
+    protected SpriteLibrary     _spriteLibrary;     // 캐릭터 파츠
 
     [SerializeField]
     private Define.State _state = Define.State.Idle;    // 캐릭터 상태
@@ -56,6 +58,7 @@ public abstract class BaseController : MonoBehaviour
     protected virtual void Init()
     {
         _anim = GetComponent<Animator>();
+        _spriteLibrary = Utils.FindChild<SpriteLibrary>(this.gameObject);
     }
 
     void Awake()
