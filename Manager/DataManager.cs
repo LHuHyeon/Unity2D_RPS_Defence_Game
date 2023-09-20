@@ -17,11 +17,13 @@ public class DataManager : MonoBehaviour
 	public void Init()
     {
         StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
+        StartCoroutine(DataRequest(MercenaryRequest, Define.MercenaryDataNumber));
     }
 
     public bool IsData()
     {
-        if (Waves.IsNull() == true)
+        if (Waves.IsNull()      == true  ||
+            Mercenarys.IsNull() == true     )
             return false;
 
         return true;
@@ -100,6 +102,7 @@ public class DataManager : MonoBehaviour
                 AttackRange = float.Parse(row[6]),
                 SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/"+row[7]),
                 Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[8]),
+                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[9]),
             };
 
             dict.Add(mercenaryStat.Id, mercenaryStat);

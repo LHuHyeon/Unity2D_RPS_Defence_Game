@@ -8,9 +8,6 @@ TODO : UI가 완성되면 용병 저장 용도로 변경 (스크립트 옮기기
 
 public class TowerSpawner : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject      towerPrefab;
-
     public void SpawnTower(Transform tileTransform)
     {
         Tile tile = tileTransform.GetComponent<Tile>();
@@ -24,7 +21,11 @@ public class TowerSpawner : MonoBehaviour
         tile.IsBuildTower = true;
 
         // 선택한 타일의 위치에 타워 건설
-        GameObject go = Managers.Game.Spawn(Define.WorldObject.Mercenary, towerPrefab);
+        GameObject          go          = Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/Mercenary");
+        MercenaryController mercenary   = go.GetComponent<MercenaryController>();
+
+        mercenary.SetStat(Managers.Data.Mercenarys[1]);
+
         go.transform.position = tileTransform.position;
     }
 }

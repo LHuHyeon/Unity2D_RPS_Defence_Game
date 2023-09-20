@@ -6,12 +6,13 @@ using UnityEngine;
 public class Define
 {
 	public enum UIEvent
-	{
-		Click,
-		Pressed,
-		PointerDown,
-		PointerUp,
-	}
+    {
+        Click,
+        BeginDrag,
+        Drag,
+        EndDrag,
+        Drop,
+    }
 
 	public enum Scene
 	{
@@ -101,4 +102,5 @@ public class Define
 	}
 
 	public const string WaveDataNumber = "1279670946";
+	public const string MercenaryDataNumber = "1983187163";
 }

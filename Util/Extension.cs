@@ -13,10 +13,10 @@ public static class Extension
 		return Utils.GetOrAddComponent<T>(go);
 	}
 
-	public static void BindEvent(this GameObject go, Action action, Define.UIEvent type = Define.UIEvent.Click)
-	{
-		UI_Base.BindEvent(go, action, type);
-	}
+	public static void BindEvent(this GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    {
+        UI_Base.BindEvent(go, action, type);
+    }
 
 	// 참조형식(Reference) null 체크
     public static bool IsNull(this UnityEngine.Object go) { return ReferenceEquals(go, null); }

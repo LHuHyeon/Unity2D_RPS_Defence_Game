@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-몬스터가 피격받았을 때 그리고 죽었을 때를 관리한다.
-
-Collider를 통해 피격받고 있으므로 죽으면 끄기.
-*/
-
-/*
  * File :   EnemyStat.cs
  * Desc :   적 스탯
  */
 
-public class EnemyStat : Stat
+public class EnemyStat : MonoBehaviour
 {
-    [SerializeField] protected int      _hp;            // 체력
-    [SerializeField] protected int      _maxHp;         // 최대 체력
-    [SerializeField] protected int      _defence;       // 방어력
-    [SerializeField] protected int      _dropGold;      // 골드 드랍
-    [SerializeField] protected float    _movespeed;     // 이동 속도
+    [SerializeField] protected int              _id;
+    [SerializeField] protected string           _name = "NoName";
+    [SerializeField] protected Define.RaceType  _race;
+    [SerializeField] protected int              _hp;            // 체력
+    [SerializeField] protected int              _maxHp;         // 최대 체력
+    [SerializeField] protected int              _defence;       // 방어력
+    [SerializeField] protected int              _dropGold;      // 골드 드랍
+    [SerializeField] protected float            _movespeed;     // 이동 속도
 
-    public int      Hp          { get { return _hp; }           set { _hp = Mathf.Clamp(value, 0, MaxHp); } }
-    public int      MaxHp       { get { return _maxHp; }        set { _maxHp = value; Hp = MaxHp; } }
-    public int      Defence     { get { return _defence; }      set { _defence = value; } }
-    public int      DropGold    { get { return _dropGold; }     set { _dropGold = value; } }
-    public float    MoveSpeed   { get { return _movespeed; }    set { _movespeed = value; } }
+    public int              Id          { get { return _id; }           set { _id = value; } }
+    public string           Name        { get { return _name; }         set { _name = value; } }
+    public Define.RaceType  Race        { get { return _race; }         set { _race = value; } }
+    public int              Hp          { get { return _hp; }           set { _hp = Mathf.Clamp(value, 0, MaxHp); } }
+    public int              MaxHp       { get { return _maxHp; }        set { _maxHp = value; Hp = MaxHp; } }
+    public int              Defence     { get { return _defence; }      set { _defence = value; } }
+    public int              DropGold    { get { return _dropGold; }     set { _dropGold = value; } }
+    public float            MoveSpeed   { get { return _movespeed; }    set { _movespeed = value; } }
 
     // Wave에 맞게 스탯 수정
     public void SetWaveStat(WaveData waveData)

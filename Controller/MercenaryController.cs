@@ -7,6 +7,9 @@ using UnityEngine;
  * Desc :   용병의 기본 기능
  *
  & Functions
+ &  [Public]
+ &  : SetStat()         - 생성 설정
+ &
  &  [Protected]
  &  : Init()            - 초기 설정
  &  : UpdateIdle()      - 멈춤일 때 (주변 적 탐색)
@@ -30,14 +33,19 @@ public class MercenaryController : BaseController
     private MercenaryStat       _stat;          // 스탯
     private EnemyController     enemy;          // 적 정보
 
+    // 생성 시 설정
+    public void SetStat(MercenaryStat stat)
+    {
+        _stat = stat;
+        _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
+        _anim.runtimeAnimatorController = stat.AnimatorController;
+    }
+
     protected override void Init()
     {
         base.Init();
 
         WorldObjectType = Define.WorldObject.Mercenary;
-
-        _stat = GetComponent<MercenaryStat>();
-        _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
     }
 
     protected override void UpdateIdle()

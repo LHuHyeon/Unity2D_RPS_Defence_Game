@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+TODO
+1. 
+*/
+
 public class UI_MercenaryItem : UI_Base
 {
     enum Images
@@ -14,6 +19,8 @@ public class UI_MercenaryItem : UI_Base
     {
         ItemCount,
     }
+
+    public int itemCount;
     
     public override bool Init()
     {
