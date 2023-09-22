@@ -42,6 +42,7 @@ public class Define
 	{
 		Mercenary 	= 6,
 		Enemy		= 7,
+		Tile		= 8,
 	}
 
 	public enum WorldObject

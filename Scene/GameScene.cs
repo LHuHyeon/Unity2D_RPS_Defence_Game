@@ -15,8 +15,18 @@ public class GameScene : BaseScene
 			return false;
 
         SceneType = Define.Scene.Game;
-		// Managers.UI.ShowPopupUI<UI_TitlePopup>();
+
+		StartCoroutine(OnSceneCoroutine());
+
 		Debug.Log("GameScene Init");
 		return true;
+	}
+
+	private IEnumerator OnSceneCoroutine()
+	{
+		while(Managers.Data.IsData() == false)
+			yield return null;
+
+		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
 	}
 }

@@ -33,12 +33,19 @@ public class MercenaryController : BaseController
     private MercenaryStat       _stat;          // 스탯
     private EnemyController     enemy;          // 적 정보
 
+    public Tile                 currentTile;    // 현재 타일
+
+    public MercenaryStat GetMercenaryStat() { return _stat; }
+
     // 생성 시 설정
     public void SetStat(MercenaryStat stat)
     {
         _stat = stat;
         _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
         _anim.runtimeAnimatorController = stat.AnimatorController;
+        _stat.Mercenary = this.gameObject;
+
+        State = Define.State.Idle;
     }
 
     protected override void Init()

@@ -2,30 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-TODO : UI가 완성되면 용병 저장 용도로 변경 (스크립트 옮기기)
-*/
-
 public class TowerSpawner : MonoBehaviour
 {
-    public void SpawnTower(Transform tileTransform)
+    public bool SpawnTower(Transform tileTransform)
     {
         Tile tile = tileTransform.GetComponent<Tile>();
 
-        // 타워 건설 가능 여부 확인
-        // 1. 현재 타일의 위치에 이미 타워가 건설되어 있으면 타워 건설 X
+        // 타워 건설 여부 확인
         if (tile.IsBuildTower == true)
-            return;
+        {
+            Debug.Log("Tile Build True!!");
+            return false;
+        }
 
         // 타워가 건설되어 있음으로 설정
         tile.IsBuildTower = true;
 
         // 선택한 타일의 위치에 타워 건설
-        GameObject          go          = Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/Mercenary");
+        GameObject          go          = Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/Mercenary", tileTransform);
         MercenaryController mercenary   = go.GetComponent<MercenaryController>();
 
-        mercenary.SetStat(Managers.Data.Mercenarys[1]);
+        // 용병 정보 입력
+        mercenary.SetStat(UI_DragSlot.instance.GetMercenary());
+        mercenary.transform.position = tileTransform.position;
+        mercenary.currentTile = tile;
 
-        go.transform.position = tileTransform.position;
+        // 들고 있는 용병이 슬롯에서 온거면
+        if ((UI_DragSlot.instance.itemSlot is UI_MercenaryItem) == true)
+        {
+            UI_MercenaryItem mercenaryItem = UI_DragSlot.instance.itemSlot as UI_MercenaryItem;
+
+            // 슬롯 개수 차감
+            mercenaryItem.SetCount(-1);
+        }
+
+        // 드래그 슬롯 초기화
+        UI_DragSlot.instance.ClearSlot();
+
+        return true;
     }
 }

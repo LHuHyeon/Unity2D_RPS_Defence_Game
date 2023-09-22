@@ -101,9 +101,11 @@ public class DataManager : MonoBehaviour
                 AttackRate = float.Parse(row[5]),
                 AttackRange = float.Parse(row[6]),
                 SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/"+row[7]),
-                Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[8]),
-                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[9]),
+                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[8]),
+                Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[9]),
             };
+
+            mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
 
             dict.Add(mercenaryStat.Id, mercenaryStat);
         }

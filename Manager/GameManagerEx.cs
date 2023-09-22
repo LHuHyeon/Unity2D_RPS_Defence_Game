@@ -26,6 +26,10 @@ public class GameManagerEx
 	GameData _gameData = new GameData();
 	public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
+	public UI_GameScene GameScene  { get; set; }
+
+	public bool isDrag = false;
+
 	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
 
