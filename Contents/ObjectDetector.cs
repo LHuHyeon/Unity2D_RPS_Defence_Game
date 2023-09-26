@@ -12,8 +12,8 @@ public class ObjectDetector : MonoBehaviour
     private Ray             ray;
     private RaycastHit      hit;
 
-    private int _mercenaryMask = (1 << (int)Define.LayerType.Mercenary);
-    private int _tileMask = (1 << (int)Define.LayerType.Tile);
+    private int _mercenaryMask  = (1 << (int)Define.LayerType.Mercenary);
+    private int _tileMask       = (1 << (int)Define.LayerType.Tile);
 
     void Start()
     {
@@ -51,28 +51,30 @@ public class ObjectDetector : MonoBehaviour
         if (currentMouseTime >= maxMouseTime)
         {
             // 들기 시작
+            Managers.Game.isDrag = true;
+
             MercenaryController mercenary = hit.transform.GetComponent<MercenaryController>();
+
+            // 타일에서 벗어남
             mercenary.currentTile.IsBuildTower = false;
 
-            MercenaryStat stat = mercenary.GetMercenaryStat();
-
             // 들기 정보 입력
-            UI_DragSlot.instance.mercenartObj = mercenary.gameObject;
-            UI_DragSlot.instance.mercenaryStat = stat;
-
-            Managers.Game.isDrag = true;
+            UI_DragSlot.instance.mercenary = mercenary;
+            UI_DragSlot.instance.icon.sprite = mercenary.GetMercenaryStat().Icon;
         }
     }
 
     // 타워 생성
     private void TileTowerSpawn()
     {
+        UI_DragSlot dragSlot = UI_DragSlot.instance;
+
         // 마우스 입력 확인
         if (Input.GetMouseButtonUp(0) == false)
             return;
 
         // 드래그 슬롯 정보 확인
-        if (UI_DragSlot.instance.GetMercenary().IsNull() == true)
+        if (dragSlot.GetMercenary().IsNull() == true)
         {
             Debug.Log("Drag Slot Info Failed");
             return;
@@ -80,19 +82,34 @@ public class ObjectDetector : MonoBehaviour
 
         // 마우스 위치 타일 확인
         if (RayMousePointCheck(_tileMask) == false)
+        {
+            dragSlot.DragInfoClear();
             return;
+        }
 
         // 타워 생성
-        if (towerSpawner.SpawnTower(hit.transform) == true)
+        if (towerSpawner.SpawnTower(dragSlot.GetMercenary(), hit.transform) == false)
+            return;
+        
+        // 용병을 옮기는 것이라면 기존 용병 삭제
+        if (dragSlot.mercenary.IsFakeNull() == false)
         {
-            // 용병을 옮기는 것이라면 기존 용병 삭제
-            if (UI_DragSlot.instance.mercenartObj.IsFakeNull() == false)
-            {
-                Managers.Resource.Destroy(UI_DragSlot.instance.mercenartObj);
-                UI_DragSlot.instance.mercenartObj = null;
-                Debug.Log("Temp Mercenary Destroy");
-            }
+            Debug.Log("Temp Mercenary Destroy");
+
+            Managers.Resource.Destroy(dragSlot.mercenary.gameObject);
+            dragSlot.ClearSlot();
         }
+
+        // 들고 있는 용병이 슬롯에서 온거면 개수 차감
+        if ((dragSlot.itemSlot is UI_MercenaryItem) == true)
+        {
+            UI_MercenaryItem mercenaryItem = dragSlot.itemSlot as UI_MercenaryItem;
+
+            mercenaryItem.SetCount(-1);
+        }
+
+        // 드래그 슬롯 정보 초기화
+        dragSlot.DragInfoClear();
     }
 
     // 마우스 포인트 Ray 확인
@@ -103,10 +120,7 @@ public class ObjectDetector : MonoBehaviour
 
         // ray에 부딪친 Layer가 _maks라면 통과
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, mask))
-        {
-            Debug.Log(hit.transform.name + " : Hit True!!");
             return true;
-        }
 
         return false;
     }

@@ -30,9 +30,9 @@ public class UI_GameScene : UI_Scene
 
         BindObject(typeof(GameObjects));
 
-		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
-        
         PopulateMercenary();
+
+		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
 
         SetEventHandler();
 
@@ -89,7 +89,10 @@ public class UI_GameScene : UI_Scene
 
         go.BindEvent((PointerEventData eventData)=>
         {
-            UI_DragSlot.instance.DragSetIcon(UI_DragSlot.instance.mercenaryStat.Icon);
+            if (UI_DragSlot.instance.GetMercenary().IsNull() == true)
+                return;
+
+            UI_DragSlot.instance.SetColor(1);
             UI_DragSlot.instance.icon.transform.position = eventData.position;
 
         }, Define.UIEvent.BeginDrag);
@@ -104,10 +107,7 @@ public class UI_GameScene : UI_Scene
 
         go.BindEvent((PointerEventData eventData)=>
         {
-            // ui가 아닌 곳에 놓으면 드래그 초기화
-            if (EventSystem.current.IsPointerOverGameObject() == false)
-                UI_DragSlot.instance.ClearSlot();
-
+            UI_DragSlot.instance.ClearSlot();
             Managers.Game.isDrag = false;
 
         }, Define.UIEvent.EndDrag);
@@ -121,18 +121,14 @@ public class UI_GameScene : UI_Scene
 
             // 이미 등록된 슬롯인가?
             if (IsSlotCheck(UI_DragSlot.instance.itemSlot as UI_MercenaryItem) == true)
-            {
-                UI_DragSlot.instance.ClearSlot();
                 return;
-            }
 
             // 용병이 소환되어 있다면 삭제
             if (UI_DragSlot.instance.GetMercenary().Mercenary.IsFakeNull() == false)
                 Managers.Resource.Destroy(UI_DragSlot.instance.GetMercenary().Mercenary);
 
             MercenaryRegister(UI_DragSlot.instance.GetMercenary());
-            UI_DragSlot.instance.mercenartObj = null;
-            UI_DragSlot.instance.ClearSlot();
+
         }, Define.UIEvent.Drop);
     }
 

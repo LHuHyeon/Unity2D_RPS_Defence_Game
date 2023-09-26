@@ -20,8 +20,7 @@ public class UI_DragSlot : MonoBehaviour
     public static UI_DragSlot   instance;
 
     public UI_ItemSlot          itemSlot;       // 슬롯
-    public MercenaryStat        mercenaryStat;  // 용병 스탯
-    public GameObject           mercenartObj;   // 용병 객체
+    public MercenaryController  mercenary;      // 용병
     public Image                icon;           // 아이템 이미지
 
     void Start()
@@ -34,8 +33,8 @@ public class UI_DragSlot : MonoBehaviour
     {
         if ((itemSlot is UI_MercenaryItem) == true)
             return (itemSlot as UI_MercenaryItem)._mercenary;
-        if (mercenaryStat.IsNull() == false)
-            return mercenaryStat;
+        else if (mercenary.IsNull() == false)
+            return mercenary.GetMercenaryStat();
 
         return null;
     }
@@ -55,11 +54,14 @@ public class UI_DragSlot : MonoBehaviour
         icon.color = color;
     }
 
+    public void DragInfoClear()
+    {
+        itemSlot = null;
+        mercenary = null;
+    }
+
     public void ClearSlot()
     {
-        // dragSlot 초기화
-        itemSlot = null;
-        mercenaryStat = null;
         SetColor(0);
     }
 }
