@@ -28,5 +28,8 @@ public class GameScene : BaseScene
 			yield return null;
 
 		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
+		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage01").GetComponent<WaveSystem>();
+
+		Managers.Game.WaveSystem.WaveStart();
 	}
 }

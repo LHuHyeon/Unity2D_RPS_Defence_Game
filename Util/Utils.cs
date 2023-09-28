@@ -64,4 +64,36 @@ public class Utils
             return transform.gameObject;
         return null;
     }
+
+    // 숫자 단위 붙이기
+    public static string GetNumberUnitText(int number)
+    {
+        if (number.ToString().Length <= 4)
+            return (number == 0) ? "0" : GetCommaText(number);
+
+        // 숫자 구성 단위
+        string[] unit = new string[] { "", "K", "M", "G", "T", "P", "E", "Z"};
+
+        // 3칸씩 숫자 자리 지정 
+        string num = string.Format("{0:# ### ### ### ### ### ### ### ###}", number).TrimStart().Replace(" ", ",");
+        string[] str = num.Split(',');
+
+        int cnt = str.Length - 1;
+        int strNum = Convert.ToInt32(str[0]);
+
+        string result = "";
+        // 두자리 수까진 소수점 붙이기
+        if (strNum.ToString().Length <= 2 && cnt > 0)
+            result = strNum + "." + str[1].Substring(0, 1) + unit[cnt];
+        else
+            result = strNum + unit[cnt];
+
+        return result;
+    }
+
+    // 콤마(,) 붙이기
+    public static string GetCommaText(int number)
+    {
+        return string.Format("{0:#,###}", number);
+    }
 }

@@ -12,6 +12,7 @@ public class GameData
 	public string Name;
 
 	public int Money;
+	public int GameGold;
 
 	public float PlayTime;
 
@@ -26,12 +27,15 @@ public class GameManagerEx
 	GameData _gameData = new GameData();
 	public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
-	public UI_GameScene GameScene  { get; set; }
+	public UI_GameScene GameScene  	{ get; set; }
+	public WaveSystem	WaveSystem	{ get; set; }
 
 	public bool isDrag = false;
 
 	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
+
+	public HashSet<GameObject> Enemys { get { return _enemys; } }
 
 	#region 스탯
 	public string Name
@@ -67,6 +71,13 @@ public class GameManagerEx
 		get { return _gameData.Money; }
 		set { _gameData.Money = value; }
 	}
+	
+	public int GameGold
+	{
+		get { return _gameData.GameGold; }
+		set { _gameData.GameGold = value; }
+	}
+
 	#endregion
 
 	#region 시간

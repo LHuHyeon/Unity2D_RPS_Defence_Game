@@ -82,7 +82,7 @@ public class EnemyController : BaseController
     {
         GetComponent<Collider>().enabled = false;
 
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.15f);
 
         GetComponent<Collider>().enabled = true;
 

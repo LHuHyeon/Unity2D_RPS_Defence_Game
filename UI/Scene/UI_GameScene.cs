@@ -12,6 +12,28 @@ public class UI_GameScene : UI_Scene
         UIDetector,
     }
 
+    enum Sliders
+    {
+        EnemySlider,
+    }
+
+    enum Buttons
+    {
+        PauseButton,
+        GameSpeedButton,
+    }
+
+    enum Texts
+    {
+        WaveTimeText,
+        EnemyHpText,
+        EnemyDefenceText,
+        WaveLevelText,
+        GoldText,
+        EnemyCountText,
+        GameSpeedButtonText,
+    }
+
     enum PlayTab
 	{
 		None,
@@ -20,15 +42,31 @@ public class UI_GameScene : UI_Scene
 		Mix,
 	}
 
+    private int currentEnemyCount;
+
     private List<UI_MercenaryItem> _MercenaryItems = new List<UI_MercenaryItem>();
     private PlayTab _tab = PlayTab.None;
+
+    private GameManagerEx _game;
+    private WaveData _wave;
 
     public override bool Init()
     {
         if (base.Init() == false)
             return false;
 
+        _game = Managers.Game;
+
         BindObject(typeof(GameObjects));
+        BindSlider(typeof(Sliders));
+        BindButton(typeof(Buttons));
+        BindText(typeof(Texts));
+
+        GetButton((int)Buttons.PauseButton).onClick.AddListener(OnClickPauseButton);
+        GetButton((int)Buttons.GameSpeedButton).onClick.AddListener(OnClickGameSpeedButton);
+
+        _game.OnEnemySpawnEvent -= RefreshEnemyBar;
+        _game.OnEnemySpawnEvent += RefreshEnemyBar;
 
         PopulateMercenary();
 
@@ -36,7 +74,60 @@ public class UI_GameScene : UI_Scene
 
         SetEventHandler();
 
+        SetNextWave(_wave);
+
         return true;
+    }
+
+    public void SetNextWave(WaveData waveData)
+    {
+        _wave = waveData;
+
+        if (_init == false)
+            return;
+
+        GetSlider((int)Sliders.EnemySlider).minValue = 0;
+        GetSlider((int)Sliders.EnemySlider).maxValue = _wave.maxEnemyCount;
+        GetSlider((int)Sliders.EnemySlider).value = _wave.maxEnemyCount;
+
+        GetText((int)Texts.EnemyCountText).text = $"{_wave.maxEnemyCount} / {_wave.maxEnemyCount}";
+
+        currentEnemyCount = _wave.maxEnemyCount;
+
+        RefreshWaveInfo();
+    }
+
+    public void RefreshUI()
+    {
+
+    }
+
+    public void RefreshEnemyBar(int count)
+    {
+        // 음수라면
+        if (count > 0)
+            return;
+
+        currentEnemyCount += count;
+
+        if (float.IsNaN(_game.Enemys.Count) == true)
+            GetSlider((int)Sliders.EnemySlider).value = 0;
+        else
+            GetSlider((int)Sliders.EnemySlider).value = currentEnemyCount;
+
+        GetText((int)Texts.EnemyCountText).text = $"{currentEnemyCount} / {_wave.maxEnemyCount}";
+    }
+
+    public void RefreshWaveInfo()
+    {
+        GetText((int)Texts.EnemyHpText).text = _wave.hp.ToString();
+        GetText((int)Texts.EnemyDefenceText).text = _wave.defence.ToString();
+        GetText((int)Texts.WaveLevelText).text = $"{_wave.waveLevel} / 100";
+    }
+
+    public void RefreshGold()
+    {
+        GetText((int)Texts.GoldText).text = Utils.GetCommaText(_game.GameGold);
     }
 
     // 용병 슬롯 등록
@@ -59,11 +150,6 @@ public class UI_GameScene : UI_Scene
         _MercenaryItems.Add(item);
     }
 
-    public void RefreshUI()
-    {
-
-    }
-
     // 용병 채우기 (TODO : Test 용)
     private void PopulateMercenary()
     {
@@ -80,6 +166,20 @@ public class UI_GameScene : UI_Scene
 
             _MercenaryItems.Add(item);
         }
+    }
+
+    private void OnClickPauseButton()
+    {
+        Debug.Log("OnClickPauseButton");
+
+        // TODO : 게임 일시 정지
+    }
+
+    private void OnClickGameSpeedButton()
+    {
+        Debug.Log("OnClickGameSpeedButton");
+
+        // TODO : 게임 속도 상승 or 다운
     }
 
     private void SetEventHandler()
