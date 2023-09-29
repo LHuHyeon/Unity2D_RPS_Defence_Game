@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UI_MercenaryItem : UI_ItemSlot
+public class UI_MercenaryItem : UI_ItemDragSlot
 {
     enum Images
     {
@@ -17,7 +17,6 @@ public class UI_MercenaryItem : UI_ItemSlot
     }
 
     public MercenaryStat    _mercenary;
-    public int              _itemCount;
     
     public override bool Init()
     {
@@ -27,7 +26,7 @@ public class UI_MercenaryItem : UI_ItemSlot
         BindImage(typeof(Images));
         BindText(typeof(Texts));
         
-        icon = GetImage((int)Images.Icon);
+        _icon = GetImage((int)Images.Icon);
 
         RefreshUI();
 
@@ -43,7 +42,7 @@ public class UI_MercenaryItem : UI_ItemSlot
         RefreshUI();
     }
 
-    public void RefreshUI()
+    public override void RefreshUI()
     {
         if (_init == false)
             return;
@@ -56,30 +55,17 @@ public class UI_MercenaryItem : UI_ItemSlot
 
         SetColor(255);
 
-        icon.sprite = _mercenary.Icon;
+        _icon.sprite = _mercenary.Icon;
         GetText((int)Texts.ItemCountText).text = _itemCount.ToString();
     }
 
-    public virtual void SetCount(int count = 1)
-    {
-        _itemCount += count;
-
-        RefreshUI();
-        
-        // 개수가 없다면
-        if (_itemCount <= 0)
-            ClearSlot();
-    }
-
     // 슬롯 초기화
-    public virtual void ClearSlot()
+    public override void ClearSlot()
     {
         _mercenary = null;
         GetImage((int)Images.Icon).sprite = null;
 
-        SetColor(0);
-
-        Managers.Resource.Destroy(this.gameObject);
+        base.ClearSlot();
     }
 
 #region EventHandler
@@ -102,7 +88,7 @@ public class UI_MercenaryItem : UI_ItemSlot
 
         UI_DragSlot.instance.itemSlot = this;
 
-        UI_DragSlot.instance.DragSetIcon(icon.sprite);
+        UI_DragSlot.instance.DragSetIcon(_icon.sprite);
         UI_DragSlot.instance.icon.transform.position = eventData.position;
     }
 

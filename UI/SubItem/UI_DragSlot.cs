@@ -19,7 +19,7 @@ public class UI_DragSlot : MonoBehaviour
 {
     public static UI_DragSlot   instance;
 
-    public UI_ItemSlot          itemSlot;       // 슬롯
+    public UI_ItemDragSlot      itemSlot;       // 슬롯
     public MercenaryController  mercenary;      // 용병
     public Image                icon;           // 아이템 이미지
 

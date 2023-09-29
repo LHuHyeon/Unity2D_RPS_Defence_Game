@@ -22,7 +22,7 @@ public class UI_GameScene : UI_Scene
         PauseButton,
         GameSpeedButton,
     }
-
+    
     enum Texts
     {
         WaveTimeText,
