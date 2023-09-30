@@ -42,13 +42,12 @@ public class UI_GameScene : UI_Scene
 		Mix,
 	}
 
-    private int currentEnemyCount;
+    private PlayTab         _tab = PlayTab.None;
+    
+    private GameManagerEx   _game;
+    private WaveData        _wave;
 
     private List<UI_MercenaryItem> _MercenaryItems = new List<UI_MercenaryItem>();
-    private PlayTab _tab = PlayTab.None;
-
-    private GameManagerEx _game;
-    private WaveData _wave;
 
     public override bool Init()
     {
@@ -79,8 +78,8 @@ public class UI_GameScene : UI_Scene
         return true;
     }
 
-    public void OnRPSPopup() { Invoke("OnDelayRPSPopup", 1f); }
-    private void OnDelayRPSPopup() { Managers.UI.ShowPopupUI<UI_RPSPopup>(); }
+    public  void OnRPSPopup()       { Invoke("OnDelayRPSPopup", 1f); }
+    private void OnDelayRPSPopup()  { Managers.UI.ShowPopupUI<UI_RPSPopup>(); }
 
     public void SetNextWave(WaveData waveData)
     {
@@ -93,8 +92,6 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.EnemyCountText).text = $"{_wave.maxEnemyCount} / {_wave.maxEnemyCount}";
         GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", 20f);
 
-        currentEnemyCount = _wave.maxEnemyCount;
-
         RefreshWaveInfo();
     }
 
@@ -103,6 +100,7 @@ public class UI_GameScene : UI_Scene
 
     }
 
+    // 웨이브 시간
     public void RefreshWaveTime(bool isFormat, float time)
     {
         if (isFormat == true)
@@ -111,22 +109,24 @@ public class UI_GameScene : UI_Scene
             GetText((int)Texts.WaveTimeText).text = (Mathf.CeilToInt(time)).ToString();
     }
 
+    // 남은 몬스터
     public void RefreshEnemyBar(int count)
     {
         // 음수라면
         if (count > 0)
             return;
 
-        currentEnemyCount += count;
+        _game.remainEnemys += count;
 
-        if (float.IsNaN(_game.Enemys.Count) == true)
+        if (float.IsNaN(_game.remainEnemys) == true)
             GetSlider((int)Sliders.EnemySlider).value = 0;
         else
-            GetSlider((int)Sliders.EnemySlider).value = currentEnemyCount;
+            GetSlider((int)Sliders.EnemySlider).value = _game.remainEnemys;
 
-        GetText((int)Texts.EnemyCountText).text = $"{currentEnemyCount} / {_wave.maxEnemyCount}";
+        GetText((int)Texts.EnemyCountText).text = $"{_game.remainEnemys} / {_wave.maxEnemyCount}";
     }
 
+    // 웨이브 정보
     public void RefreshWaveInfo()
     {
         GetText((int)Texts.EnemyHpText).text = _wave.hp.ToString();
@@ -134,8 +134,12 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.WaveLevelText).text = $"{_wave.waveLevel} / 100";
     }
 
+    // 골드
     public void RefreshGold()
     {
+        if (_init == false)
+            return;
+
         GetText((int)Texts.GoldText).text = Utils.GetCommaText(_game.GameGold);
     }
 

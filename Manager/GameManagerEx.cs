@@ -16,6 +16,8 @@ public class GameData
 
 	public float PlayTime;
 
+	public WaveData CurrentWave;
+
 	/*
 	필수 데이터
 	1. 용병 컬렉션
@@ -24,18 +26,17 @@ public class GameData
 
 public class GameManagerEx
 {
-	GameData _gameData = new GameData();
-	public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
+	private GameData _gameData = new GameData();
+	public 	GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
 	public UI_GameScene GameScene  	{ get; set; }
 	public WaveSystem	WaveSystem	{ get; set; }
 
 	public bool isDrag = false;
+	public int 	remainEnemys = 0;
 
 	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
-
-	public HashSet<GameObject> Enemys { get { return _enemys; } }
 
 	#region 스탯
 	public string Name
@@ -75,7 +76,11 @@ public class GameManagerEx
 	public int GameGold
 	{
 		get { return _gameData.GameGold; }
-		set { _gameData.GameGold = value; }
+		set 
+		{
+			_gameData.GameGold = value;
+			GameScene.RefreshGold();
+		}
 	}
 
 	#endregion
@@ -92,8 +97,22 @@ public class GameManagerEx
 
 	#endregion
 
+	public WaveData CurrentWave
+	{
+		get { return _gameData.CurrentWave; }
+		set { _gameData.CurrentWave = value; }
+	}
+
 	public void Init()
 	{
+	}
+
+	// 웨이브 보상
+	public void WaveReward()
+	{
+		GameGold += CurrentWave.waveGold;
+
+		GameScene.OnRPSPopup();
 	}
 
     // 캐릭터 소환

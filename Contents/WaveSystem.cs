@@ -4,23 +4,25 @@ using UnityEngine;
 
 public class WaveSystem : MonoBehaviour
 {
-    private int             currentWaveIndex = 0;
+    private int             _currentWaveIndex = 0;
 
     [SerializeField]
-    private SpawningPool    enemySpawner;
+    private SpawningPool    _enemySpawner;
 
     public void WaveStart()
     {
         // 다음 Wave 존재 확인
-        currentWaveIndex++;
-        if (Managers.Data.Waves.TryGetValue(currentWaveIndex, out WaveData waveData) == false)
+        _currentWaveIndex++;
+        if (Managers.Data.Waves.TryGetValue(_currentWaveIndex, out WaveData waveData) == false)
         {
             Debug.Log("No Next Wave");
             return;
         }
 
+        Managers.Game.CurrentWave = waveData;
+
         // 적 소환 시작
-        enemySpawner.StartWave(waveData);
+        _enemySpawner.StartWave(waveData);
         Managers.Game.GameScene.SetNextWave(waveData);
     }
 }

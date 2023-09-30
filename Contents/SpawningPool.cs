@@ -5,19 +5,21 @@ using UnityEngine;
 public class SpawningPool : MonoBehaviour
 {
     [SerializeField]
-    private float       waveTime = 20f;
+    private float       _waveTime = 20f;
 
     [SerializeField]
-    private float       currentWaveTime = 0;
+    private float       _currentWaveTime = 0;
 
     [SerializeField]
-    private Transform[] wayPoints;          // 이동 경로
+    private Transform[] _wayPoints;          // 이동 경로
 
-    private WaveData    currentWave;
+    private WaveData    _wave;
 
     public void StartWave(WaveData waveData)
     {
-        currentWave = waveData;
+        _wave = waveData;
+        Managers.Game.remainEnemys = _wave.maxEnemyCount;
+
         StartCoroutine(SpawnMonster());
     }
 
@@ -28,40 +30,49 @@ public class SpawningPool : MonoBehaviour
         StartCoroutine(WaveTimeCoroutine(false, 3));
         yield return new WaitForSeconds(3f);
 
-        // TODO : 3초 카운트 다운 구현
+        Managers.Game.GameScene.RefreshWaveTime(true, 20);
 
         // 적 생성 최대치 만큼 생성
-        while (spawnEnemyCount < currentWave.maxEnemyCount)
+        while (spawnEnemyCount < _wave.maxEnemyCount)
         {
             // 몬스터 생성 후 컴포넌트 받기
             GameObject          clone   = Managers.Game.Spawn(Define.WorldObject.Enemy, "Enemy/Enemy");
             EnemyController     monster = clone.GetComponent<EnemyController>();
 
             // 몬스터의 이동 경로 세팅
-            monster.SetWayPoint(wayPoints);
+            monster.SetWayPoint(_wayPoints);
 
             // Wave 정보 부여
-            monster.SetWave(currentWave);
+            monster.SetWave(_wave);
 
             spawnEnemyCount++;
 
-            yield return new WaitForSeconds(currentWave.spawnTime);
+            yield return new WaitForSeconds(_wave.spawnTime);
         }
 
-        StartCoroutine(WaveTimeCoroutine(true, waveTime));
+        StartCoroutine(WaveTimeCoroutine(true, _waveTime));
     }
 
     // Wave Time Check
     private IEnumerator WaveTimeCoroutine(bool isFormat, float time)
     {
-        currentWaveTime = time;
+        _currentWaveTime = time;
 
-        while (currentWaveTime >= 0f)
+        while (_currentWaveTime >= 0f)
         {
-            currentWaveTime -= Time.deltaTime;
-            Managers.Game.GameScene.RefreshWaveTime(isFormat, currentWaveTime);
+            if (Managers.Game.remainEnemys == 0)
+            {
+                Managers.Game.WaveReward();
+                yield break;
+            }
+
+            _currentWaveTime -= Time.deltaTime;
+            Managers.Game.GameScene.RefreshWaveTime(isFormat, _currentWaveTime);
 
             yield return null;
         }
+
+        // TODO : 시간이 다 지났는대 몬스터가 남아 있다면 게임오버
+        Debug.Log("Game Over");
     }
 }
