@@ -74,23 +74,24 @@ public class UI_GameScene : UI_Scene
 
         SetEventHandler();
 
-        SetNextWave(_wave);
+        OnRPSPopup();
 
         return true;
     }
 
+    public void OnRPSPopup() { Invoke("OnDelayRPSPopup", 1f); }
+    private void OnDelayRPSPopup() { Managers.UI.ShowPopupUI<UI_RPSPopup>(); }
+
     public void SetNextWave(WaveData waveData)
     {
         _wave = waveData;
-
-        if (_init == false)
-            return;
 
         GetSlider((int)Sliders.EnemySlider).minValue = 0;
         GetSlider((int)Sliders.EnemySlider).maxValue = _wave.maxEnemyCount;
         GetSlider((int)Sliders.EnemySlider).value = _wave.maxEnemyCount;
 
         GetText((int)Texts.EnemyCountText).text = $"{_wave.maxEnemyCount} / {_wave.maxEnemyCount}";
+        GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", 20f);
 
         currentEnemyCount = _wave.maxEnemyCount;
 
@@ -100,6 +101,14 @@ public class UI_GameScene : UI_Scene
     public void RefreshUI()
     {
 
+    }
+
+    public void RefreshWaveTime(bool isFormat, float time)
+    {
+        if (isFormat == true)
+            GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", time);
+        else
+            GetText((int)Texts.WaveTimeText).text = (Mathf.CeilToInt(time)).ToString();
     }
 
     public void RefreshEnemyBar(int count)

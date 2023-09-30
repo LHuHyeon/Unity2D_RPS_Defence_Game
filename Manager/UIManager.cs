@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UIManager
 {
-	int _order = -20;
+	int _order = 1;
 
 	Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
 

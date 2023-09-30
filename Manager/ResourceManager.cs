@@ -6,7 +6,7 @@ using UnityEngine;
 public class ResourceManager
 {
 	// TODO : Load 호출이 많을 겨우 딕셔너리 생성하여 관리
-	// public Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
+	public Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
 
     public void Init()
     {
@@ -26,6 +26,15 @@ public class ResourceManager
             if (go.IsNull() == false)
                 return go as T;
         }
+		else if (typeof(T) == typeof(Sprite))
+		{
+			if (_sprites.TryGetValue(path, out Sprite sprite))
+				return sprite as T;
+
+			Sprite sp = Resources.Load<Sprite>(path);
+			_sprites.Add(path, sp);
+			return sp as T;
+		}
 
 		return Resources.Load<T>(path);
 	}

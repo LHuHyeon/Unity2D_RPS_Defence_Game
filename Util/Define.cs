@@ -52,6 +52,15 @@ public class Define
 		Enemy,
 	}
 
+	public enum RPSCard
+	{
+		Unknown,
+		Rock,		// 주먹
+		Paper,		// 보
+		Scissors,	// 가위
+		Max,
+	}
+
 	public enum GradeType
 	{
 		Basic		= 0,	// E 기본

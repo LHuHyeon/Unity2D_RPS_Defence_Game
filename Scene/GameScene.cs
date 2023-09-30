@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-/*
-TODO : Stage 맵 생성
-*/
-
 public class GameScene : BaseScene
 {
     protected override bool Init()
@@ -29,7 +25,5 @@ public class GameScene : BaseScene
 
 		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
 		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage01").GetComponent<WaveSystem>();
-
-		Managers.Game.WaveSystem.WaveStart();
 	}
 }

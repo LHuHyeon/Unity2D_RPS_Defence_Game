@@ -106,7 +106,12 @@ public class PoolManager
     {
         // Poolable 컴포넌트가 붙은 객체인데 저장된 Key가 없을 경우 생성
         if (_pool.ContainsKey(original.name) == false)
-            CreatePool(original);
+        {
+            if (original.GetComponent<UI_Popup>() == true)
+                CreatePool(original, 1);
+            else
+                CreatePool(original);
+        }
 
         return _pool[original.name].Pop(parent);        // Pop 진행
     }

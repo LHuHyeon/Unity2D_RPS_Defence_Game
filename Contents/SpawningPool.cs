@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class SpawningPool : MonoBehaviour
 {
-    private WaveData    currentWave;
+    [SerializeField]
+    private float       waveTime = 20f;
+
+    [SerializeField]
+    private float       currentWaveTime = 0;
 
     [SerializeField]
     private Transform[] wayPoints;          // 이동 경로
+
+    private WaveData    currentWave;
 
     public void StartWave(WaveData waveData)
     {
@@ -18,6 +24,11 @@ public class SpawningPool : MonoBehaviour
     private IEnumerator SpawnMonster()
     {
         int spawnEnemyCount = 0;
+
+        StartCoroutine(WaveTimeCoroutine(false, 3));
+        yield return new WaitForSeconds(3f);
+
+        // TODO : 3초 카운트 다운 구현
 
         // 적 생성 최대치 만큼 생성
         while (spawnEnemyCount < currentWave.maxEnemyCount)
@@ -35,6 +46,22 @@ public class SpawningPool : MonoBehaviour
             spawnEnemyCount++;
 
             yield return new WaitForSeconds(currentWave.spawnTime);
+        }
+
+        StartCoroutine(WaveTimeCoroutine(true, waveTime));
+    }
+
+    // Wave Time Check
+    private IEnumerator WaveTimeCoroutine(bool isFormat, float time)
+    {
+        currentWaveTime = time;
+
+        while (currentWaveTime >= 0f)
+        {
+            currentWaveTime -= Time.deltaTime;
+            Managers.Game.GameScene.RefreshWaveTime(isFormat, currentWaveTime);
+
+            yield return null;
         }
     }
 }
