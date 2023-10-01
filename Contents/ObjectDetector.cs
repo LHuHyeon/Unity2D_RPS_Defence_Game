@@ -43,7 +43,7 @@ public class ObjectDetector : MonoBehaviour
             return;
 
         // 마우스 위치에 용병이 존재한가?
-        if (RayMousePointCheck(_mercenaryMask) == false)
+        if (RayMousePointCheck((_tileMask)) == false)
             return;
 
         // 들기 준비
@@ -52,11 +52,12 @@ public class ObjectDetector : MonoBehaviour
         {
             // 들기 시작
             Managers.Game.isDrag = true;
-
-            MercenaryController mercenary = hit.transform.GetComponent<MercenaryController>();
-
+                    
             // 타일에서 벗어남
-            mercenary.currentTile.IsBuildTower = false;
+            Tile tile = hit.transform.GetComponent<Tile>();
+            tile.IsBuildTower = false;
+
+            MercenaryController mercenary = tile.mercenaryObj.GetComponent<MercenaryController>();
 
             // 들기 정보 입력
             UI_DragSlot.instance.mercenary = mercenary;

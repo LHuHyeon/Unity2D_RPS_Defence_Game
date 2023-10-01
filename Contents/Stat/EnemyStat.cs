@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DamageNumbersPro;
 using UnityEngine;
 
 /*
@@ -43,12 +44,19 @@ public class EnemyStat : MonoBehaviour
         if (damage > 0)
             Hp -= damage;
 
-        // TODO : Hit Text Effect 생성
+        DamageText(damage);
 
         // 체력이 0보다 작으면 사망
         if (Hp <= 0)
         {
             GetComponent<EnemyController>().State = Define.State.Dead;
         }
+    }
+
+    private void DamageText(int damage)
+    {
+        DamageNumber damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/DamageText/Default");
+        
+        damageNumber.Spawn(transform.position + (Vector3.up * 0.25f), damage);
     }
 }

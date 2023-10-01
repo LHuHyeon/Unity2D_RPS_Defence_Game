@@ -77,7 +77,7 @@ public class MercenaryController : BaseController
     protected override void UpdateAttack()
     {
         // 대상이 없거나 죽었을 시 Idle
-        if (_attackTarget.IsFakeNull() == true || enemy.State == Define.State.Dead)
+        if (_attackTarget.gameObject.isValid() == false || enemy.State == Define.State.Dead)
         {
             State = Define.State.Idle;
             return;
