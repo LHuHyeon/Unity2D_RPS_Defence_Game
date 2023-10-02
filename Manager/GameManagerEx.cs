@@ -6,6 +6,8 @@ using System.Linq;
 using UnityEngine;
 using static Define;
 
+// TODO : 유저 정보는 서버에서 관리
+// 게임 진행 시 저장할 데이터
 [Serializable]
 public class GameData
 {
@@ -45,25 +47,6 @@ public class GameManagerEx
 		set { _gameData.Name = value; }
 	}
 
-	public int GetStat(StatType type)
-	{
-		// switch (type)
-		// {
-		// 	case StatType.MaxHp:
-		// 		return MaxHp;
-		// 	case StatType.WorkAbility:
-		// 		return WorkAbility;
-		// 	case StatType.Likeability:
-		// 		return Likeability;
-		// 	case StatType.Luck:
-		// 		return Luck;
-		// 	case StatType.Stress:
-		// 		return Stress;
-		// }
-
-		return 0;
-	}
-
 	#endregion
 
 	#region 재화
@@ -79,7 +62,6 @@ public class GameManagerEx
 		set 
 		{
 			_gameData.GameGold = value;
-			GameScene.RefreshGold();
 		}
 	}
 
@@ -111,6 +93,7 @@ public class GameManagerEx
 	public void WaveReward()
 	{
 		GameGold += CurrentWave.waveGold;
+        GameScene.RefreshGold(CurrentWave.waveGold);
 
 		GameScene.OnRPSPopup();
 	}

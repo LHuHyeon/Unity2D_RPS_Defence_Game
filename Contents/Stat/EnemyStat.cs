@@ -41,10 +41,18 @@ public class EnemyStat : MonoBehaviour
     // 공격 당하면
     public void OnAttacked(int damage)
     {
-        if (damage > 0)
-            Hp -= damage;
+        if (damage <= 0)
+            return;
 
-        DamageText(damage);
+        int hitDamage = damage;
+
+        // 100 랜덤 수 중 10 이하면 크리티컬! (TODO : 임시 코드)
+        bool isCritical = Random.Range(0, 101) < 10;
+        if (isCritical == true)
+            hitDamage = damage + (int)(damage / 1.5);
+
+        Hp -= hitDamage;
+        DamageText(isCritical, hitDamage);
 
         // 체력이 0보다 작으면 사망
         if (Hp <= 0)
@@ -53,9 +61,13 @@ public class EnemyStat : MonoBehaviour
         }
     }
 
-    private void DamageText(int damage)
+    private void DamageText(bool isCritical, int damage)
     {
-        DamageNumber damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/DamageText/Default");
+        DamageNumber damageNumber;
+        if (isCritical == true)
+            damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Critical");
+        else
+            damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Default");
         
         damageNumber.Spawn(transform.position + (Vector3.up * 0.25f), damage);
     }

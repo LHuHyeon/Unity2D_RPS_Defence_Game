@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DamageNumbersPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,6 +11,7 @@ public class UI_GameScene : UI_Scene
         MercenaryTab,
         MercenaryContent,
         UIDetector,
+        StatusGold,
     }
 
     enum Sliders
@@ -79,7 +81,7 @@ public class UI_GameScene : UI_Scene
     }
 
     public  void OnRPSPopup()       { Invoke("OnDelayRPSPopup", 1f); }
-    private void OnDelayRPSPopup()  { Managers.UI.ShowPopupUI<UI_RPSPopup>(); }
+    private void OnDelayRPSPopup()  { Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); }
 
     public void SetNextWave(WaveData waveData)
     {
@@ -135,12 +137,19 @@ public class UI_GameScene : UI_Scene
     }
 
     // 골드
-    public void RefreshGold()
+    public void RefreshGold(int goldCount = 0)
     {
         if (_init == false)
             return;
 
         GetText((int)Texts.GoldText).text = Utils.GetCommaText(_game.GameGold);
+
+        // 골드를 획득하면 Effect Text 생성
+        if (goldCount > 0)
+        {
+            DamageNumber goldText = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Gold").Spawn(Vector3.zero, goldCount);
+            goldText.SetAnchoredPosition(GetObject((int)GameObjects.StatusGold).transform, new Vector2(0, 0));
+        }
     }
 
     // 용병 슬롯 등록
