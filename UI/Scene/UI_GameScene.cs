@@ -237,19 +237,27 @@ public class UI_GameScene : UI_Scene
         // 용병 슬롯 탭 Drop 설정
         GetObject((int)GameObjects.MercenaryTab).BindEvent((PointerEventData eventData)=>
         {
+            UI_DragSlot dragSlot = UI_DragSlot.instance;
+
             // 드래그 정보가 존재하는가?
-            if (UI_DragSlot.instance.GetMercenary().IsNull() == true)
+            if (dragSlot.GetMercenary().IsNull() == true)
                 return;
 
             // 이미 등록된 슬롯인가?
-            if (IsSlotCheck(UI_DragSlot.instance.itemSlot as UI_MercenaryItem) == true)
+            if (IsSlotCheck(dragSlot.itemSlot as UI_MercenaryItem) == true)
                 return;
 
-            // 용병이 소환되어 있다면 삭제
-            if (UI_DragSlot.instance.GetMercenary().Mercenary.IsFakeNull() == false)
-                Managers.Resource.Destroy(UI_DragSlot.instance.GetMercenary().Mercenary);
+            // 용병 슬롯 등록
+            MercenaryRegister(dragSlot.GetMercenary());
 
-            MercenaryRegister(UI_DragSlot.instance.GetMercenary());
+            // 타일에서 왔으면 타일 초기화
+            if (dragSlot.tile.IsFakeNull() == false)
+            {
+                Managers.Resource.Destroy(dragSlot.tile.mercenaryObj);
+                dragSlot.tile.Clear();
+            }
+
+            dragSlot.DragInfoClear();
 
         }, Define.UIEvent.Drop);
     }

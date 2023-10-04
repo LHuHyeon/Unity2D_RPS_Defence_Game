@@ -8,8 +8,8 @@ public class TowerSpawner : MonoBehaviour
     {
         Tile tile = tileTransform.GetComponent<Tile>();
 
-        // 타워 건설 여부 확인
-        if (tile.IsBuildTower == true)
+        // 용병 존재 여부 확인
+        if (tile.mercenaryObj.IsFakeNull() == false)
         {
             Debug.Log("Tile Build True!!");
             return false;
@@ -19,8 +19,7 @@ public class TowerSpawner : MonoBehaviour
         GameObject          go          = Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/Mercenary", tileTransform);
         MercenaryController mercenary   = go.GetComponent<MercenaryController>();
         
-        // 타워 건설 설정
-        tile.IsBuildTower = true;
+        // 타워 설정
         tile.mercenaryObj = go;
 
         // 용병 정보 입력

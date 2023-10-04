@@ -37,10 +37,6 @@ public class UI_RPSPopup : UI_Popup
         GetButton((int)Buttons.CheckButton).onClick.AddListener(OnClickCheckButton);
 
         PopulateRPSCard();
-        
-        // 카드 세팅
-        for(int i=0; i<_cardList.Count; i++)
-            _cardList[i].SetInfo();
 
         RefreshUI();
 
@@ -51,6 +47,10 @@ public class UI_RPSPopup : UI_Popup
     {
         if (_init == false)
             return;
+
+        // RPS 카드 세팅
+        for(int i=0; i<_cardList.Count; i++)
+            _cardList[i].SetInfo();
 
         // 용병 슬롯 삭제
         foreach(Transform child in GetObject((int)GameObjects.MercenaryGrid).transform)

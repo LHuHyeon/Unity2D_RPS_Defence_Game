@@ -81,12 +81,13 @@ public class Define
 
 	public enum RaceType
 	{
-		Unknown	= 0,
-		Human	= 1,	// 인간
-		Elf		= 2,	// 엘프
-		Goblin	= 3,	// 고블린
-		Undead	= 4,	// 언데드
-		Devil	= 5,	// 악마
+		Unknown		= 0,
+		Human		= 1,	// 인간
+		Elf			= 2,	// 엘프
+		WereWolf	= 3,	// 웨어 울프
+		Goblin		= 4,	// 고블린
+		Undead		= 5,	// 언데드
+		Devil		= 6,	// 악마
 	}
 
 	public enum StatType

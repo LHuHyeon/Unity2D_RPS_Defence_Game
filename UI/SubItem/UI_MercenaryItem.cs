@@ -117,22 +117,24 @@ public class UI_MercenaryItem : UI_ItemDragSlot
         if (dragSlot.itemSlot == this)
             return;
 
-        // 내 용병과 다르다면
+        // 내 용병과 같은지 확인
         if (dragSlot.GetMercenary() != _mercenary)
         {
-            // 용병이 소환되어 있다면 삭제
-            if (dragSlot.GetMercenary().Mercenary.IsFakeNull() == false)
-                Managers.Resource.Destroy(dragSlot.GetMercenary().Mercenary);
-
             // 다른 슬롯에 등록
             if (Managers.Game.GameScene.IsSlotCheck(dragSlot.itemSlot as UI_MercenaryItem) == false)
                 Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
-
-            return;
         }
+        else
+            SetColor(1);
 
-        // 나랑 같은 용병이기 떄문에 여기서 카운터 증가
-        SetColor(1);
+        // 타일에서 왔으면 타일 초기화
+        if (dragSlot.tile.IsFakeNull() == false)
+        {
+            Managers.Resource.Destroy(dragSlot.tile.mercenaryObj);
+            dragSlot.tile.Clear();
+        }
+        
+        dragSlot.DragInfoClear();
     }
 
 #endregion

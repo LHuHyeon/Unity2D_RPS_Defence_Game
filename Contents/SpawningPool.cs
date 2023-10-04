@@ -71,8 +71,5 @@ public class SpawningPool : MonoBehaviour
 
             yield return null;
         }
-
-        // TODO : 시간이 다 지났는대 몬스터가 남아 있다면 게임오버
-        Debug.Log("Game Over");
     }
 }

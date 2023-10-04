@@ -35,7 +35,7 @@ public class MercenaryController : BaseController
 
     public Tile                 currentTile;    // 현재 타일
 
-    public MercenaryStat GetMercenaryStat() { return _stat; }
+    public MercenaryStat GetStat() { return _stat; }
 
     // 생성 시 설정
     public void SetStat(MercenaryStat stat)
