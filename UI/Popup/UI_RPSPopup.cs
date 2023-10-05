@@ -5,6 +5,19 @@ using UnityEngine.UI;
 
 public class UI_RPSPopup : UI_Popup
 {
+    struct RPSCard
+    {
+        public Define.RPSCard cardType;
+        public Define.GradeType cardGrade;  // 카드 등급
+        public bool isCard;                 // 카드가 뽑혔는지
+
+        public void AddCard()   // 카드 추가
+        {
+            cardGrade++;
+            isCard = true;
+        }
+    }
+
     enum GameObjects
     {
         Background,
@@ -20,9 +33,12 @@ public class UI_RPSPopup : UI_Popup
         CheckButton,
     }
 
-    private int maxCardCount = 5;   // 카드 최대 개수
+    private int     maxCardCount    = 5;        // 카드 최대 개수
+    private bool    isCheckButton   = false;
+    private bool    isResetButton   = true;
 
     private List<UI_RPSCard> _cardList = new List<UI_RPSCard>();
+    private List<MercenaryStat> _rewardMercenary = new List<MercenaryStat>();
 
     public override bool Init()
     {
@@ -56,6 +72,9 @@ public class UI_RPSPopup : UI_Popup
         foreach(Transform child in GetObject((int)GameObjects.MercenaryGrid).transform)
             Managers.Resource.Destroy(child.gameObject);
 
+        SetColor(GetButton((int)Buttons.ResetButton).image, 1f);
+        GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_DarkGray");
+
         StartCoroutine(CallPopup());
     }
 
@@ -75,6 +94,13 @@ public class UI_RPSPopup : UI_Popup
         }
     }
 
+    private void SetColor(Image icon, float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
+    }
+
     private void OnClickHelperButton()
     {
         Debug.Log("OnClickHelperButton");
@@ -83,25 +109,101 @@ public class UI_RPSPopup : UI_Popup
     private void OnClickResetButton()
     {
         Debug.Log("OnClickResetButton");
+        
+        if (isResetButton == false)
+            return;
 
+        isResetButton = false;
+
+        // 카드 리셋
         for(int i=0; i<_cardList.Count; i++)
             _cardList[i].OnRandomCard();
+
+        // 투명화
+        SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
     }
 
     private void OnClickCheckButton()
     {
         Debug.Log("OnClickCheckButton");
 
-		Managers.Game.WaveSystem.WaveStart();
+        if (isCheckButton == false)
+        {
+            // 첫 확인 누를 시 리셋 버튼 비활성화
+            isCheckButton = true;
+            isResetButton = false;
+            GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_BlueGray");
+            SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
 
-        Clear();
+            // 보상 확인
+            GetCardReward();
+        }
+        else
+        {
+            // 보상 용병 등록
+            for(int i=0; i<_rewardMercenary.Count; i++)
+                Managers.Game.GameScene.MercenaryRegister(_rewardMercenary[i]);
+            
+            // 웨이브 시작
+            Managers.Game.WaveSystem.WaveStart();
+            Clear();
+        }
     }
 
-    private void SetColor(Image icon, float alpha)
+    // 카드 보상 확인
+    RPSCard scissorsCard;   // 가위
+    RPSCard rockCard;       // 바위
+    RPSCard paperCard;      // 보
+    private void GetCardReward()
     {
-        Color color = icon.color;
-        color.a = alpha;
-        icon.color = color;
+        // 초기화
+        _rewardMercenary = new List<MercenaryStat>();
+        scissorsCard    = new RPSCard() {cardType = Define.RPSCard.Scissors};
+        rockCard        = new RPSCard() {cardType = Define.RPSCard.Rock};
+        paperCard       = new RPSCard() {cardType = Define.RPSCard.Paper};
+
+        // 현재 카드 정보 가져오기
+        foreach(UI_RPSCard rpsCard in _cardList)
+        {
+            if (rpsCard.GetCard() == Define.RPSCard.Scissors)
+                scissorsCard.AddCard();
+            else if (rpsCard.GetCard() == Define.RPSCard.Rock)
+                rockCard.AddCard();
+            else if (rpsCard.GetCard() == Define.RPSCard.Paper)
+                paperCard.AddCard();
+        }
+
+        // 패배한 카드 차감 시켜주기 ( 가위3 - 주먹1 = 가위2 )
+        scissorsCard.cardGrade -= rockCard.cardGrade;
+        rockCard.cardGrade -= paperCard.cardGrade;
+        paperCard.cardGrade -= scissorsCard.cardGrade;
+
+        // 보상 용병 획득
+        if (scissorsCard.isCard == true)
+            RewardMercenary(scissorsCard);
+        if (rockCard.isCard == true)
+            RewardMercenary(rockCard);
+        if (paperCard.isCard == true)
+            RewardMercenary(paperCard);
+    }
+
+    // 용병 보상 
+    private void RewardMercenary(RPSCard card)
+    {
+        // 카드 개수가 0 미만이면 Basic 반환
+        if ((int)card.cardGrade < 0)
+            card.cardGrade = Define.GradeType.Basic;
+
+        // 카드 정보로 용병 가져오기
+        List<MercenaryStat> mercenarys = Managers.Data.GetMercenarys(card.cardGrade, (Define.JobType)card.cardType);
+
+        MercenaryStat mercenary = mercenarys[Random.Range(0, mercenarys.Count)];
+        _rewardMercenary.Add(mercenary);
+
+        // 용병 View Slot 생성
+        Transform parent = GetObject((int)GameObjects.MercenaryGrid).transform;
+        UI_MercenaryViewSlot viewSlot = Managers.UI.MakeSubItem<UI_MercenaryViewSlot>(parent);
+        viewSlot.SetInfo(mercenary);
     }
  
     // 팝업 호출 시 등장!
@@ -148,6 +250,8 @@ public class UI_RPSPopup : UI_Popup
 
     public void Clear()
     {
+        isCheckButton = false;
+        isResetButton = true;
         Managers.Resource.Destroy(this.gameObject);
     }
 }

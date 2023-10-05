@@ -14,7 +14,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
 
     // 등급마다 직업별로 용병들이 존재한 이중 딕셔너리
-    public Dictionary<Define.GradeType, Dictionary<Define.JobType, HashSet<MercenaryStat>>> JobByGrade { get; private set; }
+    public Dictionary<Define.GradeType, Dictionary<Define.JobType, List<MercenaryStat>>> JobByGrade { get; private set; }
 
 	public void Init()
     {
@@ -32,9 +32,9 @@ public class DataManager : MonoBehaviour
     }
 
     // 직업과 등급에 맞는 용병들 반환
-    public HashSet<MercenaryStat> GetMercenarys(Define.GradeType grade, Define.JobType job)
+    public List<MercenaryStat> GetMercenarys(Define.GradeType grade, Define.JobType job)
     {
-        if (JobByGrade.TryGetValue(grade, out Dictionary<Define.JobType, HashSet<MercenaryStat>> jobStat) == false)
+        if (JobByGrade.TryGetValue(grade, out Dictionary<Define.JobType, List<MercenaryStat>> jobStat) == false)
         {
             Debug.Log($"JobByGrade Failed : {grade.ToString()} Grade");
             return null;
@@ -97,7 +97,7 @@ public class DataManager : MonoBehaviour
     private void MercenaryRequest(string data)
     {
         Dictionary<int, MercenaryStat> dict = new Dictionary<int, MercenaryStat>();
-        JobByGrade = new Dictionary<Define.GradeType, Dictionary<Define.JobType, HashSet<MercenaryStat>>>();
+        JobByGrade = new Dictionary<Define.GradeType, Dictionary<Define.JobType, List<MercenaryStat>>>();
 
         string[] lines = data.Split("\n");
 
@@ -131,20 +131,20 @@ public class DataManager : MonoBehaviour
         Mercenarys = dict;
     }
 
-    // 등급별로 직업을 나누고, 직업안에 HashSet으로 용병 저장.
+    // 등급별로 직업을 나누고, 직업안에 List으로 용병 저장.
     private void SetJobByGrade(MercenaryStat mercenary)
     {
         // 등급 딕셔너리 공간 확인
-        if (JobByGrade.TryGetValue(mercenary.Grade, out Dictionary<Define.JobType, HashSet<MercenaryStat>> jobStat) == false)
+        if (JobByGrade.TryGetValue(mercenary.Grade, out Dictionary<Define.JobType, List<MercenaryStat>> jobStat) == false)
         {
-            jobStat = new Dictionary<Define.JobType, HashSet<MercenaryStat>>();
+            jobStat = new Dictionary<Define.JobType, List<MercenaryStat>>();
             JobByGrade.Add(mercenary.Grade, jobStat);
         }
 
         // 직업 딕셔너리 공간 확인
-        if (jobStat.TryGetValue(mercenary.Job, out HashSet<MercenaryStat> mercenaryHash) == false)
+        if (jobStat.TryGetValue(mercenary.Job, out List<MercenaryStat> mercenaryHash) == false)
         {
-            HashSet<MercenaryStat> mercenarys = new HashSet<MercenaryStat>();
+            List<MercenaryStat> mercenarys = new List<MercenaryStat>();
             mercenarys.Add(mercenary);
             jobStat.Add(mercenary.Job, mercenarys);
 

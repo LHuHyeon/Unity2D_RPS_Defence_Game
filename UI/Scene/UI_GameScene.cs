@@ -69,7 +69,9 @@ public class UI_GameScene : UI_Scene
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
         _game.OnEnemySpawnEvent += RefreshEnemyBar;
 
-        PopulateMercenary();
+        // 용병 슬롯 초기화
+        foreach(Transform child in GetObject((int)GameObjects.MercenaryContent).transform)
+            Managers.Resource.Destroy(child.gameObject);
 
 		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
 
@@ -170,24 +172,6 @@ public class UI_GameScene : UI_Scene
         item.SetInfo(mercenaryStat);
 
         _MercenaryItems.Add(item);
-    }
-
-    // 용병 채우기 (TODO : Test 용)
-    private void PopulateMercenary()
-    {
-        var mercenaryParent = GetObject((int)GameObjects.MercenaryContent);
-
-        foreach(Transform child in mercenaryParent.transform)
-            Managers.Resource.Destroy(child.gameObject);
-        
-        for(int i=1; i<=3; i++)
-        {
-            UI_MercenaryItem item = Managers.UI.MakeSubItem<UI_MercenaryItem>(mercenaryParent.transform);
-
-            item.SetInfo(Managers.Data.Mercenarys[i]);
-
-            _MercenaryItems.Add(item);
-        }
     }
 
     private void OnClickPauseButton()

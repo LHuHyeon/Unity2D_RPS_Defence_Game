@@ -55,9 +55,9 @@ public class Define
 	public enum RPSCard
 	{
 		Unknown,
-		Rock,		// 주먹
-		Paper,		// 보
-		Scissors,	// 가위
+		Rock		= 1,	// 주먹
+		Scissors	= 2,	// 가위
+		Paper		= 3,	// 보
 		Max,
 	}
 

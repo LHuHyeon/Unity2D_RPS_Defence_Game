@@ -41,6 +41,15 @@ public class UI_RPSCard : UI_Base
         return true;
     }
 
+    public Define.RPSCard GetCard()
+    {
+        // 리셋 비활성화
+        isReset = false;
+        RefreshResetColor();
+
+        return rpsType;
+    }
+
     public void SetInfo()
     {
         isReset = true;
@@ -110,7 +119,7 @@ public class UI_RPSCard : UI_Base
             bg.localRotation = Quaternion.Euler(0, rotationY, 0);
         }
 
-        // 카드 랜덤 세팅
+        // 카드 랜덤 세팅 (그냥.. 두번 돌려봄)
         rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
         rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
         RefreshRPSIcon();
