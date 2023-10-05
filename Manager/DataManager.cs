@@ -79,7 +79,7 @@ public class DataManager : MonoBehaviour
                 race = (Define.RaceType)int.Parse(row[1]),
                 hp = int.Parse(row[2]),
                 defence = int.Parse(row[3]),
-                moveSpeed = int.Parse(row[4]),
+                moveSpeed = float.Parse(row[4]),
                 gold = int.Parse(row[5]),
                 waveGold = int.Parse(row[6]),
                 maxEnemyCount = int.Parse(row[7]),
