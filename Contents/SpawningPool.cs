@@ -63,6 +63,7 @@ public class SpawningPool : MonoBehaviour
             if (Managers.Game.remainEnemys == 0)
             {
                 Managers.Game.WaveReward();
+                Managers.Game.GameScene.RefreshWaveTime(false, 0);
                 yield break;
             }
 

@@ -121,7 +121,6 @@ public class UI_RPSCard : UI_Base
 
         // 카드 랜덤 세팅 (그냥.. 두번 돌려봄)
         rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
-        rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
         RefreshRPSIcon();
 
         // 절반 회전

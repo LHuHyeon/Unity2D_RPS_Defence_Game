@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class UI_RPSPopup : UI_Popup
 {
-    struct RPSCard
+    class RPSCard
     {
-        public Define.RPSCard cardType;
+        public Define.RPSCard cardType;     // 카드 타입
         public Define.GradeType cardGrade;  // 카드 등급
         public bool isCard;                 // 카드가 뽑혔는지
 
@@ -15,6 +15,13 @@ public class UI_RPSPopup : UI_Popup
         {
             cardGrade++;
             isCard = true;
+        }
+
+        public void Clear(Define.RPSCard card)
+        {
+            cardType = card;
+            cardGrade = Define.GradeType.Basic;
+            isCard = false;
         }
     }
 
@@ -39,6 +46,7 @@ public class UI_RPSPopup : UI_Popup
 
     private List<UI_RPSCard> _cardList = new List<UI_RPSCard>();
     private List<MercenaryStat> _rewardMercenary = new List<MercenaryStat>();
+    private Dictionary<Define.RPSCard, RPSCard> _rpsCardDict;
 
     public override bool Init()
     {
@@ -51,6 +59,13 @@ public class UI_RPSPopup : UI_Popup
         GetButton((int)Buttons.HelperButton).onClick.AddListener(OnClickHelperButton);
         GetButton((int)Buttons.ResetButton).onClick.AddListener(OnClickResetButton);
         GetButton((int)Buttons.CheckButton).onClick.AddListener(OnClickCheckButton);
+
+        _rpsCardDict = new Dictionary<Define.RPSCard, RPSCard>()
+        {
+            {Define.RPSCard.Scissors, new RPSCard()},
+            {Define.RPSCard.Rock, new RPSCard()},
+            {Define.RPSCard.Paper, new RPSCard()},
+        };
 
         PopulateRPSCard();
 
@@ -151,52 +166,49 @@ public class UI_RPSPopup : UI_Popup
     }
 
     // 카드 보상 확인
-    RPSCard scissorsCard;   // 가위
-    RPSCard rockCard;       // 바위
-    RPSCard paperCard;      // 보
     private void GetCardReward()
     {
         // 초기화
         _rewardMercenary = new List<MercenaryStat>();
-        scissorsCard    = new RPSCard() {cardType = Define.RPSCard.Scissors};
-        rockCard        = new RPSCard() {cardType = Define.RPSCard.Rock};
-        paperCard       = new RPSCard() {cardType = Define.RPSCard.Paper};
+        foreach(var rpsCard in _rpsCardDict)
+            rpsCard.Value.Clear(rpsCard.Key);
 
         // 현재 카드 정보 가져오기
         foreach(UI_RPSCard rpsCard in _cardList)
-        {
-            if (rpsCard.GetCard() == Define.RPSCard.Scissors)
-                scissorsCard.AddCard();
-            else if (rpsCard.GetCard() == Define.RPSCard.Rock)
-                rockCard.AddCard();
-            else if (rpsCard.GetCard() == Define.RPSCard.Paper)
-                paperCard.AddCard();
-        }
+            _rpsCardDict[rpsCard.GetCard()].AddCard();
+
+        // 계산 오류 없도록 임시 변수 생성
+        Define.GradeType tempScissors   = _rpsCardDict[Define.RPSCard.Scissors].cardGrade;
+        Define.GradeType tempRock       = _rpsCardDict[Define.RPSCard.Rock].cardGrade;
+        Define.GradeType tempPaper      = _rpsCardDict[Define.RPSCard.Paper].cardGrade;
 
         // 패배한 카드 차감 시켜주기 ( 가위3 - 주먹1 = 가위2 )
-        scissorsCard.cardGrade -= rockCard.cardGrade;
-        rockCard.cardGrade -= paperCard.cardGrade;
-        paperCard.cardGrade -= scissorsCard.cardGrade;
+        _rpsCardDict[Define.RPSCard.Scissors].cardGrade -= tempRock;
+        _rpsCardDict[Define.RPSCard.Rock].cardGrade -= tempPaper;
+        _rpsCardDict[Define.RPSCard.Paper].cardGrade -= tempScissors;
 
         // 보상 용병 획득
-        if (scissorsCard.isCard == true)
-            RewardMercenary(scissorsCard);
-        if (rockCard.isCard == true)
-            RewardMercenary(rockCard);
-        if (paperCard.isCard == true)
-            RewardMercenary(paperCard);
+        foreach(var rpsCard in _rpsCardDict)
+            RewardMercenary(rpsCard.Value);
     }
 
     // 용병 보상 
     private void RewardMercenary(RPSCard card)
     {
+        // 카드가 뽑히지 않았다면
+        if (card.isCard == false)
+            return;
+
         // 카드 개수가 0 미만이면 Basic 반환
         if ((int)card.cardGrade < 0)
             card.cardGrade = Define.GradeType.Basic;
 
+        Debug.Log("Card : " + card.cardType.ToString() + ", Grade : " + card.cardGrade.ToString());
+
         // 카드 정보로 용병 가져오기
         List<MercenaryStat> mercenarys = Managers.Data.GetMercenarys(card.cardGrade, (Define.JobType)card.cardType);
 
+        // 랜덤 용병 뽑기
         MercenaryStat mercenary = mercenarys[Random.Range(0, mercenarys.Count)];
         _rewardMercenary.Add(mercenary);
 

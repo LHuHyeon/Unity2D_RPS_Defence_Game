@@ -105,12 +105,14 @@ public class UI_GameScene : UI_Scene
     }
 
     // 웨이브 시간
+    private float noTime = 10f;
     public void RefreshWaveTime(bool isFormat, float time)
     {
-        if (isFormat == true)
-            GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", time);
-        else
-            GetText((int)Texts.WaveTimeText).text = (Mathf.CeilToInt(time)).ToString();
+        // 색 설정
+        GetText((int)Texts.WaveTimeText).color = time <= noTime && isFormat ? Color.red : Color.white;
+
+        // 시간 설정
+        GetText((int)Texts.WaveTimeText).text = isFormat ? string.Format("{0:N2}", time) : (Mathf.CeilToInt(time)).ToString();
     }
 
     // 남은 몬스터

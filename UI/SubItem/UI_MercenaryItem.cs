@@ -57,6 +57,7 @@ public class UI_MercenaryItem : UI_ItemDragSlot
 
         _icon.sprite = _mercenary.Icon;
         GetText((int)Texts.ItemCountText).text = _itemCount.ToString();
+        GetImage((int)Images.Background).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
     }
 
     // 슬롯 초기화
