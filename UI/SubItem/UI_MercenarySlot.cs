@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UI_MercenaryItem : UI_ItemDragSlot
+public class UI_MercenarySlot : UI_ItemDragSlot
 {
     enum Images
     {
@@ -82,7 +82,7 @@ public class UI_MercenaryItem : UI_ItemDragSlot
 
     protected override void OnBeginDragEvent(PointerEventData eventData)
     {
-        if (_mercenary.IsNull() == true)
+        if (_mercenary.IsNull() == true || Managers.Game.isDrag == true)
             return;
 
         Managers.Game.isDrag = true;
@@ -103,7 +103,6 @@ public class UI_MercenaryItem : UI_ItemDragSlot
     protected override void OnEndDragEvent(PointerEventData eventData)
     {
         UI_DragSlot.instance.ClearSlot();
-        Managers.Game.isDrag = false;
     }
 
     protected override void OnDropEvent(PointerEventData eventData)
@@ -122,20 +121,18 @@ public class UI_MercenaryItem : UI_ItemDragSlot
         if (dragSlot.GetMercenary() != _mercenary)
         {
             // 다른 슬롯에 등록
-            if (Managers.Game.GameScene.IsSlotCheck(dragSlot.itemSlot as UI_MercenaryItem) == false)
+            if (Managers.Game.GameScene.IsSlotCheck(dragSlot.itemSlot as UI_MercenarySlot) == false)
                 Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
         }
         else
             SetColor(1);
 
         // 타일에서 왔으면 타일 초기화
-        if (dragSlot.tile.IsFakeNull() == false)
+        if (dragSlot.mercenaryTile.IsFakeNull() == false)
         {
-            Managers.Resource.Destroy(dragSlot.tile.mercenaryObj);
-            dragSlot.tile.Clear();
+            Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
+            dragSlot.mercenaryTile.Clear();
         }
-        
-        dragSlot.DragInfoClear();
     }
 
 #endregion

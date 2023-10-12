@@ -33,8 +33,6 @@ public class MercenaryController : BaseController
     private MercenaryStat       _stat;          // 스탯
     private EnemyController     enemy;          // 적 정보
 
-    public Tile                 currentTile;    // 현재 타일
-
     public MercenaryStat GetStat() { return _stat; }
 
     // 생성 시 설정

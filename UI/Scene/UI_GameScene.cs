@@ -10,7 +10,6 @@ public class UI_GameScene : UI_Scene
     {
         MercenaryTab,
         MercenaryContent,
-        UIDetector,
         StatusGold,
     }
 
@@ -49,7 +48,7 @@ public class UI_GameScene : UI_Scene
     private GameManagerEx   _game;
     private WaveData        _wave;
 
-    private List<UI_MercenaryItem> _MercenaryItems = new List<UI_MercenaryItem>();
+    private List<UI_MercenarySlot> _MercenaryItems = new List<UI_MercenarySlot>();
 
     public override bool Init()
     {
@@ -160,7 +159,7 @@ public class UI_GameScene : UI_Scene
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
         // 현재 존재하는 용병 슬롯 탐지
-        foreach(UI_MercenaryItem slot in _MercenaryItems)
+        foreach(UI_MercenarySlot slot in _MercenaryItems)
         {
             if (slot._mercenary == mercenaryStat)
             {
@@ -170,7 +169,7 @@ public class UI_GameScene : UI_Scene
         }
 
         // 중복된 용병 슬롯이 없으면 생성하여 저장
-        UI_MercenaryItem item = Managers.UI.MakeSubItem<UI_MercenaryItem>(GetObject((int)GameObjects.MercenaryContent).transform);
+        UI_MercenarySlot item = Managers.UI.MakeSubItem<UI_MercenarySlot>(GetObject((int)GameObjects.MercenaryContent).transform);
         item.SetInfo(mercenaryStat);
 
         _MercenaryItems.Add(item);
@@ -192,35 +191,8 @@ public class UI_GameScene : UI_Scene
 
     private void SetEventHandler()
     {
-        // 2D Object를 위한 UI 탐지 Event 설정
-        GameObject go = GetObject((int)GameObjects.UIDetector);
-
-        go.BindEvent((PointerEventData eventData)=>
-        {
-            if (UI_DragSlot.instance.GetMercenary().IsNull() == true)
-                return;
-
-            UI_DragSlot.instance.SetColor(1);
-            UI_DragSlot.instance.icon.transform.position = eventData.position;
-
-        }, Define.UIEvent.BeginDrag);
-
-        go.BindEvent((PointerEventData eventData)=>
-        {
-            // 마우스 드래그 방향으로 아이템 이동
-            if (UI_DragSlot.instance.GetMercenary().IsNull() == false)
-                UI_DragSlot.instance.icon.transform.position = eventData.position;
-
-        }, Define.UIEvent.Drag);
-
-        go.BindEvent((PointerEventData eventData)=>
-        {
-            UI_DragSlot.instance.ClearSlot();
-            Managers.Game.isDrag = false;
-
-        }, Define.UIEvent.EndDrag);
-
         // 용병 슬롯 탭 Drop 설정
+        // TODO : 리펙토링 했으니 기존 tile에 대한 코드 삭제 및 수정하기
         GetObject((int)GameObjects.MercenaryTab).BindEvent((PointerEventData eventData)=>
         {
             UI_DragSlot dragSlot = UI_DragSlot.instance;
@@ -230,30 +202,28 @@ public class UI_GameScene : UI_Scene
                 return;
 
             // 이미 등록된 슬롯인가?
-            if (IsSlotCheck(dragSlot.itemSlot as UI_MercenaryItem) == true)
+            if (IsSlotCheck(dragSlot.itemSlot as UI_MercenarySlot) == true)
                 return;
 
             // 용병 슬롯 등록
             MercenaryRegister(dragSlot.GetMercenary());
 
             // 타일에서 왔으면 타일 초기화
-            if (dragSlot.tile.IsFakeNull() == false)
+            if (dragSlot.mercenaryTile.IsFakeNull() == false)
             {
-                Managers.Resource.Destroy(dragSlot.tile.mercenaryObj);
-                dragSlot.tile.Clear();
+                Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
+                dragSlot.mercenaryTile.Clear();
             }
-
-            dragSlot.DragInfoClear();
 
         }, Define.UIEvent.Drop);
     }
 
-    public bool IsSlotCheck(UI_MercenaryItem mercenaryItem)
+    public bool IsSlotCheck(UI_MercenarySlot mercenaryItem)
     {
         if (mercenaryItem.IsFakeNull() == true)
             return false;
 
-        foreach(UI_MercenaryItem slot in _MercenaryItems)
+        foreach(UI_MercenarySlot slot in _MercenaryItems)
         {
             if (slot == mercenaryItem)
                 return true;

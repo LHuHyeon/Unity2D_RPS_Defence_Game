@@ -20,7 +20,7 @@ public class UI_DragSlot : MonoBehaviour
     public static UI_DragSlot   instance;
 
     public UI_ItemDragSlot      itemSlot;       // 슬롯
-    public Tile                 tile;           // 타일
+    public MercenaryTile        mercenaryTile;
     public Image                icon;           // 아이템 이미지
 
     void Start()
@@ -31,10 +31,10 @@ public class UI_DragSlot : MonoBehaviour
     // 용병 반환
     public MercenaryStat GetMercenary()
     {
-        if ((itemSlot is UI_MercenaryItem) == true)
-            return (itemSlot as UI_MercenaryItem)._mercenary;
-        else if (tile.IsFakeNull() == false)
-            return tile.GetMercenary().GetStat();
+        if ((itemSlot is UI_MercenarySlot) == true)
+            return (itemSlot as UI_MercenarySlot)._mercenary;
+        else if (mercenaryTile.IsFakeNull() == false)
+            return mercenaryTile.GetMercenary().GetStat();
 
         return null;
     }
@@ -42,6 +42,7 @@ public class UI_DragSlot : MonoBehaviour
     // 드래그 할 경우 활성화
     public void DragSetIcon(Sprite sprite)
     {
+        Debug.Log("Icon 1!!");
         icon.sprite = sprite;
         SetColor(1);
     }
@@ -56,12 +57,18 @@ public class UI_DragSlot : MonoBehaviour
 
     public void DragInfoClear()
     {
-        itemSlot = null;
-        tile = null;
     }
 
     public void ClearSlot()
     {
+        Debug.Log("ClearSlot!!");
+
         SetColor(0);
+
+        mercenaryTile = null;
+        itemSlot = null;
+
+        Managers.Game.isDrag = false;
+
     }
 }
