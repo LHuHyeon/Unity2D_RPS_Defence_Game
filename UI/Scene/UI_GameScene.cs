@@ -11,6 +11,9 @@ public class UI_GameScene : UI_Scene
         MercenaryTab,
         MercenaryContent,
         StatusGold,
+        MercenaryFocus,
+        UpgradeFocus,
+        CompositionFocus,
     }
 
     enum Sliders
@@ -22,6 +25,9 @@ public class UI_GameScene : UI_Scene
     {
         PauseButton,
         GameSpeedButton,
+        MercenaryButton,
+        UpgradeButton,
+        CompositionButton,
     }
     
     enum Texts
@@ -33,14 +39,17 @@ public class UI_GameScene : UI_Scene
         GoldText,
         EnemyCountText,
         GameSpeedButtonText,
+        MercenaryText,
+        UpgradeText,
+        CompositionText,
     }
 
-    enum PlayTab
+    public enum PlayTab
 	{
 		None,
-		Mercenary,
-		Upgrade,
-		Mix,
+		Mercenary,      // 용병
+		Upgrade,        // 강화
+		Composition,    // 조합 구성
 	}
 
     private PlayTab         _tab = PlayTab.None;
@@ -62,8 +71,12 @@ public class UI_GameScene : UI_Scene
         BindButton(typeof(Buttons));
         BindText(typeof(Texts));
 
-        GetButton((int)Buttons.PauseButton).onClick.AddListener(OnClickPauseButton);
-        GetButton((int)Buttons.GameSpeedButton).onClick.AddListener(OnClickGameSpeedButton);
+        GetButton((int)Buttons.PauseButton).gameObject.BindEvent(OnClickPauseButton);
+        GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
+
+        GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
+        GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
+        GetButton((int)Buttons.CompositionButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Composition); });
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
         _game.OnEnemySpawnEvent += RefreshEnemyBar;
@@ -155,6 +168,39 @@ public class UI_GameScene : UI_Scene
         }
     }
 
+    public void ShowTab(PlayTab tab)
+    {
+        if (_tab == tab)
+            return;
+
+        _tab = tab;
+
+        // TODO : 유니티 상에 있는 색을 적용시키기
+
+        GetObject((int)GameObjects.MercenaryFocus).SetActive(false);
+        GetObject((int)GameObjects.UpgradeFocus).SetActive(false);
+        GetObject((int)GameObjects.CompositionFocus).SetActive(false);
+        GetText((int)Texts.MercenaryText).color = Color.gray;
+        GetText((int)Texts.UpgradeText).color = Color.gray;
+        GetText((int)Texts.CompositionText).color = Color.gray;
+
+        switch(_tab)
+        {
+            case PlayTab.Mercenary:
+                GetObject((int)GameObjects.MercenaryFocus).SetActive(true);
+                GetText((int)Texts.MercenaryText).color = Color.yellow;
+                break;
+            case PlayTab.Upgrade:
+                GetObject((int)GameObjects.UpgradeFocus).SetActive(true);
+                GetText((int)Texts.UpgradeText).color = Color.yellow;
+                break;
+            case PlayTab.Composition:
+                GetObject((int)GameObjects.CompositionFocus).SetActive(true);
+                GetText((int)Texts.CompositionText).color = Color.yellow;
+                break;
+        }
+    }
+
     // 용병 슬롯 등록
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
@@ -175,14 +221,14 @@ public class UI_GameScene : UI_Scene
         _MercenaryItems.Add(item);
     }
 
-    private void OnClickPauseButton()
+    private void OnClickPauseButton(PointerEventData eventData)
     {
         Debug.Log("OnClickPauseButton");
 
         // TODO : 게임 일시 정지
     }
 
-    private void OnClickGameSpeedButton()
+    private void OnClickGameSpeedButton(PointerEventData eventData)
     {
         Debug.Log("OnClickGameSpeedButton");
 

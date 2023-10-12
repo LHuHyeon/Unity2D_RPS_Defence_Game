@@ -67,11 +67,8 @@ public abstract class UI_Base : MonoBehaviour
 
 	public static void BindEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {
-        // 객체에 컴포넌트 추가 및 읽어오기
-        // EventSystem 관련 클래스이기 때문에 스크립트를 추가하면 클릭 드래그에 관한 메소드를 바로 사용 가능하다.
         UI_EventHandler evt = Utils.GetOrAddComponent<UI_EventHandler>(go);
 
-        // UI_EventHandler 안에 action을 받을 Action이 있음!
         switch (type)
         {
             case Define.UIEvent.Click:
