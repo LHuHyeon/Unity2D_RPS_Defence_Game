@@ -117,15 +117,11 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         if (dragSlot.itemSlot == this)
             return;
 
-        // 내 용병과 같은지 확인
-        if (dragSlot.GetMercenary() != _mercenary)
-        {
-            // 다른 슬롯에 등록
-            if (Managers.Game.GameScene.IsSlotCheck(dragSlot.itemSlot as UI_MercenarySlot) == false)
-                Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
-        }
+        // 내 용병과 다르면 다른 슬롯에 추가 or 같으면 여기서 개수 추가
+        if (dragSlot.GetMercenary().Id != _mercenary.Id)
+            Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
         else
-            SetColor(1);
+            SetCount(1);
 
         // 타일에서 왔으면 타일 초기화
         if (dragSlot.mercenaryTile.IsFakeNull() == false)

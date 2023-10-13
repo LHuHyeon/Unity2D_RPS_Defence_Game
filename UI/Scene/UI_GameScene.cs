@@ -9,6 +9,8 @@ public class UI_GameScene : UI_Scene
     enum GameObjects
     {
         MercenaryTab,
+        UpgradeTab,
+        CompositionTab,
         MercenaryContent,
         StatusGold,
         MercenaryFocus,
@@ -88,6 +90,8 @@ public class UI_GameScene : UI_Scene
 		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
 
         SetEventHandler();
+
+        ShowTab(PlayTab.Mercenary);
 
         OnRPSPopup();
 
@@ -175,28 +179,35 @@ public class UI_GameScene : UI_Scene
 
         _tab = tab;
 
-        // TODO : 유니티 상에 있는 색을 적용시키기
+        Color darkGrayColor = new Color(121f/255f, 110f/255f, 111f/255f);   // 어두운 회색
+        Color yellowColor = new Color(246f/255f, 225f/255f, 156f/255f);     // 밝은 노랑색
 
+        GetObject((int)GameObjects.MercenaryTab).SetActive(false);
+        GetObject((int)GameObjects.UpgradeTab).SetActive(false);
+        GetObject((int)GameObjects.CompositionTab).SetActive(false);
         GetObject((int)GameObjects.MercenaryFocus).SetActive(false);
         GetObject((int)GameObjects.UpgradeFocus).SetActive(false);
         GetObject((int)GameObjects.CompositionFocus).SetActive(false);
-        GetText((int)Texts.MercenaryText).color = Color.gray;
-        GetText((int)Texts.UpgradeText).color = Color.gray;
-        GetText((int)Texts.CompositionText).color = Color.gray;
+        GetText((int)Texts.MercenaryText).color = darkGrayColor;
+        GetText((int)Texts.UpgradeText).color = darkGrayColor;
+        GetText((int)Texts.CompositionText).color = darkGrayColor;
 
         switch(_tab)
         {
             case PlayTab.Mercenary:
+                GetObject((int)GameObjects.MercenaryTab).SetActive(true);
                 GetObject((int)GameObjects.MercenaryFocus).SetActive(true);
-                GetText((int)Texts.MercenaryText).color = Color.yellow;
+                GetText((int)Texts.MercenaryText).color = yellowColor;
                 break;
             case PlayTab.Upgrade:
+                GetObject((int)GameObjects.UpgradeTab).SetActive(true);
                 GetObject((int)GameObjects.UpgradeFocus).SetActive(true);
-                GetText((int)Texts.UpgradeText).color = Color.yellow;
+                GetText((int)Texts.UpgradeText).color = yellowColor;
                 break;
             case PlayTab.Composition:
+                GetObject((int)GameObjects.CompositionTab).SetActive(true);
                 GetObject((int)GameObjects.CompositionFocus).SetActive(true);
-                GetText((int)Texts.CompositionText).color = Color.yellow;
+                GetText((int)Texts.CompositionText).color = yellowColor;
                 break;
         }
     }
@@ -264,6 +275,7 @@ public class UI_GameScene : UI_Scene
         }, Define.UIEvent.Drop);
     }
 
+    // 슬롯이 존재하는지 확인
     public bool IsSlotCheck(UI_MercenarySlot mercenaryItem)
     {
         if (mercenaryItem.IsFakeNull() == true)
