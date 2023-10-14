@@ -42,7 +42,6 @@ public class UI_DragSlot : MonoBehaviour
     // 드래그 할 경우 활성화
     public void DragSetIcon(Sprite sprite)
     {
-        Debug.Log("Icon 1!!");
         icon.sprite = sprite;
         SetColor(1);
     }
@@ -61,8 +60,6 @@ public class UI_DragSlot : MonoBehaviour
 
     public void ClearSlot()
     {
-        Debug.Log("ClearSlot!!");
-
         SetColor(0);
 
         mercenaryTile = null;

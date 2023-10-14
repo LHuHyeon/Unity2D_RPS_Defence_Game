@@ -17,6 +17,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     }
 
     public MercenaryStat    _mercenary;
+    private bool            isScroll = false;
     
     public override bool Init()
     {
@@ -66,6 +67,8 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         _mercenary = null;
         GetImage((int)Images.Icon).sprite = null;
 
+        Managers.Game.GameScene.RemoveMercenarySlot(this);
+
         base.ClearSlot();
     }
 
@@ -87,15 +90,39 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
         Managers.Game.isDrag = true;
 
-        UI_DragSlot.instance.itemSlot = this;
+        // 마우스 드래그 방향 확인
+        Vector2 dir = eventData.delta.normalized;
 
-        UI_DragSlot.instance.DragSetIcon(_icon.sprite);
-        UI_DragSlot.instance.icon.transform.position = eventData.position;
+        // 왼쪽, 오른쪽으로 움직이면 탭 스크롤 이동
+        if (dir == Vector2.left || dir == Vector2.right)
+            isScroll = true;
+
+        if (isScroll == true)
+        {
+            // 스크롤 시작
+            Managers.Game.GameScene._mercenaryTabScroll.ResetVertical();
+            Managers.Game.GameScene._mercenaryTabScroll.OnBeginDrag(eventData);
+        }
+        else
+        {
+            // 슬롯 드래그 시작
+            UI_DragSlot.instance.itemSlot = this;
+
+            UI_DragSlot.instance.DragSetIcon(_icon.sprite);
+            UI_DragSlot.instance.icon.transform.position = eventData.position;
+        }
     }
 
     protected override void OnDragEvent(PointerEventData eventData)
     {
-        // 마우스 드래그 방향으로 아이템 이동
+        // 스크롤 중이라면
+        if (isScroll == true)
+        {
+            Managers.Game.GameScene._mercenaryTabScroll.OnDrag(eventData);
+            return;
+        }
+
+        // 슬롯을 마우스 드래그 방향으로 아이템 이동
         if (_mercenary.IsNull() == false && UI_DragSlot.instance.itemSlot.IsNull() == false)
             UI_DragSlot.instance.icon.transform.position = eventData.position;
     }
@@ -103,18 +130,20 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     protected override void OnEndDragEvent(PointerEventData eventData)
     {
         UI_DragSlot.instance.ClearSlot();
+
+        if (isScroll == true)
+        {
+            Managers.Game.GameScene._mercenaryTabScroll.OnEndDrag(eventData);
+            isScroll = false;
+        }
     }
 
     protected override void OnDropEvent(PointerEventData eventData)
     {
         UI_DragSlot dragSlot = UI_DragSlot.instance;
 
-        // 드래그 슬롯에 용병 정보가 존재하는가?
-        if (dragSlot.GetMercenary().IsNull() == true)
-            return;
-
-        // 내 자신일 경우
-        if (dragSlot.itemSlot == this)
+        // 타일 정보가 존재 하는가?
+        if (dragSlot.mercenaryTile.IsFakeNull() == true)
             return;
 
         // 내 용병과 다르면 다른 슬롯에 추가 or 같으면 여기서 개수 추가
@@ -123,12 +152,9 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         else
             SetCount(1);
 
-        // 타일에서 왔으면 타일 초기화
-        if (dragSlot.mercenaryTile.IsFakeNull() == false)
-        {
-            Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
-            dragSlot.mercenaryTile.Clear();
-        }
+        // 타일 초기화
+        Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
+        dragSlot.mercenaryTile.Clear();
     }
 
 #endregion

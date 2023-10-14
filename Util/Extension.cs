@@ -18,9 +18,13 @@ public static class Extension
         UI_Base.BindEvent(go, action, type);
     }
 
+    // 스크롤 리셋
+	public static void ResetVertical(this ScrollRect scrollRect)    { scrollRect.verticalNormalizedPosition = 1; }
+	public static void ResetHorizontal(this ScrollRect scrollRect)  { scrollRect.horizontalNormalizedPosition = 1; }
+
 	// 참조형식(Reference) null 체크
-    public static bool IsNull(this UnityEngine.Object go) { return ReferenceEquals(go, null); }
-    public static bool IsNull(this System.Object go) { return ReferenceEquals(go, null); }
+    public static bool IsNull(this UnityEngine.Object go)   { return ReferenceEquals(go, null); }
+    public static bool IsNull(this System.Object go)        { return ReferenceEquals(go, null); }
 
     // Fake Null 체크
     public static bool IsFakeNull(this UnityEngine.Object go) { return (go.IsNull() == false && go == true) == false; }

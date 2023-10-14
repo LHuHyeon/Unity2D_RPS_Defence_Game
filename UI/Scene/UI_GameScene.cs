@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DamageNumbersPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UI_GameScene : UI_Scene
 {
@@ -54,12 +55,14 @@ public class UI_GameScene : UI_Scene
 		Composition,    // 조합 구성
 	}
 
-    private PlayTab         _tab = PlayTab.None;
+    public ScrollRect       _mercenaryTabScroll;
+
+    private List<UI_MercenarySlot> _mercenarySlots = new List<UI_MercenarySlot>();
     
     private GameManagerEx   _game;
     private WaveData        _wave;
 
-    private List<UI_MercenarySlot> _MercenaryItems = new List<UI_MercenarySlot>();
+    private PlayTab         _tab = PlayTab.None;
 
     public override bool Init()
     {
@@ -72,6 +75,8 @@ public class UI_GameScene : UI_Scene
         BindSlider(typeof(Sliders));
         BindButton(typeof(Buttons));
         BindText(typeof(Texts));
+
+        _mercenaryTabScroll = GetObject((int)GameObjects.MercenaryTab).GetComponent<ScrollRect>();
 
         GetButton((int)Buttons.PauseButton).gameObject.BindEvent(OnClickPauseButton);
         GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
@@ -124,7 +129,7 @@ public class UI_GameScene : UI_Scene
     private float noTime = 10f;
     public void RefreshWaveTime(bool isFormat, float time)
     {
-        // 색 설정
+        // 색 설정 (noTime(10f)부터 빨간색)
         GetText((int)Texts.WaveTimeText).color = time <= noTime && isFormat ? Color.red : Color.white;
 
         // 시간 설정
@@ -213,10 +218,14 @@ public class UI_GameScene : UI_Scene
     }
 
     // 용병 슬롯 등록
+    // TODO : 탭 초과 시 사이즈 키우기
+    private int     tapSlotExceeded = 18;       // 탭 슬롯 초과 개수
+    private int     overAddSlotNumber = 3;      // 탭 사이즈가 추가되는 슬롯 개수 기준
+    private float   addTabSize = -165f;         // 탭 사이즈 추가
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
         // 현재 존재하는 용병 슬롯 탐지
-        foreach(UI_MercenarySlot slot in _MercenaryItems)
+        foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
             if (slot._mercenary == mercenaryStat)
             {
@@ -229,8 +238,12 @@ public class UI_GameScene : UI_Scene
         UI_MercenarySlot item = Managers.UI.MakeSubItem<UI_MercenarySlot>(GetObject((int)GameObjects.MercenaryContent).transform);
         item.SetInfo(mercenaryStat);
 
-        _MercenaryItems.Add(item);
+        _mercenarySlots.Add(item);
+        Debug.Log("list count : " + _mercenarySlots.Count);
     }
+
+    // 용병 슬롯 삭제
+    public void RemoveMercenarySlot(UI_MercenarySlot slot) { _mercenarySlots.Remove(slot); }
 
     private void OnClickPauseButton(PointerEventData eventData)
     {
@@ -249,7 +262,6 @@ public class UI_GameScene : UI_Scene
     private void SetEventHandler()
     {
         // 용병 슬롯 탭 Drop 설정
-        // TODO : 리펙토링 했으니 기존 tile에 대한 코드 삭제 및 수정하기
         GetObject((int)GameObjects.MercenaryTab).BindEvent((PointerEventData eventData)=>
         {
             UI_DragSlot dragSlot = UI_DragSlot.instance;
@@ -281,7 +293,7 @@ public class UI_GameScene : UI_Scene
         if (mercenaryItem.IsFakeNull() == true)
             return false;
 
-        foreach(UI_MercenarySlot slot in _MercenaryItems)
+        foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
             if (slot == mercenaryItem)
                 return true;
