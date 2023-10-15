@@ -93,14 +93,13 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         // 마우스 드래그 방향 확인
         Vector2 dir = eventData.delta.normalized;
 
-        // 왼쪽, 오른쪽으로 움직이면 탭 스크롤 이동
+        // 왼쪽, 오른쪽으로 움직이면 탭 스크롤 조작
         if (dir == Vector2.left || dir == Vector2.right)
             isScroll = true;
 
         if (isScroll == true)
         {
             // 스크롤 시작
-            Managers.Game.GameScene._mercenaryTabScroll.ResetVertical();
             Managers.Game.GameScene._mercenaryTabScroll.OnBeginDrag(eventData);
         }
         else

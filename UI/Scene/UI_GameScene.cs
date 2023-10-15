@@ -31,6 +31,7 @@ public class UI_GameScene : UI_Scene
         MercenaryButton,
         UpgradeButton,
         CompositionButton,
+        TestRegistarButton,
     }
     
     enum Texts
@@ -84,6 +85,10 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
         GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
         GetButton((int)Buttons.CompositionButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Composition); });
+
+        GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
+            MercenaryRegister(Managers.Data.Mercenarys[Random.Range(1, 40)]);
+        });
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
         _game.OnEnemySpawnEvent += RefreshEnemyBar;
@@ -201,6 +206,7 @@ public class UI_GameScene : UI_Scene
         {
             case PlayTab.Mercenary:
                 GetObject((int)GameObjects.MercenaryTab).SetActive(true);
+                GetObject((int)GameObjects.MercenaryTab).GetComponent<ScrollRect>().ResetHorizontal(0);
                 GetObject((int)GameObjects.MercenaryFocus).SetActive(true);
                 GetText((int)Texts.MercenaryText).color = yellowColor;
                 break;
@@ -218,10 +224,6 @@ public class UI_GameScene : UI_Scene
     }
 
     // 용병 슬롯 등록
-    // TODO : 탭 초과 시 사이즈 키우기
-    private int     tapSlotExceeded = 18;       // 탭 슬롯 초과 개수
-    private int     overAddSlotNumber = 3;      // 탭 사이즈가 추가되는 슬롯 개수 기준
-    private float   addTabSize = -165f;         // 탭 사이즈 추가
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
         // 현재 존재하는 용병 슬롯 탐지
@@ -239,7 +241,9 @@ public class UI_GameScene : UI_Scene
         item.SetInfo(mercenaryStat);
 
         _mercenarySlots.Add(item);
-        Debug.Log("list count : " + _mercenarySlots.Count);
+
+        // TODO : 용병 정렬 구현 시 삭제
+        GetObject((int)GameObjects.MercenaryTab).GetComponent<ScrollRect>().ResetHorizontal(1);
     }
 
     // 용병 슬롯 삭제
