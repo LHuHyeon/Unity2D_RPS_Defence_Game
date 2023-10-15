@@ -31,6 +31,8 @@ public class EnemyController : BaseController
 
     private EnemyStat       _stat;                  // 스탯
 
+    public  UI_HpBar        _hpBar;
+
     // Wave에 맞게 몬스터 정보 수정
     public void SetWave(WaveData waveData)
     {
@@ -111,9 +113,15 @@ public class EnemyController : BaseController
 
         // 이동 방향 바라보기
         if (_direction == Vector3.left || _direction == Vector3.up)
+        {
             transform.rotation = Quaternion.Euler(0, 180, 0);
+            _hpBar.transform.localRotation = Quaternion.Euler(0, 180, 0);
+        }
         else if (_direction == Vector3.right || _direction == Vector3.down)
+        {
             transform.rotation = Quaternion.Euler(0, 0, 0);
+            _hpBar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 
     private void Clear()

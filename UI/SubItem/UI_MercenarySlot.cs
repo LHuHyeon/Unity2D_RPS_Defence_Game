@@ -9,6 +9,8 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     {
         Background,
         Icon,
+        JobLabel,
+        JobLabelIcon,
     }
 
     enum Texts
@@ -59,6 +61,8 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         _icon.sprite = _mercenary.Icon;
         GetText((int)Texts.ItemCountText).text = _itemCount.ToString();
         GetImage((int)Images.Background).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
+        GetImage((int)Images.JobLabel).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_JobIcon_"+_mercenary.Job.ToString());
+        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/JobIcon_"+_mercenary.Job.ToString());
     }
 
     // 슬롯 초기화

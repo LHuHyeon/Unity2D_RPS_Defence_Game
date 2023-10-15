@@ -40,6 +40,26 @@ public class UIManager
 		}
 	}
 
+	// 2D 안에 있는 WorldSpace에서 UI 생성 (캐릭터 체력 UI ...)
+    public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UI_Base
+    {
+        if (string.IsNullOrEmpty(name))
+            name = typeof(T).Name;
+
+        GameObject go = Managers.Resource.Instantiate($"UI/WorldSpace/{name}");
+
+        if (parent.IsNull() == false)
+            go.transform.SetParent(parent);
+
+        Canvas canvas = go.GetOrAddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.worldCamera = Camera.main;
+
+		canvas.sortingOrder = 10;	// 2D 오브젝트 중 제일 앞에 보여야 하기 때문에 설정
+
+        return go.GetOrAddComponent<T>();
+    }
+
 	public T MakeSubItem<T>(Transform parent = null, string name = null) where T : UI_Base
 	{
 		if (string.IsNullOrEmpty(name))
