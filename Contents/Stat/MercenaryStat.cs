@@ -20,7 +20,7 @@ public class MercenaryStat
     [SerializeField] protected float                        _attackRate;            // 공격 속도
     [SerializeField] protected float                        _attackRange;           // 공격 사거리
     [SerializeField] protected GameObject                   _projectile;            // 발사체 Prefab
-    [SerializeField] protected GameObject                   _mercenary;          // 용병 Object
+    [SerializeField] protected GameObject                   _mercenary;             // 용병 Object
     [SerializeField] protected SpriteLibraryAsset           _spriteLibrary;         // 캐릭터 파츠
     [SerializeField] protected Sprite                       _icon;                  // 이미지
     [SerializeField] protected RuntimeAnimatorController    _animatorController;    // 애니메이션 컨트롤러

@@ -244,7 +244,6 @@ public class UI_GameScene : UI_Scene
 
         _mercenarySlots.Add(item);
 
-        // TODO : 용병 정렬 구현 시 삭제
         SortMercenarySlot();
     }
 
@@ -253,12 +252,7 @@ public class UI_GameScene : UI_Scene
 
     public void SortMercenarySlot()
     {   
-        /* 정렬 방법 우선순위
-        1. 등급
-        2. 진화
-        3. 개수
-        TODO : 전사, 궁수, 법사 필터도 구현하기
-        */
+        // TODO : 전사, 궁수, 법사 필터도 구현하기
 
         if (_mercenarySlots.Count < 2)
             return;
@@ -281,7 +275,8 @@ public class UI_GameScene : UI_Scene
             return slot2._itemCount.CompareTo(slot1._itemCount); // 내림차순
         });
 
-        // TODO : list를 토대로 자식객체도 정렬
+        for(int i=0; i<_mercenarySlots.Count; i++)
+            _mercenarySlots[i].transform.SetSiblingIndex(i);
     }   
 
     private void OnClickPauseButton(PointerEventData eventData)

@@ -264,6 +264,6 @@ public class UI_RPSPopup : UI_Popup
     {
         isCheckButton = false;
         isResetButton = true;
-        Managers.Resource.Destroy(this.gameObject);
+        Managers.UI.ClosePopupUI(this);
     }
 }

@@ -80,11 +80,17 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
     protected override void OnClickEvent(PointerEventData eventData)
     {
-        if (UI_DragSlot.instance.itemSlot.IsFakeNull() == false)
+        if (Managers.Game.isDrag == true)
             return;
 
         Debug.Log("OnClickEvent");
-        // TODO : 정보 or 소환 확인
+
+        // 용병 정보 팝업 호출
+        UI_MercenaryInfoPopup infoPopup = Managers.UI.FindPopup<UI_MercenaryInfoPopup>();
+        if (infoPopup.IsFakeNull() == true)
+            infoPopup = Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
+
+        infoPopup.SetInfo(_mercenary);
     }
 
     protected override void OnBeginDragEvent(PointerEventData eventData)
