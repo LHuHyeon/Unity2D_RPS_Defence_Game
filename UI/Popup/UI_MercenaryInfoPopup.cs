@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UI_MercenaryInfoPopup : UI_Popup
 {
     enum GameObjects
     {
         Background,
+        ExitBackground,
     }
 
     enum Buttons
@@ -27,7 +30,9 @@ public class UI_MercenaryInfoPopup : UI_Popup
         InfoText,
     }
 
-    public MercenaryStat _mercenary;
+    public MercenaryStat    _mercenary;
+
+    private bool            _isActive = false;  // 팝업 활성화 여부
 
     public override bool Init()
     {
@@ -39,7 +44,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
         BindImage(typeof(Images));
         BindText(typeof(Texts));
 
-        GetButton((int)Buttons.ExitButton).onClick.AddListener(OnClickExitButton);
+        GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
+        GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClickExitButton);
 
         RefreshUI();
 
@@ -72,18 +78,67 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 공격속도 {_mercenary.AttackRate.ToString()}
 사거리 {_mercenary.AttackRange.ToString()}";
 
+        if (_isActive == false)
+            StartCoroutine(CallPopup());
     }
 
     public void Clear()
     {
+        _isActive = false;
         _mercenary = null;
+        Managers.UI.ClosePopupUI(this);
     }
 
-    private void OnClickExitButton()
+    private void OnClickExitButton(PointerEventData eventData)
     {
         Debug.Log("OnClickExitButton");
         
-        Managers.UI.ClosePopupUI(this);
+        if (_isActive == true)
+            StartCoroutine(ExitPopup());
+    }
+
+    private float lerpTime = 0.5f;  // Lerp 시간
+    private Vector3 startPos = Vector3.up * 400f;
+    private Vector3 endPos = Vector3.up * 300f;
+    private IEnumerator CallPopup()
+    {
+        _isActive = true;
+
+        // 내려오며 팝업 등장
+        float currentTime = 0;
+        while (currentTime < lerpTime)
+        {
+            currentTime += Time.deltaTime;
+
+            float t = currentTime / lerpTime;
+
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);     // SmoothStep 참고 
+
+            GetObject((int)GameObjects.Background).transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator ExitPopup()
+    {
+        _isActive = false;
+
+        // 올라가며 팝업 없애기
+        float currentTime = 0;
+        while (currentTime < lerpTime)
+        {
+            currentTime += Time.deltaTime;
+            float t = currentTime / lerpTime;
+            
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);     // SmoothStep 참고 
+
+            GetObject((int)GameObjects.Background).transform.localPosition = Vector3.Lerp(endPos, startPos, t);
+
+            yield return null;
+        }
+
+        Clear();
     }
 
     // 종족 컬러

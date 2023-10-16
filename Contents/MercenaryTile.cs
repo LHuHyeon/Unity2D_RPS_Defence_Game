@@ -63,6 +63,22 @@ public class MercenaryTile : MonoBehaviour
     {
         gameObject.BindEvent((PointerEventData eventData)=>
         {
+            if (Managers.Game.isDrag == true)
+                return;
+
+            Debug.Log("OnClickEvent");
+
+            // 용병 정보 팝업 호출
+            UI_MercenaryInfoPopup infoPopup = Managers.UI.FindPopup<UI_MercenaryInfoPopup>();
+            if (infoPopup.IsFakeNull() == true)
+                infoPopup = Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
+
+            infoPopup.SetInfo(GetMercenary().GetStat());
+
+        }, Define.UIEvent.Click);
+
+        gameObject.BindEvent((PointerEventData eventData)=>
+        {
             if (_mercenary.IsNull() == true || Managers.Game.isDrag == true)
                 return;
 

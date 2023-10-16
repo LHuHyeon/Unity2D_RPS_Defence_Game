@@ -19,13 +19,15 @@ public class UI_DragSlot : MonoBehaviour
 {
     public static UI_DragSlot   instance;
 
-    public UI_ItemDragSlot      itemSlot;       // 슬롯
-    public MercenaryTile        mercenaryTile;
-    public Image                icon;           // 아이템 이미지
+    public UI_ItemDragSlot      itemSlot;           // 슬롯
+    public MercenaryTile        mercenaryTile;      // 용병 타일
+    public Image                icon;               // 아이템 이미지
+    public RectTransform        attackRangeMark;    // 공격 사거리 표시
 
     void Start()
     {
         instance = this;
+        attackRangeMark.gameObject.SetActive(false);
     }
 
     // 용병 반환
@@ -44,6 +46,11 @@ public class UI_DragSlot : MonoBehaviour
     {
         icon.sprite = sprite;
         SetColor(1);
+
+        // 공격 사거리 표시
+        float rangeSize = GetMercenary().AttackRange * 4f;
+        attackRangeMark.gameObject.SetActive(true);
+        attackRangeMark.localScale = new Vector3(rangeSize, rangeSize, 0f);
     }
 
     // 투명도 설정
@@ -61,11 +68,11 @@ public class UI_DragSlot : MonoBehaviour
     public void ClearSlot()
     {
         SetColor(0);
+        attackRangeMark.gameObject.SetActive(false);
 
         mercenaryTile = null;
         itemSlot = null;
 
         Managers.Game.isDrag = false;
-
     }
 }
