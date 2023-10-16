@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DamageNumbersPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -58,6 +59,7 @@ public class UI_GameScene : UI_Scene
 
     public ScrollRect       _mercenaryTabScroll;
 
+    [SerializeField]
     private List<UI_MercenarySlot> _mercenarySlots = new List<UI_MercenarySlot>();
     
     private GameManagerEx   _game;
@@ -243,11 +245,44 @@ public class UI_GameScene : UI_Scene
         _mercenarySlots.Add(item);
 
         // TODO : 용병 정렬 구현 시 삭제
-        GetObject((int)GameObjects.MercenaryTab).GetComponent<ScrollRect>().ResetHorizontal(1);
+        SortMercenarySlot();
     }
 
     // 용병 슬롯 삭제
     public void RemoveMercenarySlot(UI_MercenarySlot slot) { _mercenarySlots.Remove(slot); }
+
+    public void SortMercenarySlot()
+    {   
+        /* 정렬 방법 우선순위
+        1. 등급
+        2. 진화
+        3. 개수
+        TODO : 전사, 궁수, 법사 필터도 구현하기
+        */
+
+        if (_mercenarySlots.Count < 2)
+            return;
+
+        _mercenarySlots.Sort((slot1, slot2) =>
+        {
+            // 1. 등급으로 정렬
+            if (slot1._mercenary.Grade != slot2._mercenary.Grade)
+            {
+                return slot2._mercenary.Grade.CompareTo(slot1._mercenary.Grade); // 내림차순
+            }
+            
+            // // 2. 진화 수준으로 정렬
+            // if (slot1.EnhancementLevel != slot2.EnhancementLevel)
+            // {
+            //     return slot2.EnhancementLevel.CompareTo(slot1.EnhancementLevel); // 내림차순
+            // }
+            
+            // 3. 개수로 정렬
+            return slot2._itemCount.CompareTo(slot1._itemCount); // 내림차순
+        });
+
+        // TODO : list를 토대로 자식객체도 정렬
+    }   
 
     private void OnClickPauseButton(PointerEventData eventData)
     {
@@ -260,7 +295,7 @@ public class UI_GameScene : UI_Scene
     {
         Debug.Log("OnClickGameSpeedButton");
 
-        // TODO : 게임 속도 상승 or 다운
+        // TODO : 게임 속도 상승 or 다운 (최대 2배속)
     }
 
     private void SetEventHandler()

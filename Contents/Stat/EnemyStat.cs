@@ -32,6 +32,13 @@ public class EnemyStat : MonoBehaviour
 
     private UI_HpBar _hpBar;
 
+	enum DamageType
+	{
+		Default,
+		Critical,
+		Defence,
+	}
+
     void Start()
     {
         _hpBar = GetComponent<EnemyController>()._hpBar = Managers.UI.MakeWorldSpaceUI<UI_HpBar>(transform);
@@ -42,7 +49,7 @@ public class EnemyStat : MonoBehaviour
     {
         Race        = waveData.race;
         MaxHp       = waveData.hp;
-        Defence     = waveData.defence;
+        MaxDefence  = waveData.defence;
         MoveSpeed   = waveData.moveSpeed;
         DropGold    = waveData.gold;
 
@@ -60,6 +67,7 @@ public class EnemyStat : MonoBehaviour
         if (Defence > 0)
         {
             Defence--;
+            DamageTextEffect(DamageType.Defence, 1);
             return;
         }
 
@@ -72,24 +80,19 @@ public class EnemyStat : MonoBehaviour
 
         Hp -= hitDamage;
 
-        DamageText(isCritical, hitDamage);  // 데미지 텍스트 생성
-        _hpBar.RefreshUI();                  // 체력바 설정
+        DamageTextEffect(isCritical ? DamageType.Critical : DamageType.Default, hitDamage);
 
         if (Hp <= 0)
-        {
             GetComponent<EnemyController>().State = Define.State.Dead;
-        }
     }
 
     // 데미지 텍스트 Effect 생성
-    private void DamageText(bool isCritical, int damage)
+    private void DamageTextEffect(DamageType damageType, int damage = 0)
     {
-        DamageNumber damageNumber;
-        if (isCritical == true)
-            damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Critical");
-        else
-            damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Default");
-        
+        DamageNumber damageNumber = Managers.Resource.Load<DamageNumber>("Prefabs/Text/"+damageType.ToString());
         damageNumber.Spawn(transform.position + (Vector3.up * 0.25f), damage);
+
+        // 체력바 업데이트
+        _hpBar.RefreshUI();
     }
 }

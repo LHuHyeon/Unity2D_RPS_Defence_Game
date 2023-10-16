@@ -34,6 +34,8 @@ public class UI_HpBar : UI_Base
 
         _posY = (parent.GetComponent<Collider>().bounds.size.y + parent.GetComponent<Collider>().bounds.size.y / 5);
 
+        RefreshUI();
+
         return true;
     }
 
