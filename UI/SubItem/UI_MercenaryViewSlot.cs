@@ -8,9 +8,11 @@ public class UI_MercenaryViewSlot : UI_Base
     {
         Background,
         ViewIcon,
+        JobLabel,
+        JobLabelIcon,
     }
 
-    public MercenaryStat mercenaryStat;
+    public MercenaryStat    mercenaryStat;
 
     public override bool Init()
     {
@@ -24,6 +26,7 @@ public class UI_MercenaryViewSlot : UI_Base
         return true;
     }
 
+    // 보상이 확정일 때
     public void SetInfo(MercenaryStat stat)
     {
         mercenaryStat = stat;
@@ -41,5 +44,12 @@ public class UI_MercenaryViewSlot : UI_Base
 
         GetImage((int)Images.ViewIcon).sprite = mercenaryStat.Icon;
         GetImage((int)Images.Background).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+mercenaryStat.Grade.ToString());
+        GetImage((int)Images.JobLabel).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_JobIcon_"+mercenaryStat.Job.ToString());
+        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/JobIcon_"+mercenaryStat.Job.ToString());
+    }
+
+    public void Clear()
+    {
+        mercenaryStat = null;
     }
 }

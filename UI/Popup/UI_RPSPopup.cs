@@ -37,6 +37,7 @@ public class UI_RPSPopup : UI_Popup
     {
         HelperButton,
         ResetButton,
+        ADButton,
         CheckButton,
     }
 
@@ -44,8 +45,10 @@ public class UI_RPSPopup : UI_Popup
     private bool    isCheckButton   = false;
     private bool    isResetButton   = true;
 
-    private List<UI_RPSCard> _cardList = new List<UI_RPSCard>();
-    private List<MercenaryStat> _rewardMercenary = new List<MercenaryStat>();
+    private List<UI_RPSCard>                    _cardList           = new List<UI_RPSCard>();
+    private List<UI_MercenaryViewSlot>          _viewSlots          = new List<UI_MercenaryViewSlot>();
+    private List<MercenaryStat>                 _rewardMercenary    = new List<MercenaryStat>();
+
     private Dictionary<Define.RPSCard, RPSCard> _rpsCardDict;
 
     public override bool Init()
@@ -58,6 +61,7 @@ public class UI_RPSPopup : UI_Popup
 
         GetButton((int)Buttons.HelperButton).onClick.AddListener(OnClickHelperButton);
         GetButton((int)Buttons.ResetButton).onClick.AddListener(OnClickResetButton);
+        GetButton((int)Buttons.ADButton).onClick.AddListener(OnClickADButton);
         GetButton((int)Buttons.CheckButton).onClick.AddListener(OnClickCheckButton);
 
         _rpsCardDict = new Dictionary<Define.RPSCard, RPSCard>()
@@ -87,8 +91,11 @@ public class UI_RPSPopup : UI_Popup
         foreach(Transform child in GetObject((int)GameObjects.MercenaryGrid).transform)
             Managers.Resource.Destroy(child.gameObject);
 
-        SetColor(GetButton((int)Buttons.ResetButton).image, 1f);
+        GetButton((int)Buttons.ADButton).gameObject.SetActive(true);
         GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_DarkGray");
+
+        SetColor(GetButton((int)Buttons.ResetButton).image, 1f);
+        SetColor(GetButton((int)Buttons.ADButton).image, 1f);
 
         StartCoroutine(CallPopup());
     }
@@ -107,13 +114,6 @@ public class UI_RPSPopup : UI_Popup
 
             _cardList.Add(rpsCard);
         }
-    }
-
-    private void SetColor(Image icon, float alpha)
-    {
-        Color color = icon.color;
-        color.a = alpha;
-        icon.color = color;
     }
 
     private void OnClickHelperButton()
@@ -138,6 +138,22 @@ public class UI_RPSPopup : UI_Popup
         SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
     }
 
+    private void OnClickADButton()
+    {
+        // TODO : 광고 기능 추가하기
+
+        Debug.Log("OnClickADButton");
+
+        if (isCheckButton == true)
+            return;
+
+        // 카드 리셋
+        for(int i=0; i<_cardList.Count; i++)
+            _cardList[i].OnRandomCard(true);
+
+        GetButton((int)Buttons.ADButton).gameObject.SetActive(false);
+    }
+
     private void OnClickCheckButton()
     {
         Debug.Log("OnClickCheckButton");
@@ -149,8 +165,9 @@ public class UI_RPSPopup : UI_Popup
             isResetButton = false;
             GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_BlueGray");
             SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
+            SetColor(GetButton((int)Buttons.ADButton).image, 0.3f);
 
-            // 보상 확인
+            // 카드 보상 확인
             GetCardReward();
         }
         else
@@ -186,16 +203,15 @@ public class UI_RPSPopup : UI_Popup
         _rpsCardDict[Define.RPSCard.Scissors].cardGrade -= tempRock;
         _rpsCardDict[Define.RPSCard.Rock].cardGrade -= tempPaper;
         _rpsCardDict[Define.RPSCard.Paper].cardGrade -= tempScissors;
-
-        // 보상 용병 획득
+        
+        // 용병 보상 가져오기
         foreach(var rpsCard in _rpsCardDict)
-            RewardMercenary(rpsCard.Value);
+            GetRewardMercenary(rpsCard.Value);
     }
 
-    // 용병 보상 
-    private void RewardMercenary(RPSCard card)
+    // 용병 보상 가져오기
+    private void GetRewardMercenary(RPSCard card)
     {
-        // 카드가 뽑히지 않았다면
         if (card.isCard == false)
             return;
 
@@ -203,19 +219,24 @@ public class UI_RPSPopup : UI_Popup
         if ((int)card.cardGrade < 0)
             card.cardGrade = Define.GradeType.Basic;
 
-        Debug.Log("Card : " + card.cardType.ToString() + ", Grade : " + card.cardGrade.ToString());
-
-        // 카드 정보로 용병 가져오기
         List<MercenaryStat> mercenarys = Managers.Data.GetMercenarys(card.cardGrade, (Define.JobType)card.cardType);
 
         // 랜덤 용병 뽑기
         MercenaryStat mercenary = mercenarys[Random.Range(0, mercenarys.Count)];
         _rewardMercenary.Add(mercenary);
 
-        // 용병 View Slot 생성
-        Transform parent = GetObject((int)GameObjects.MercenaryGrid).transform;
-        UI_MercenaryViewSlot viewSlot = Managers.UI.MakeSubItem<UI_MercenaryViewSlot>(parent);
+        // viewSlot 생성
+        UI_MercenaryViewSlot viewSlot = Managers.UI.MakeSubItem<UI_MercenaryViewSlot>(GetObject((int)GameObjects.MercenaryGrid).transform);
         viewSlot.SetInfo(mercenary);
+
+        _viewSlots.Add(viewSlot);
+
+        // List 등급별로 정렬 (내림차순)
+        _viewSlots.Sort((slot1, slot2) => { return slot2.mercenaryStat.Grade.CompareTo(slot1.mercenaryStat.Grade); });
+
+        // 객체 정렬 적용
+        for(int i=0; i<_viewSlots.Count; i++)
+            _viewSlots[i].transform.SetSiblingIndex(i);
     }
  
     // 팝업 호출 시 등장!
@@ -260,8 +281,16 @@ public class UI_RPSPopup : UI_Popup
         }
     }
 
+    private void SetColor(Image icon, float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
+    }
+
     public void Clear()
     {
+        _viewSlots.Clear();
         isCheckButton = false;
         isResetButton = true;
         Managers.UI.ClosePopupUI(this);

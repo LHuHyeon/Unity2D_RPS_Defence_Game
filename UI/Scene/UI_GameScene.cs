@@ -277,7 +277,7 @@ public class UI_GameScene : UI_Scene
 
         for(int i=0; i<_mercenarySlots.Count; i++)
             _mercenarySlots[i].transform.SetSiblingIndex(i);
-    }   
+    }
 
     private void OnClickPauseButton(PointerEventData eventData)
     {

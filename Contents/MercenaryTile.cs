@@ -63,7 +63,7 @@ public class MercenaryTile : MonoBehaviour
     {
         gameObject.BindEvent((PointerEventData eventData)=>
         {
-            if (Managers.Game.isDrag == true)
+            if (_mercenary.IsFakeNull() == true || Managers.Game.isDrag == true)
                 return;
 
             Debug.Log("OnClickEvent");
@@ -79,10 +79,14 @@ public class MercenaryTile : MonoBehaviour
 
         gameObject.BindEvent((PointerEventData eventData)=>
         {
-            if (_mercenary.IsNull() == true || Managers.Game.isDrag == true)
+            if (Managers.Game.isDrag == true)
+                return;
+            
+            Managers.Game.isDrag = true;
+
+            if (_mercenary.IsFakeNull() == true)
                 return;
 
-            Managers.Game.isDrag = true;
             UI_DragSlot.instance.mercenaryTile = this;
 
             UI_DragSlot.instance.DragSetIcon(GetMercenary().GetStat().Icon);

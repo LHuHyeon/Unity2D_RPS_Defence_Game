@@ -12,11 +12,6 @@ public class UI_MercenaryInfoPopup : UI_Popup
         ExitBackground,
     }
 
-    enum Buttons
-    {
-        ExitButton,
-    }
-
     enum Images
     {
         Icon,
@@ -40,12 +35,10 @@ public class UI_MercenaryInfoPopup : UI_Popup
             return false;
 
         BindObject(typeof(GameObjects));
-        BindButton(typeof(Buttons));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
 
         GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
-        GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClickExitButton);
 
         RefreshUI();
 
@@ -98,14 +91,20 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     }
 
     private float lerpTime = 0.5f;  // Lerp 시간
+    private float maxAlpha = 0.7f;  // 투명도 최대치
     private Vector3 startPos = Vector3.up * 400f;
     private Vector3 endPos = Vector3.up * 300f;
     private IEnumerator CallPopup()
     {
         _isActive = true;
 
+        Image icon = GetObject((int)GameObjects.Background).GetComponent<Image>();
+
+        SetColor(icon, 0);
+
         // 내려오며 팝업 등장
         float currentTime = 0;
+        float currentAlpha = 0f;
         while (currentTime < lerpTime)
         {
             currentTime += Time.deltaTime;
@@ -116,16 +115,28 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
             GetObject((int)GameObjects.Background).transform.localPosition = Vector3.Lerp(startPos, endPos, t);
 
+            // 점점 밝아지게
+            if (currentAlpha < maxAlpha)
+            {
+                currentAlpha += 0.05f;
+                SetColor(icon, currentAlpha);
+            }
+
             yield return null;
         }
+
+        SetColor(icon, maxAlpha);
     }
 
     private IEnumerator ExitPopup()
     {
         _isActive = false;
 
+        Image icon = GetObject((int)GameObjects.Background).GetComponent<Image>();
+
         // 올라가며 팝업 없애기
         float currentTime = 0;
+        float currentAlpha = maxAlpha;
         while (currentTime < lerpTime)
         {
             currentTime += Time.deltaTime;
@@ -135,10 +146,23 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
             GetObject((int)GameObjects.Background).transform.localPosition = Vector3.Lerp(endPos, startPos, t);
 
+            // 점점 밝아지게
+            currentAlpha -= 0.05f;
+            SetColor(icon, currentAlpha);
+
             yield return null;
         }
 
+        SetColor(icon, 0);
+
         Clear();
+    }
+
+    private void SetColor(Image icon, float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
     }
 
     // 종족 컬러

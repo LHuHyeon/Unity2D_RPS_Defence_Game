@@ -23,7 +23,7 @@ public class UI_RPSCard : UI_Base
 
     public Define.RPSCard rpsType = Define.RPSCard.Unknown;
 
-    private bool isReset = true;
+    private bool _isReset = true;
 
     public override bool Init()
     {
@@ -44,7 +44,7 @@ public class UI_RPSCard : UI_Base
     public Define.RPSCard GetCard()
     {
         // 리셋 비활성화
-        isReset = false;
+        _isReset = false;
         RefreshResetColor();
 
         return rpsType;
@@ -52,7 +52,7 @@ public class UI_RPSCard : UI_Base
 
     public void SetInfo()
     {
-        isReset = true;
+        _isReset = true;
         rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
 
         RefreshUI();
@@ -79,7 +79,7 @@ public class UI_RPSCard : UI_Base
     // ResetButton 투명도
     public void RefreshResetColor()
     {
-        if (isReset == true)
+        if (_isReset == true)
         {
             SetColor(GetButton((int)Buttons.RPSResetButton).image, 1);
             SetColor(GetImage((int)Images.RPSResetButtonIcon), 1);
@@ -93,8 +93,15 @@ public class UI_RPSCard : UI_Base
 
     // 카드 랜덤 설정
     private Coroutine co;
-    public void OnRandomCard()
+    public void OnRandomCard(bool isReset = false)
     {
+        // 리셋을 이미 사용했다면? (광고 보면 리셋 한번 더 가능하게!)
+        if (_isReset == false)
+        {
+            _isReset = isReset;
+            RefreshResetColor();
+        }
+
         if (co.IsNull() == false) StopCoroutine(co);
         co = StartCoroutine(CardRotation());
     }
@@ -119,7 +126,7 @@ public class UI_RPSCard : UI_Base
             bg.localRotation = Quaternion.Euler(0, rotationY, 0);
         }
 
-        // 카드 랜덤 세팅 (그냥.. 두번 돌려봄)
+        // 카드 랜덤 세팅
         rpsType = (Define.RPSCard)Random.Range(1, (int)Define.RPSCard.Max);
         RefreshRPSIcon();
 
@@ -143,10 +150,10 @@ public class UI_RPSCard : UI_Base
 
     private void OnClickResetButton()
     {
-        if (isReset == false)
+        if (_isReset == false)
             return;
 
-        isReset = false;
+        _isReset = false;
         RefreshResetColor();
 
         OnRandomCard();
