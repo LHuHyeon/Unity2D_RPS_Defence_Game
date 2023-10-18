@@ -114,12 +114,13 @@ public class DataManager : MonoBehaviour
                 Grade = (Define.GradeType)int.Parse(row[1]),
                 Race = (Define.RaceType)int.Parse(row[2]),
                 Job = (Define.JobType)int.Parse(row[3]),
-                Damage = int.Parse(row[4]),
-                AttackRate = float.Parse(row[5]),
-                AttackRange = float.Parse(row[6]),
-                SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[7]),
-                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[8]),
-                Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[9]),
+                SalePrice = int.Parse(row[4]),
+                Damage = int.Parse(row[5]),
+                AttackRate = float.Parse(row[6]),
+                AttackRange = float.Parse(row[7]),
+                SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[8]),
+                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[9]),
+                Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[10]),
             };
 
             mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");

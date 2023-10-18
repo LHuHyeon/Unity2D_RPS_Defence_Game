@@ -130,6 +130,8 @@ public class UIManager
 
 	public void ClosePopupUI(UI_Popup popup)
 	{
+		Debug.Log("스택 개수 " + _popupStack.Count);
+
 		if (_popupStack.Count == 0)
 			return;
 
@@ -148,6 +150,9 @@ public class UIManager
 			return;
 
 		UI_Popup popup = _popupStack.Pop();
+
+		Debug.Log("삭제 POpup " + popup.name);
+
 		Managers.Resource.Destroy(popup.gameObject);
 		popup = null;
 		_order--;

@@ -24,6 +24,7 @@ public class MercenaryTile : MonoBehaviour
 
     public void Clear()
     {
+        Managers.Resource.Destroy(_mercenary);
         _mercenary = null;
     }
 
@@ -73,7 +74,7 @@ public class MercenaryTile : MonoBehaviour
             if (infoPopup.IsFakeNull() == true)
                 infoPopup = Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
 
-            infoPopup.SetInfo(GetMercenary().GetStat());
+            infoPopup.SetInfoTile(this);
 
         }, Define.UIEvent.Click);
 

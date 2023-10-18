@@ -90,7 +90,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         if (infoPopup.IsFakeNull() == true)
             infoPopup = Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
 
-        infoPopup.SetInfo(_mercenary);
+        infoPopup.SetInfoSlot(this);
     }
 
     protected override void OnBeginDragEvent(PointerEventData eventData)
@@ -162,7 +162,6 @@ public class UI_MercenarySlot : UI_ItemDragSlot
             SetCount(1);
 
         // 타일 초기화
-        Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
         dragSlot.mercenaryTile.Clear();
     }
 

@@ -52,6 +52,26 @@ public class Define
 		Enemy,
 	}
 
+	// 능력 종류
+	public enum AbilityType
+	{
+		Unknown,
+		Damage,			// 공격력
+		AttackRate,		// 공격 속도
+		AttackRange,	// 공격 사거리
+		AttackCount,	// 공격 횟수
+	}
+
+	public enum EvolutionType
+	{
+		Unknown,
+		Star1,
+		Star2,
+		Star3,
+		Star4,
+		Star5,
+	}
+
 	public enum RPSCard
 	{
 		Unknown,
@@ -114,4 +134,6 @@ public class Define
 
 	public const string WaveDataNumber = "1279670946";
 	public const string MercenaryDataNumber = "1983187163";
+
+	public const string SaleConfirmText = "판매하시겠습니까?";
 }

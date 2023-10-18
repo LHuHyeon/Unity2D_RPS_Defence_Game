@@ -12,6 +12,11 @@ public class UI_MercenaryInfoPopup : UI_Popup
         ExitBackground,
     }
 
+    enum Buttons
+    {
+        SaleButton,
+    }
+
     enum Images
     {
         Icon,
@@ -23,7 +28,11 @@ public class UI_MercenaryInfoPopup : UI_Popup
         RaceText,
         JobText,
         InfoText,
+        SaleGoldText,
     }
+
+    public MercenaryTile    _tile;
+    public UI_MercenarySlot _slot;
 
     public MercenaryStat    _mercenary;
 
@@ -35,19 +44,30 @@ public class UI_MercenaryInfoPopup : UI_Popup
             return false;
 
         BindObject(typeof(GameObjects));
+        BindButton(typeof(Buttons));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
 
         GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
+        GetButton((int)Buttons.SaleButton).gameObject.BindEvent(OnClickSaleButton);
 
         RefreshUI();
 
         return true;
     }
 
-    public void SetInfo(MercenaryStat mercenary)
+    public void SetInfoTile(MercenaryTile tile)
     {
-        _mercenary = mercenary;
+        _tile = tile;
+        _mercenary = _tile.GetMercenary().GetStat();
+
+        RefreshUI();
+    }
+
+    public void SetInfoSlot(UI_MercenarySlot slot)
+    {
+        _slot = slot;
+        _mercenary = _slot._mercenary;
 
         RefreshUI();
     }
@@ -65,6 +85,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         GetText((int)Texts.RaceText).text = $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>";
         GetText((int)Texts.JobText).text = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
+        GetText((int)Texts.SaleGoldText).text = _mercenary.SalePrice.ToString();
+
         GetText((int)Texts.InfoText).text = 
 $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 공격력 {_mercenary.Damage.ToString()}
@@ -78,8 +100,30 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     public void Clear()
     {
         _isActive = false;
+        _tile = null;
+        _slot = null;
         _mercenary = null;
         Managers.UI.ClosePopupUI(this);
+    }
+
+    private void OnClickSaleButton(PointerEventData eventData)
+    {
+        Debug.Log("OnClickSaleButton");
+
+        string saleText = Define.SaleConfirmText + "\n" + $@"<color=yellow>Gold {_mercenary.SalePrice}</color>";
+
+        Managers.UI.ShowPopupUI<UI_ConfirmPopup>().SetInfo(()=>
+        {
+            Managers.Game.GameGold += _mercenary.SalePrice;
+            Managers.Game.GameScene.RefreshGold(_mercenary.SalePrice);
+
+            if (_tile.IsFakeNull() == false)
+                _tile.Clear();
+            else if (_slot.IsFakeNull() == false)
+                _slot.SetCount(-1);
+
+            Clear();
+        }, saleText);
     }
 
     private void OnClickExitButton(PointerEventData eventData)
