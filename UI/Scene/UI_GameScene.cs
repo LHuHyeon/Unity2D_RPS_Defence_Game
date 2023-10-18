@@ -59,7 +59,6 @@ public class UI_GameScene : UI_Scene
 
     public ScrollRect       _mercenaryTabScroll;
 
-    [SerializeField]
     private List<UI_MercenarySlot> _mercenarySlots = new List<UI_MercenarySlot>();
     
     private GameManagerEx   _game;
@@ -250,6 +249,7 @@ public class UI_GameScene : UI_Scene
     // 용병 슬롯 삭제
     public void RemoveMercenarySlot(UI_MercenarySlot slot) { _mercenarySlots.Remove(slot); }
 
+    // 용병 슬롯 정렬
     public void SortMercenarySlot()
     {   
         // TODO : 전사, 궁수, 법사 필터도 구현하기
@@ -291,6 +291,21 @@ public class UI_GameScene : UI_Scene
         Debug.Log("OnClickGameSpeedButton");
 
         // TODO : 게임 속도 상승 or 다운 (최대 2배속)
+    }
+
+    private void OnClickUpgradeButton(Define.RaceType raceType)
+    {
+        // TODO : 각 버튼에 기능 추가 후 여기 init에서 생성해주기
+
+        switch (raceType)
+        {
+            case Define.RaceType.Human:
+                break;
+            case Define.RaceType.Elf:
+                break;
+            case Define.RaceType.WereWolf:
+                break;
+        }
     }
 
     private void SetEventHandler()

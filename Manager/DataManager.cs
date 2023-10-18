@@ -12,6 +12,7 @@ public class DataManager : MonoBehaviour
 
     public Dictionary<int, WaveData>        Waves       { get; private set; }
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
+    public Dictionary<int, UpgradeData>     Upgrades    { get; private set; }
 
     // 등급마다 직업별로 용병들이 존재한 이중 딕셔너리
     public Dictionary<Define.GradeType, Dictionary<Define.JobType, List<MercenaryStat>>> JobByGrade { get; private set; }
@@ -20,12 +21,14 @@ public class DataManager : MonoBehaviour
     {
         StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
         StartCoroutine(DataRequest(MercenaryRequest, Define.MercenaryDataNumber));
+        StartCoroutine(DataRequest(UpgradeRequest, Define.UpgradeDataNumber));
     }
 
     public bool IsData()
     {
         if (Waves.IsNull()      == true  ||
-            Mercenarys.IsNull() == true     )
+            Mercenarys.IsNull() == true  ||
+            Upgrades.IsNull()   == true   )
             return false;
 
         return true;
@@ -154,6 +157,35 @@ public class DataManager : MonoBehaviour
 
         // 용병 넣기
         mercenaryHash.Add(mercenary);
+    }
+
+    // 종족 강화 데이터
+    private void UpgradeRequest(string data)
+    {
+        Dictionary<int, UpgradeData> dict = new Dictionary<int, UpgradeData>();
+
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            UpgradeData upgradeData = new UpgradeData()
+            {
+                level = int.Parse(row[0]),
+                prime = int.Parse(row[1]),
+                humanDamage = int.Parse(row[2]),
+                elfDamage = int.Parse(row[3]),
+                werewolfDamage = int.Parse(row[4]),
+            };
+
+            dict.Add(upgradeData.level, upgradeData);
+        }
+
+        Upgrades = dict;
     }
 
     // 가로 줄 읽기 (csv)

@@ -134,6 +134,7 @@ public class Define
 
 	public const string WaveDataNumber = "1279670946";
 	public const string MercenaryDataNumber = "1983187163";
+	public const string UpgradeDataNumber = "2068092916";
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
 }
