@@ -87,11 +87,13 @@ public class UI_MercenaryInfoPopup : UI_Popup
         GetText((int)Texts.JobText).text = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
         GetText((int)Texts.SaleGoldText).text = _mercenary.SalePrice.ToString();
 
+        string addDamageText = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
+
         GetText((int)Texts.InfoText).text = 
 $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
-공격력 {_mercenary.Damage.ToString()}
-공격속도 {_mercenary.AttackRate.ToString()}
-사거리 {_mercenary.AttackRange.ToString()}";
+공격력 {_mercenary.Damage}{addDamageText}
+공격속도 {_mercenary.AttackRate}
+사거리 {_mercenary.AttackRange}";
 
         if (_isActive == false)
             StartCoroutine(CallPopup());
@@ -115,10 +117,12 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         Managers.UI.ShowPopupUI<UI_ConfirmPopup>().SetInfo(()=>
         {
             Managers.Game.GameGold += _mercenary.SalePrice;
-            Managers.Game.GameScene.RefreshGold(_mercenary.SalePrice);
 
             if (_tile.IsFakeNull() == false)
+            {
+                Managers.Resource.Destroy(_tile._mercenary);
                 _tile.Clear();
+            }
             else if (_slot.IsFakeNull() == false)
                 _slot.SetCount(-1);
 

@@ -18,6 +18,16 @@ public class GameData
 
 	public float PlayTime;
 
+	// 현재 종족 레벨
+	public int CurrentHumanLevel = 0;
+	public int CurrentElfLevel = 0;
+	public int CurrentWereWolfLevel = 0;
+
+	// 현재 추가된 종족 데미지
+	public int HumanAddDamage = 0;
+	public int ElfAddDamage = 0;
+	public int WereWolfAddDamage = 0;
+
 	public WaveData CurrentWave;
 
 	/*
@@ -61,7 +71,10 @@ public class GameManagerEx
 		get { return _gameData.GameGold; }
 		set 
 		{
+			int addGold = value - _gameData.GameGold;
 			_gameData.GameGold = value;
+
+			GameScene.RefreshGold(addGold);
 		}
 	}
 
@@ -79,6 +92,42 @@ public class GameManagerEx
 
 	#endregion
 
+	public int CurrentHumanLevel
+	{
+		get { return _gameData.CurrentHumanLevel; }
+		set { _gameData.CurrentHumanLevel = value; }
+	}
+
+	public int CurrentElfLevel
+	{
+		get { return _gameData.CurrentElfLevel; }
+		set { _gameData.CurrentElfLevel = value; }
+	}
+
+	public int CurrentWereWolfLevel
+	{
+		get { return _gameData.CurrentWereWolfLevel; }
+		set { _gameData.CurrentWereWolfLevel = value; }
+	}
+
+	public int HumanAddDamage
+	{
+		get { return _gameData.HumanAddDamage; }
+		set { _gameData.HumanAddDamage = value; }
+	}
+
+	public int ElfAddDamage
+	{
+		get { return _gameData.ElfAddDamage; }
+		set { _gameData.ElfAddDamage = value; }
+	}
+
+	public int WereWolfAddDamage
+	{
+		get { return _gameData.WereWolfAddDamage; }
+		set { _gameData.WereWolfAddDamage = value; }
+	}
+
 	public WaveData CurrentWave
 	{
 		get { return _gameData.CurrentWave; }
@@ -93,9 +142,23 @@ public class GameManagerEx
 	public void WaveReward()
 	{
 		GameGold += CurrentWave.waveGold;
-        GameScene.RefreshGold(CurrentWave.waveGold);
 
 		GameScene.OnRPSPopup();
+	}
+
+	public int GetRaceAddDamage(Define.RaceType raceType)
+	{
+		switch (raceType)
+		{
+			case Define.RaceType.Human:
+				return HumanAddDamage;
+			case Define.RaceType.Elf:
+				return ElfAddDamage;
+			case Define.RaceType.WereWolf:
+				return WereWolfAddDamage;
+			default:
+				return 0;
+		}
 	}
 
     // 캐릭터 소환

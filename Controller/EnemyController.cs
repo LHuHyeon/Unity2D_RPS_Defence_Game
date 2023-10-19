@@ -85,7 +85,6 @@ public class EnemyController : BaseController
         GetComponent<Collider>().enabled = false;
 
         Managers.Game.GameGold += _stat.DropGold;
-        Managers.Game.GameScene.RefreshGold(_stat.DropGold);
 
         yield return new WaitForSeconds(0.15f);
 

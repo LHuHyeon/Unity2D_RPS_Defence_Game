@@ -17,7 +17,6 @@ public class MercenaryStat
     [SerializeField] protected Define.GradeType             _grade;                 // 등급
     [SerializeField] protected Define.JobType               _job;                   // 직업
     [SerializeField] protected int                          _salePrice;             // 판매 가격
-    [SerializeField] protected int                          _damage;                // 공격력
     [SerializeField] protected float                        _attackRate;            // 공격 속도
     [SerializeField] protected float                        _attackRange;           // 공격 사거리
     [SerializeField] protected int                          _upgrade;
@@ -28,11 +27,13 @@ public class MercenaryStat
     [SerializeField] protected Sprite                       _icon;                  // 이미지
     [SerializeField] protected RuntimeAnimatorController    _animatorController;    // 애니메이션 컨트롤러
 
+    [SerializeField] protected int                          _damage;                // 공격력
+    [SerializeField] protected int                          _addDamage;             // 추가 공격력
+
     public int                  Id              { get { return _id; }               set { _id = value; } }
     public string               Name            { get { return _name; }             set { _name = value; } }
     public Define.RaceType      Race            { get { return _race; }             set { _race = value; } }
     public int                  SalePrice       { get { return _salePrice; }        set { _salePrice = value; } }
-    public int                  Damage          { get { return _damage; }           set { _damage = value; } }
     public float                AttackRate      { get { return _attackRate; }       set { _attackRate = value; } }
     public float                AttackRange     { get { return _attackRange; }      set { _attackRange = value; } }
     public Define.GradeType     Grade           { get { return _grade; }            set { _grade = value; } }
@@ -43,4 +44,7 @@ public class MercenaryStat
     public Sprite               Icon            { get { return _icon; }             set { _icon = value; }}
 
     public RuntimeAnimatorController    AnimatorController   { get { return _animatorController; }    set { _animatorController = value; }}
+
+    public int Damage       { get { return _damage + _addDamage; }  set { _damage = value; } }
+    public int AddDamage    { get { return Managers.Game.GetRaceAddDamage(_race); } }
 }

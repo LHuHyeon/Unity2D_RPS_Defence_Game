@@ -24,7 +24,6 @@ public class MercenaryTile : MonoBehaviour
 
     public void Clear()
     {
-        Managers.Resource.Destroy(_mercenary);
         _mercenary = null;
     }
 

@@ -62,7 +62,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         GetText((int)Texts.ItemCountText).text = _itemCount.ToString();
         GetImage((int)Images.Background).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
         GetImage((int)Images.JobLabel).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_JobIcon_"+_mercenary.Job.ToString());
-        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/JobIcon_"+_mercenary.Job.ToString());
+        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Job_"+_mercenary.Job.ToString());
     }
 
     // 슬롯 초기화
@@ -162,6 +162,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
             SetCount(1);
 
         // 타일 초기화
+        Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
         dragSlot.mercenaryTile.Clear();
     }
 

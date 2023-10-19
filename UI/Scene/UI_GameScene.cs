@@ -18,6 +18,7 @@ public class UI_GameScene : UI_Scene
         MercenaryFocus,
         UpgradeFocus,
         CompositionFocus,
+        UpgradeGrid,
     }
 
     enum Sliders
@@ -98,6 +99,9 @@ public class UI_GameScene : UI_Scene
         foreach(Transform child in GetObject((int)GameObjects.MercenaryContent).transform)
             Managers.Resource.Destroy(child.gameObject);
 
+        // 강화 버튼 채우기
+        PopulateUpgradeButton();
+
 		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
 
         SetEventHandler();
@@ -173,7 +177,7 @@ public class UI_GameScene : UI_Scene
         if (_init == false)
             return;
 
-        GetText((int)Texts.GoldText).text = Utils.GetCommaText(_game.GameGold);
+        GetText((int)Texts.GoldText).text = _game.GameGold > 0 ? Utils.GetCommaText(_game.GameGold) : "0";
 
         // 골드를 획득하면 Effect Text 생성
         if (goldCount > 0)
@@ -279,6 +283,20 @@ public class UI_GameScene : UI_Scene
             _mercenarySlots[i].transform.SetSiblingIndex(i);
     }
 
+    private void PopulateUpgradeButton()
+    {
+        Transform grid = GetObject((int)GameObjects.UpgradeGrid).transform;
+
+        foreach(Transform child in grid)
+            Managers.Resource.Destroy(child.gameObject);
+        
+        for(int i=1; i<=(int)Define.RaceType.WereWolf; i++)
+        {
+            UI_UpgradeButton upgradeButton = Managers.UI.MakeSubItem<UI_UpgradeButton>(grid);
+            upgradeButton.SetInfo((Define.RaceType)i);
+        }
+    }
+
     private void OnClickPauseButton(PointerEventData eventData)
     {
         Debug.Log("OnClickPauseButton");
@@ -291,21 +309,6 @@ public class UI_GameScene : UI_Scene
         Debug.Log("OnClickGameSpeedButton");
 
         // TODO : 게임 속도 상승 or 다운 (최대 2배속)
-    }
-
-    private void OnClickUpgradeButton(Define.RaceType raceType)
-    {
-        // TODO : 각 버튼에 기능 추가 후 여기 init에서 생성해주기
-
-        switch (raceType)
-        {
-            case Define.RaceType.Human:
-                break;
-            case Define.RaceType.Elf:
-                break;
-            case Define.RaceType.WereWolf:
-                break;
-        }
     }
 
     private void SetEventHandler()
@@ -328,7 +331,10 @@ public class UI_GameScene : UI_Scene
 
             // 타일에서 왔으면 타일 초기화
             if (dragSlot.mercenaryTile.IsFakeNull() == false)
+            {
+                Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
                 dragSlot.mercenaryTile.Clear();
+            }
 
         }, Define.UIEvent.Drop);
     }

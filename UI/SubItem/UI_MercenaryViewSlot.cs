@@ -45,7 +45,7 @@ public class UI_MercenaryViewSlot : UI_Base
         GetImage((int)Images.ViewIcon).sprite = mercenaryStat.Icon;
         GetImage((int)Images.Background).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+mercenaryStat.Grade.ToString());
         GetImage((int)Images.JobLabel).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_JobIcon_"+mercenaryStat.Job.ToString());
-        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/JobIcon_"+mercenaryStat.Job.ToString());
+        GetImage((int)Images.JobLabelIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Job_"+mercenaryStat.Job.ToString());
     }
 
     public void Clear()
