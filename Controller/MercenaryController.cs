@@ -33,6 +33,17 @@ public class MercenaryController : BaseController
     private MercenaryStat       _stat;          // 스탯
     private EnemyController     enemy;          // 적 정보
 
+    // -- Test 중복 멀티샷 공격
+
+    [SerializeField]
+    private int test_MaxAttackCount = 2;
+    [SerializeField]
+    private int test_CurrentAttackCount = 0;
+
+    private List<Transform> test_AttackTargets = new List<Transform>();
+
+    // --
+
     public MercenaryStat GetStat() { return _stat; }
 
     // 생성 시 설정
@@ -65,7 +76,7 @@ public class MercenaryController : BaseController
             enemy = _attackTarget.GetComponent<EnemyController>();
 
             // 거리 한번 더 체크 후 공격 진행
-            if (IsAttackRangeCheck() == true)
+            if (IsAttackRangeCheck(_attackTarget) == true)
                 State = Define.State.Attack;
 
             return;
@@ -91,37 +102,89 @@ public class MercenaryController : BaseController
         if (_attackTarget.IsFakeNull() == true)
             return;
 
-        // 발사체 생성
-        GameObject projectile = Managers.Resource.Instantiate(_stat.Projectile);
-
-        // 발사!
-        projectile.transform.position = transform.position;
-        projectile.GetComponent<Projectile>().SetTarget(_attackTarget, _stat.Damage);
+        StartAttack(_attackTarget);
+        StartAttackTargets();
     }
 
     // 공격 중단 [ Animation Event ]
     private void StopAttackEvent()
     {
         // 대상이 공격 사거리 안에 있으면 Attack
-        if (IsAttackRangeCheck() == true)
+        if (IsAttackRangeCheck(_attackTarget) == true)
             State = Define.State.Attack;
         else
-            State = Define.State.Idle;
+            StopAttack();
+    }
+
+    // 공격 시작
+    private void StartAttack(Transform target)
+    {
+        // 발사체 생성
+        GameObject projectile = Managers.Resource.Instantiate(_stat.Projectile);
+
+        // 발사!
+        projectile.transform.position = transform.position;
+        projectile.GetComponent<Projectile>().SetTarget(target, _stat.Damage);
+    }
+
+    // 여러 타겟 공격 시작
+    private void StartAttackTargets()
+    {
+        // 여러 적 탐지
+        TargetsDetection();
+
+        // 탐지된 적들 공격
+        for(int i=0; i<test_AttackTargets.Count; i++)
+        {
+            Transform target = test_AttackTargets[i];
+
+            // 거리 체크 or 존재 여부 체크
+            if (IsAttackRangeCheck(target) == false || target.gameObject.isValid() == false)
+            {
+                --test_CurrentAttackCount;
+                test_AttackTargets.Remove(target);
+                continue;
+            }
+            
+            // 공격 시작
+            StartAttack(target);
+        }
+    }
+    
+    // 여러 적 탐지
+    private void TargetsDetection()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _stat.AttackRange, _mask);
+        
+        foreach(Collider collider in colliders)
+        {
+            // 목표물인지 확인 (첫 공격 대상인지?)
+            if (collider.transform == _attackTarget)
+                continue;
+
+            // 이미 탐지된 적인지 확인
+            if (test_AttackTargets.Contains(collider.transform) == true)
+                continue;
+
+            // 탐지 개수 확인
+            if (test_CurrentAttackCount >= test_MaxAttackCount)
+                return;
+
+            test_CurrentAttackCount++;
+            test_AttackTargets.Add(collider.transform);
+        }
     }
 
     // 타겟과의 거리 체크
-    private bool IsAttackRangeCheck()
+    private bool IsAttackRangeCheck(Transform target)
     {
-        if (_attackTarget.IsFakeNull() == true)
+        if (target.IsFakeNull() == true)
             return false;
 
         // 공격 사거리 체크
-        float distance = (_attackTarget.position - transform.position).magnitude;
+        float distance = (target.position - transform.position).magnitude;
         if (distance > _stat.AttackRange)
-        {
-            StopAttack();
             return false;
-        }
 
         return true;
     }
@@ -145,5 +208,8 @@ public class MercenaryController : BaseController
     {
         _attackTarget = null;
         State = Define.State.Idle;
+
+        test_AttackTargets.Clear();
+        test_CurrentAttackCount = 0;
     }
 }
