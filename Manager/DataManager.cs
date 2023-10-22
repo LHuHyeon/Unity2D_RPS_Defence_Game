@@ -133,6 +133,9 @@ public class DataManager : MonoBehaviour
         }
 
         Mercenarys = dict;
+
+        // 진화 능력 가져오기
+        StartCoroutine(DataRequest(EvolutionRequest, Define.EvolutionDataNumber));
     }
 
     // 등급별로 직업을 나누고, 직업안에 List으로 용병 저장.
@@ -186,6 +189,41 @@ public class DataManager : MonoBehaviour
         }
 
         Upgrades = dict;
+    }
+
+    private void EvolutionRequest(string data)
+    {
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            for(int i=1; i<=6; i+=2)
+            {
+                AbilityData ability = new AbilityData()
+                {
+                    abilityType = (Define.AbilityType)int.Parse(row[i]),
+                    value = float.Parse(row[i+1]),
+                };
+
+                // 능력 설명
+                switch (ability.abilityType)
+                {
+                    case Define.AbilityType.Damage:         ability.descripition = $"공격력 {(int)ability.value} 증가";     break;
+                    case Define.AbilityType.DamageParcent:  ability.descripition = $"공격력 {(int)ability.value}% 증가";    break;
+                    case Define.AbilityType.AttackRate:     ability.descripition = $"공격속도 {ability.value} 증가";        break;
+                    case Define.AbilityType.AttackRange:    ability.descripition = $"공격범위 {ability.value} 증가";        break;
+                    case Define.AbilityType.MultiShot:      ability.descripition = $"멀티샷 {(int)ability.value} 증가";     break;
+                    default: break;
+                }
+
+                Mercenarys[y].Abilities.Add(ability);
+            }
+        }
     }
 
     // 가로 줄 읽기 (csv)

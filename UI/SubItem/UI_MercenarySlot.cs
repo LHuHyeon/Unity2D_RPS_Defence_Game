@@ -162,7 +162,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
             SetCount(1);
 
         // 타일 초기화
-        Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
+        Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
         dragSlot.mercenaryTile.Clear();
     }
 

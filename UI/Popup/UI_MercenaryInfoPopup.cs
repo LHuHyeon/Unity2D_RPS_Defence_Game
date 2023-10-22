@@ -10,6 +10,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
     {
         Background,
         ExitBackground,
+        EvolutionTextGrid,
     }
 
     enum Buttons
@@ -37,6 +38,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
     public MercenaryStat    _mercenary;
 
     private bool            _isActive = false;  // 팝업 활성화 여부
+    
+    private List<UI_EvolutionText> _evolutionTexts = new List<UI_EvolutionText>();
 
     public override bool Init()
     {
@@ -51,11 +54,14 @@ public class UI_MercenaryInfoPopup : UI_Popup
         GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
         GetButton((int)Buttons.SaleButton).gameObject.BindEvent(OnClickSaleButton);
 
+        PopulateEvolutionText();    // 진화 능력 Text 채우기
+
         RefreshUI();
 
         return true;
     }
 
+    // 타일 정보를 받아올 때
     public void SetInfoTile(MercenaryTile tile)
     {
         _tile = tile;
@@ -64,6 +70,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         RefreshUI();
     }
 
+    // 슬롯 정보를 받아올 때
     public void SetInfoSlot(UI_MercenarySlot slot)
     {
         _slot = slot;
@@ -80,6 +87,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
         if (_mercenary.IsNull() == true)
             return;
 
+        _mercenary.RefreshAddData();
+
         GetImage((int)Images.IconBackground).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
         GetImage((int)Images.Icon).sprite = _mercenary.Icon;
 
@@ -88,12 +97,18 @@ public class UI_MercenaryInfoPopup : UI_Popup
         GetText((int)Texts.SaleGoldText).text = _mercenary.SalePrice.ToString();
 
         string addDamageText = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
+        string addAttackRateText = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
+        string addAttackRangeText = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
 
         GetText((int)Texts.InfoText).text = 
 $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 공격력 {_mercenary.Damage}{addDamageText}
-공격속도 {_mercenary.AttackRate}
-사거리 {_mercenary.AttackRange}";
+공격속도 {_mercenary.AttackRate}{addAttackRateText}
+사거리 {_mercenary.AttackRange}{addAttackRangeText}";
+        
+        // 진화 능력 Text 적용
+        for(int i=0; i<_evolutionTexts.Count; i++)
+            _evolutionTexts[i].SetInfo(_mercenary.Abilities[i]);
 
         if (_isActive == false)
             StartCoroutine(CallPopup());
@@ -108,6 +123,23 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         Managers.UI.ClosePopupUI(this);
     }
 
+    private int _maxStarCount = 3;  // 진화 별 최대 개수
+    private void PopulateEvolutionText()
+    {
+        Transform parent = GetObject((int)GameObjects.EvolutionTextGrid).transform;
+
+        foreach(Transform child in parent)
+            Managers.Resource.Destroy(child.gameObject);
+
+        for(int i=1; i<=_maxStarCount; i++)
+        {
+            UI_EvolutionText evolution = Managers.UI.MakeSubItem<UI_EvolutionText>(parent);
+            evolution._starCount = i;
+
+            _evolutionTexts.Add(evolution);
+        }
+    }
+
     private void OnClickSaleButton(PointerEventData eventData)
     {
         Debug.Log("OnClickSaleButton");
@@ -120,7 +152,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
             if (_tile.IsFakeNull() == false)
             {
-                Managers.Resource.Destroy(_tile._mercenary);
+                Managers.Game.Despawn(_tile._mercenary);
                 _tile.Clear();
             }
             else if (_slot.IsFakeNull() == false)
@@ -237,6 +269,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         return colorName;
     }
 
+    // 직업 컬러
     private string GetJobColor()
     {
         string colorName;
@@ -260,6 +293,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         return colorName;
     }
 
+    // 등급 컬러
     private string GetGradeColor()
     {
         string colorName;

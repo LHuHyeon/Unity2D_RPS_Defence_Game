@@ -55,21 +55,21 @@ public class Define
 	// 능력 종류
 	public enum AbilityType
 	{
-		Unknown,
-		Damage,			// 공격력
-		AttackRate,		// 공격 속도
-		AttackRange,	// 공격 사거리
-		AttackCount,	// 공격 횟수
+		Unknown			= 0,
+		Damage			= 1,	// 공격력
+		DamageParcent 	= 2,	// 공격력 % 증가
+		AttackRate		= 3,	// 공격 속도
+		AttackRange		= 4,	// 공격 사거리
+		MultiShot		= 5,	// 멀티샷
 	}
 
 	public enum EvolutionType
 	{
-		Unknown,
-		Star1,
-		Star2,
-		Star3,
-		Star4,
-		Star5,
+		Unknown	= 0,
+		Star1	= 1,
+		Star2	= 2,
+		Star3	= 3,
+		Max		= 4,
 	}
 
 	public enum RPSCard
@@ -110,31 +110,10 @@ public class Define
 		Devil		= 6,	// 악마
 	}
 
-	public enum StatType
-	{
-		MaxHp,
-		WorkAbility,
-		Likeability,
-		Luck,
-		Stress
-	}
-
-	public enum RewardType
-	{
-		Hp,
-		WorkAbility,
-		Likeability,
-		Luck,
-		Stress,
-		Money,
-		Block,
-		SalaryIncrease,
-		Promotion
-	}
-
 	public const string WaveDataNumber = "1279670946";
 	public const string MercenaryDataNumber = "1983187163";
 	public const string UpgradeDataNumber = "2068092916";
+	public const string EvolutionDataNumber = "279655201";
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
 }

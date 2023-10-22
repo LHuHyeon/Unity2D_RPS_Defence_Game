@@ -146,19 +146,12 @@ public class GameManagerEx
 		GameScene.OnRPSPopup();
 	}
 
-	public int GetRaceAddDamage(Define.RaceType raceType)
+	// 용병 새로고침
+	public void RefreshMercenary()
 	{
-		switch (raceType)
-		{
-			case Define.RaceType.Human:
-				return HumanAddDamage;
-			case Define.RaceType.Elf:
-				return ElfAddDamage;
-			case Define.RaceType.WereWolf:
-				return WereWolfAddDamage;
-			default:
-				return 0;
-		}
+		// 용병의 추가 데이터 새로고침
+		foreach(var mercenary in _mercenarys)
+			mercenary.GetComponent<MercenaryController>().GetStat().RefreshAddData();
 	}
 
     // 캐릭터 소환

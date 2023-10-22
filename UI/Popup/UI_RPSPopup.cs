@@ -215,9 +215,9 @@ public class UI_RPSPopup : UI_Popup
         if (card.isCard == false)
             return;
 
-        // 카드 개수가 0 미만이면 Basic 반환
+        // 카드 개수가 0 미만이면 카드 보상 x
         if ((int)card.cardGrade < 0)
-            card.cardGrade = Define.GradeType.Basic;
+            return;
 
         List<MercenaryStat> mercenarys = Managers.Data.GetMercenarys(card.cardGrade, (Define.JobType)card.cardType);
 

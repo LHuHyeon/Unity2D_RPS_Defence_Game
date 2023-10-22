@@ -17,16 +17,15 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField]
-    private float       _attackSpeed = 7f;
-    private int         _damage;
+    private float           _attackSpeed = 7f;
+    private MercenaryStat   _stat;
 
     private Transform   _attackTarget;
 
-    public void SetTarget(Transform target, int damage)
+    public void SetTarget(Transform target, MercenaryStat stat)
     {
         _attackTarget = target;
-        _damage = damage;
+        _stat = stat;
     }
 
     void FixedUpdate()
@@ -57,7 +56,7 @@ public class Projectile : MonoBehaviour
         if ((_attackTarget.position - transform.position).magnitude < 0.3f)
         {
             // TODO : 접촉 후 또 다른 효과 확인 (폭발, 감전 등)
-            _attackTarget.GetComponent<EnemyStat>().OnAttacked(_damage);
+            _attackTarget.GetComponent<EnemyStat>().OnAttacked(_stat.Damage);
             Managers.Resource.Destroy(this.gameObject);
         }
     }

@@ -332,7 +332,7 @@ public class UI_GameScene : UI_Scene
             // 타일에서 왔으면 타일 초기화
             if (dragSlot.mercenaryTile.IsFakeNull() == false)
             {
-                Managers.Resource.Destroy(dragSlot.mercenaryTile._mercenary);
+                Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
                 dragSlot.mercenaryTile.Clear();
             }
 
