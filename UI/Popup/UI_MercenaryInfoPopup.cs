@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_MercenaryInfoPopup : UI_Popup
 {
@@ -10,12 +11,15 @@ public class UI_MercenaryInfoPopup : UI_Popup
     {
         Background,
         ExitBackground,
+        StarGrid,
         EvolutionTextGrid,
+        EvolutionGauge,
     }
 
     enum Buttons
     {
         SaleButton,
+        EvolutionButton,
     }
 
     enum Images
@@ -30,6 +34,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
         JobText,
         InfoText,
         SaleGoldText,
+        EvolutionGaugeText,
+        EvolutionButtonText,
     }
 
     public MercenaryTile    _tile;
@@ -37,9 +43,13 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     public MercenaryStat    _mercenary;
 
-    private bool            _isActive = false;  // 팝업 활성화 여부
+    private bool            _isActive       = false;    // 팝업 활성화 여부
+    private bool            _isEvolution    = false;    // 진화 가능 여부
+
+    private int             _evolutionPlanCount = 0;    // 진화 목표수
     
-    private List<UI_EvolutionText> _evolutionTexts = new List<UI_EvolutionText>();
+    private List<Image>             _starIcons = new List<Image>();
+    private List<UI_EvolutionText>  _evolutionTexts = new List<UI_EvolutionText>();
 
     public override bool Init()
     {
@@ -53,6 +63,11 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
         GetButton((int)Buttons.SaleButton).gameObject.BindEvent(OnClickSaleButton);
+        GetButton((int)Buttons.EvolutionButton).gameObject.BindEvent(OnClickEvolutionButton);
+        
+        // 진화 등급(별) Icon 가져오기
+        foreach(Transform child in GetObject((int)GameObjects.StarGrid).transform)
+            _starIcons.Add(child.GetComponent<Image>());
 
         PopulateEvolutionText();    // 진화 능력 Text 채우기
 
@@ -67,6 +82,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         _tile = tile;
         _mercenary = _tile.GetMercenary().GetStat();
 
+        _slot = null;
         RefreshUI();
     }
 
@@ -76,6 +92,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         _slot = slot;
         _mercenary = _slot._mercenary;
 
+        _tile = null;
         RefreshUI();
     }
 
@@ -89,38 +106,88 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         _mercenary.RefreshAddData();
 
-        GetImage((int)Images.IconBackground).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
-        GetImage((int)Images.Icon).sprite = _mercenary.Icon;
+        RefreshInfo();
+        RefreshEvolution();
 
-        GetText((int)Texts.RaceText).text = $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>";
-        GetText((int)Texts.JobText).text = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
-        GetText((int)Texts.SaleGoldText).text = _mercenary.SalePrice.ToString();
-
-        string addDamageText = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
-        string addAttackRateText = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
-        string addAttackRangeText = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
-
-        GetText((int)Texts.InfoText).text = 
-$@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
-공격력 {_mercenary.Damage}{addDamageText}
-공격속도 {_mercenary.AttackRate}{addAttackRateText}
-사거리 {_mercenary.AttackRange}{addAttackRangeText}";
-        
-        // 진화 능력 Text 적용
-        for(int i=0; i<_evolutionTexts.Count; i++)
-            _evolutionTexts[i].SetInfo(_mercenary.Abilities[i]);
-
+        // 팝업이 비활성화일 때 호출이면 코루틴 작동
         if (_isActive == false)
             StartCoroutine(CallPopup());
     }
 
-    public void Clear()
+    public void RefreshInfo()
     {
-        _isActive = false;
-        _tile = null;
-        _slot = null;
-        _mercenary = null;
-        Managers.UI.ClosePopupUI(this);
+        GetImage((int)Images.IconBackground).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
+        GetImage((int)Images.Icon).sprite = _mercenary.Icon;
+
+        GetText((int)Texts.RaceText).text       = $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>";
+        GetText((int)Texts.JobText).text        = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
+        GetText((int)Texts.SaleGoldText).text   = _mercenary.SalePrice.ToString();
+
+        string addDamageText        = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
+        string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
+        string addAttackRangeText   = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
+
+        GetText((int)Texts.InfoText).text = 
+$@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
+공격력 {_mercenary.Damage}{addDamageText}
+공격속도 {_mercenary.AttackSpeed}{addAttackRateText}
+사거리 {_mercenary.AttackRange}{addAttackRangeText}";
+        
+        // 진화 능력 Text 적용
+        for(int i=0; i<_evolutionTexts.Count; i++)
+            _evolutionTexts[i].SetInfo(_mercenary.Abilities[i], _mercenary.CurrentEvolution);
+    }
+
+    public void RefreshEvolution()
+    {
+        Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
+        int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary)?._itemCount ?? 0;
+        
+        _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1) + 1;
+
+        evolutionSlider.minValue = 0;
+        evolutionSlider.maxValue = _evolutionPlanCount;
+
+        // 현재 용병 수 / 필요 수
+        GetText((int)Texts.EvolutionGaugeText).text = $"{mercenaryCount} / {_evolutionPlanCount}";
+
+        // 진화 버튼 활성화/비활성화 투명도 설정
+        if (mercenaryCount >= _evolutionPlanCount)
+        {
+            _isEvolution = true;
+            SetColor(GetButton((int)Buttons.EvolutionButton).image, 1);
+            SetColor(GetText((int)Texts.EvolutionButtonText), 1);
+        }
+        else
+        {
+            _isEvolution = false;
+            SetColor(GetButton((int)Buttons.EvolutionButton).image, 0.5f);
+            SetColor(GetText((int)Texts.EvolutionButtonText), 0.5f);
+        }
+
+        // 슬라이더 값 적용
+        if (_mercenary.CurrentEvolution >= Define.EvolutionType.Star3)
+        {
+            evolutionSlider.value = evolutionSlider.maxValue;
+            GetText((int)Texts.EvolutionButtonText).text = "Max";
+            _isEvolution = false;
+        }
+        else
+        {
+            evolutionSlider.value = mercenaryCount;
+            GetText((int)Texts.EvolutionButtonText).text = "진화";
+        }
+
+        // 용병 진화 수 만큼 별 활성화
+        for(int i=0; i<((int)_mercenary.CurrentEvolution); i++)
+            _starIcons[i].sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_Star");
+
+        // 나머지 별 비활성화
+        for(int i=((int)_mercenary.CurrentEvolution); i<_starIcons.Count; i++)
+            _starIcons[i].sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_DeStar");
+
+        // 타일에서의 용병은 진화 불가
+        GetButton((int)Buttons.EvolutionButton).gameObject.SetActive(_tile.IsNull());
     }
 
     private int _maxStarCount = 3;  // 진화 별 최대 개수
@@ -134,10 +201,34 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         for(int i=1; i<=_maxStarCount; i++)
         {
             UI_EvolutionText evolution = Managers.UI.MakeSubItem<UI_EvolutionText>(parent);
-            evolution._starCount = i;
+            evolution._evolutionType = (Define.EvolutionType)i;
 
             _evolutionTexts.Add(evolution);
         }
+    }
+
+    private void OnClickEvolutionButton(PointerEventData eventData)
+    {
+        Debug.Log("OnClickEvolutionButton");
+
+        if (_isEvolution == false)
+            return;
+
+        // 진화 재료로 사용될 slot 가져오기
+        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary);
+        if (slot.IsNull() == true)
+            return;
+
+        // 진화 목표수 만큼 차감
+        slot.SetCount(-_evolutionPlanCount);
+
+        // 진화 +1
+        _mercenary.CurrentEvolution++;
+
+        // 진화된 용병에게 맞는 슬롯 등록
+        Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+
+        RefreshUI();
     }
 
     private void OnClickSaleButton(PointerEventData eventData)
@@ -170,10 +261,10 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
             StartCoroutine(ExitPopup());
     }
 
-    private float lerpTime = 0.5f;  // Lerp 시간
-    private float maxAlpha = 0.7f;  // 투명도 최대치
-    private Vector3 startPos = Vector3.up * 400f;
-    private Vector3 endPos = Vector3.up * 300f;
+    private float lerpTime      = 0.5f;  // Lerp 시간
+    private float maxAlpha      = 0.7f;  // 투명도 최대치
+    private Vector3 startPos    = Vector3.up * 400f;
+    private Vector3 endPos      = Vector3.up * 300f;
     private IEnumerator CallPopup()
     {
         _isActive = true;
@@ -238,11 +329,15 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         Clear();
     }
 
-    private void SetColor(Image icon, float alpha)
+    private void SetColor(TextMeshProUGUI text, float alpha)    { text.color = SetColor(text.color, alpha); }
+    private void SetColor(Image icon, float alpha)              { icon.color = SetColor(icon.color, alpha); }
+
+    // 투명도 설정
+    private Color SetColor(Color color, float alpha)
     {
-        Color color = icon.color;
-        color.a = alpha;
-        icon.color = color;
+        Color _color = color;
+        _color.a = alpha;
+        return _color;
     }
 
     // 종족 컬러
@@ -324,5 +419,14 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         }
 
         return colorName;
+    }
+
+    public void Clear()
+    {
+        _isActive = false;
+        _tile = null;
+        _slot = null;
+        _mercenary = null;
+        Managers.UI.ClosePopupUI(this);
     }
 }

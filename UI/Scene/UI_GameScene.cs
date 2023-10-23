@@ -88,6 +88,7 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
         GetButton((int)Buttons.CompositionButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Composition); });
 
+        // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
             MercenaryRegister(Managers.Data.Mercenarys[Random.Range(1, 40)]);
         });
@@ -231,14 +232,12 @@ public class UI_GameScene : UI_Scene
     // 용병 슬롯 등록
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
-        // 현재 존재하는 용병 슬롯 탐지
-        foreach(UI_MercenarySlot slot in _mercenarySlots)
+        // 용병 정보에 맞는 슬롯 탐지
+        UI_MercenarySlot slot = GetMercenarySlot(mercenaryStat);
+        if (slot.IsFakeNull() == false)
         {
-            if (slot._mercenary == mercenaryStat)
-            {
-                slot.SetCount(count);
-                return;
-            }
+            slot.SetCount(count);
+            return;
         }
 
         // 중복된 용병 슬롯이 없으면 생성하여 저장
@@ -339,15 +338,27 @@ public class UI_GameScene : UI_Scene
         }, Define.UIEvent.Drop);
     }
 
-    // 슬롯이 존재하는지 확인
-    public bool IsSlotCheck(UI_MercenarySlot mercenaryItem)
+    // 용병으로 슬롯 찾기
+    public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary)
     {
-        if (mercenaryItem.IsFakeNull() == true)
+        foreach(UI_MercenarySlot slot in _mercenarySlots)
+        {
+            if (slot._mercenary.IsSameMercenary(mercenary) == true)
+                return slot;
+        }
+
+        return null;
+    }
+
+    // 슬롯이 존재하는지 확인
+    public bool IsSlotCheck(UI_MercenarySlot mercenarySlot)
+    {
+        if (mercenarySlot.IsFakeNull() == true)
             return false;
 
         foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
-            if (slot == mercenaryItem)
+            if (slot == mercenarySlot)
                 return true;
         }
 

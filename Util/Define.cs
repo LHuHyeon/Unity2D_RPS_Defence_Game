@@ -58,7 +58,7 @@ public class Define
 		Unknown			= 0,
 		Damage			= 1,	// 공격력
 		DamageParcent 	= 2,	// 공격력 % 증가
-		AttackRate		= 3,	// 공격 속도
+		AttackSpeed		= 3,	// 공격 속도
 		AttackRange		= 4,	// 공격 사거리
 		MultiShot		= 5,	// 멀티샷
 	}

@@ -119,7 +119,7 @@ public class DataManager : MonoBehaviour
                 Job = (Define.JobType)int.Parse(row[3]),
                 SalePrice = int.Parse(row[4]),
                 Damage = int.Parse(row[5]),
-                AttackRate = float.Parse(row[6]),
+                AttackSpeed = float.Parse(row[6]),
                 AttackRange = float.Parse(row[7]),
                 SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[8]),
                 AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[9]),
@@ -215,7 +215,7 @@ public class DataManager : MonoBehaviour
                 {
                     case Define.AbilityType.Damage:         ability.descripition = $"공격력 {(int)ability.value} 증가";     break;
                     case Define.AbilityType.DamageParcent:  ability.descripition = $"공격력 {(int)ability.value}% 증가";    break;
-                    case Define.AbilityType.AttackRate:     ability.descripition = $"공격속도 {ability.value} 증가";        break;
+                    case Define.AbilityType.AttackSpeed:    ability.descripition = $"공격속도 {ability.value} 증가";        break;
                     case Define.AbilityType.AttackRange:    ability.descripition = $"공격범위 {ability.value} 증가";        break;
                     case Define.AbilityType.MultiShot:      ability.descripition = $"멀티샷 {(int)ability.value} 증가";     break;
                     default: break;

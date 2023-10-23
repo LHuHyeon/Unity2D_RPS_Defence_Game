@@ -48,6 +48,8 @@ public class MercenaryController : BaseController
 
         _stat.RefreshAddData();
 
+        _anim.SetFloat("AttackSpeed", _stat.AttackSpeed);
+
         State = Define.State.Idle;
     }
 

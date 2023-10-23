@@ -24,10 +24,10 @@ public class MercenaryStat
     protected RuntimeAnimatorController     _animatorController;    // 애니메이션 컨트롤러
 
     protected int                           _damage;                // 공격력
-    protected float                         _attackRate;            // 공격 속도
+    protected float                         _attackSpeed;            // 공격 속도
     protected float                         _attackRange;           // 공격 사거리
 
-    protected int                           _cureentEvolution;      // 현재 진화 단계
+    protected Define.EvolutionType          _cureentEvolution = Define.EvolutionType.Unknown;   // 현재 진화 단계
 
     public int                  Id              { get { return _id; }               set { _id = value; } }
     public string               Name            { get { return _name; }             set { _name = value; } }
@@ -43,7 +43,7 @@ public class MercenaryStat
     public RuntimeAnimatorController    AnimatorController   { get { return _animatorController; }    set { _animatorController = value; }}
 
     public int      Damage                  { get { return _damage + AddDamage; }              set { _damage = value; } }
-    public float    AttackRate              { get { return _attackRate + AddAttackRate; }      set { _attackRate = value; } }
+    public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }      set { _attackSpeed = value; } }
     public float    AttackRange             { get { return _attackRange + AddAttackRange; }    set { _attackRange = value; } }
 
     public int      AddDamage               { get; set; } = 0;
@@ -53,8 +53,18 @@ public class MercenaryStat
     public int      MaxMultiShotCount       { get; set; } = 0;
     public bool     IsMultiShot             { get; set; } = false;
 
-    public int      CureentEvolution        { get { return _cureentEvolution; } set { _cureentEvolution = value; }}
-    public List<AbilityData> Abilities      { get; set; } = new List<AbilityData>();
+    public Define.EvolutionType     CurrentEvolution    { get { return _cureentEvolution; } set { _cureentEvolution = value; }}
+    public List<AbilityData>        Abilities           { get; set; } = new List<AbilityData>();
+
+    // 들어온 용병 정보와 내 정보가 같은지 확인
+    public bool IsSameMercenary(MercenaryStat mercenary)
+    {
+        // id와 진화 정보가 같은지?
+        if (Id == mercenary.Id && CurrentEvolution == mercenary.CurrentEvolution)
+            return true;
+
+        return false;
+    }
 
     public void RefreshAddData()
     {
@@ -74,7 +84,7 @@ public class MercenaryStat
     private void OnAbility()
     {
         // 진화된 수만큼 능력 확인 후 적용
-        for(int i=0; i<CureentEvolution; i++)
+        for(int i=0; i<((int)CurrentEvolution); i++)
         {
             switch(Abilities[i].abilityType)
             {
@@ -84,7 +94,7 @@ public class MercenaryStat
                 case Define.AbilityType.DamageParcent:
                     AddDamage += _damage / (int)(Abilities[i].value * 0.1f);
                     break;
-                case Define.AbilityType.AttackRate:
+                case Define.AbilityType.AttackSpeed:
                     AddAttackRate += Abilities[i].value;
                     break;
                 case Define.AbilityType.AttackRange:
@@ -116,14 +126,3 @@ public class MercenaryStat
 		}
 	}
 }
-
-/*
-[ 능력, 강화 확인해야할 때 ]
-1. 용병 소환 시 O
-2. 용병 정보 Popup 호출 시
-2-1. 진화에 대한 UI 표시하기 ( 버튼 누르면 뜨게끔? )
-
-
-3. 진화 확인 시 슬롯에서 별 나오게 하기
-
-*/

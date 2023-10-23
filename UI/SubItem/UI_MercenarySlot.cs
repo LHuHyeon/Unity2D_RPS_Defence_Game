@@ -18,7 +18,9 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         ItemCountText,
     }
 
-    public MercenaryStat    _mercenary;
+    public MercenaryStat        _mercenary;
+    public Define.EvolutionType _evolution;
+
     private bool            isScroll = false;
     
     public override bool Init()
@@ -39,6 +41,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     public void SetInfo(MercenaryStat mercenary, int count = 1)
     {
         _mercenary = mercenary;
+        _evolution = _mercenary.CurrentEvolution;
 
         SetCount(count);
 
@@ -119,6 +122,8 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
             UI_DragSlot.instance.DragSetIcon(_icon.sprite);
             UI_DragSlot.instance.icon.transform.position = eventData.position;
+
+            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
         }
     }
 
@@ -155,11 +160,11 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         if (dragSlot.mercenaryTile.IsFakeNull() == true)
             return;
 
-        // 내 용병과 다르면 다른 슬롯에 추가 or 같으면 여기서 개수 추가
-        if (dragSlot.GetMercenary().Id != _mercenary.Id)
-            Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
+        // 현재 슬롯의 용병 정보와 같은지
+        if (_mercenary.IsSameMercenary(dragSlot.GetMercenary()))
+            SetColor(1);
         else
-            SetCount(1);
+            Managers.Game.GameScene.MercenaryRegister(dragSlot.GetMercenary());
 
         // 타일 초기화
         Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);

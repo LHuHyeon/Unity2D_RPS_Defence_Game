@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_EvolutionText : UI_Base
 {
@@ -15,7 +16,9 @@ public class UI_EvolutionText : UI_Base
         EvolutionText,
     }
 
-    public int          _starCount = 0;
+    public Define.EvolutionType _evolutionType = Define.EvolutionType.Unknown;
+
+    private Define.EvolutionType _currentEvolution;
 
     private AbilityData _ability;
 
@@ -34,9 +37,10 @@ public class UI_EvolutionText : UI_Base
         return true;
     }
 
-    public void SetInfo(AbilityData ability)
+    public void SetInfo(AbilityData ability, Define.EvolutionType evolutionType)
     {
         _ability = ability;
+        _currentEvolution = evolutionType;
 
         RefreshUI();
     }
@@ -47,6 +51,7 @@ public class UI_EvolutionText : UI_Base
             return;
 
         GetText((int)Texts.EvolutionText).text = _ability.descripition;
+        SetColor(GetText((int)Texts.EvolutionText), (_currentEvolution >= _evolutionType ? 1f : 0.5f));
     }
 
     private void PopulateStarIcon()
@@ -59,10 +64,17 @@ public class UI_EvolutionText : UI_Base
 
             Image icon = child.GetComponent<Image>();
 
-            if (currentStarCount <= _starCount)
+            if (currentStarCount <= ((int)_evolutionType))
                 icon.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_Star");
             else
                 icon.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_DeStar");
         }
+    }
+
+    private void SetColor(TextMeshProUGUI text, float alpha)
+    {
+        Color _color = text.color;
+        _color.a = alpha;
+        text.color = _color;
     }
 }
