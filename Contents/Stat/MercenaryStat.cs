@@ -57,11 +57,22 @@ public class MercenaryStat
     public List<AbilityData>        Abilities           { get; set; } = new List<AbilityData>();
 
     // 들어온 용병 정보와 내 정보가 같은지 확인
-    public bool IsSameMercenary(MercenaryStat mercenary)
+    public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
     {
+        if (Id != mercenary.Id)
+            return false;
+
         // id와 진화 정보가 같은지?
-        if (Id == mercenary.Id && CurrentEvolution == mercenary.CurrentEvolution)
-            return true;
+        if (isEvolution == true)
+        {
+            if (CurrentEvolution == mercenary.CurrentEvolution)
+                return true;
+        }
+        else
+        {
+            if (CurrentEvolution == Define.EvolutionType.Unknown)
+                return true;
+        }
 
         return false;
     }
@@ -125,4 +136,33 @@ public class MercenaryStat
 				return 0;
 		}
 	}
+
+    // 깊은 복사 (DeepCopy)
+    public MercenaryStat MercenaryClone()
+    {
+        return new MercenaryStat()
+        {
+            Id                  = this.Id,
+            Name                = this.Name,
+            SalePrice           = this.SalePrice,
+            Race                = this.Race,
+            Grade               = this.Grade,
+            Job                 = this.Job,
+            Projectile          = this.Projectile,
+            Mercenary           = this.Mercenary,
+            SpriteLibrary       = this.SpriteLibrary,
+            Icon                = this.Icon,
+            AnimatorController  = this.AnimatorController,
+            Damage              = this.Damage,
+            AttackSpeed         = this.AttackSpeed,
+            AttackRange         = this.AttackRange,
+            AddDamage           = this.AddDamage,
+            AddAttackRate       = this.AddAttackRate,
+            AddAttackRange      = this.AddAttackRange,
+            MaxMultiShotCount   = this.MaxMultiShotCount,
+            IsMultiShot         = this.IsMultiShot,
+            CurrentEvolution    = this.CurrentEvolution,
+            Abilities           = this.Abilities,
+        };
+    }
 }

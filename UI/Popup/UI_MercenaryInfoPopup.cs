@@ -141,7 +141,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     public void RefreshEvolution()
     {
         Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
-        int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary)?._itemCount ?? 0;
+        int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false)?._itemCount ?? 0;
         
         _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1) + 1;
 
@@ -215,18 +215,25 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
             return;
 
         // 진화 재료로 사용될 slot 가져오기
-        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary);
+        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false);
         if (slot.IsNull() == true)
             return;
 
         // 진화 목표수 만큼 차감
         slot.SetCount(-_evolutionPlanCount);
 
-        // 진화 +1
-        _mercenary.CurrentEvolution++;
+        // 첫 진화된 용병은 다른 슬롯에 등록
+        if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
+        {
+            MercenaryStat mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone();
+            mercenary.CurrentEvolution++;
 
-        // 진화된 용병에게 맞는 슬롯 등록
-        Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+            Managers.Game.GameScene.MercenaryRegister(mercenary, 1);
+        }
+        else
+            _mercenary.CurrentEvolution++;
+
+            // TODO : 진화 후 슬롯도 RefreshUI 호출시켜주기
 
         RefreshUI();
     }

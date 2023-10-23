@@ -90,7 +90,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[Random.Range(1, 40)]);
+            MercenaryRegister(Managers.Data.Mercenarys[Random.Range(35, 43)]);
         });
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
@@ -233,7 +233,7 @@ public class UI_GameScene : UI_Scene
     public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
         // 용병 정보에 맞는 슬롯 탐지
-        UI_MercenarySlot slot = GetMercenarySlot(mercenaryStat);
+        UI_MercenarySlot slot = GetMercenarySlot(mercenaryStat, true);
         if (slot.IsFakeNull() == false)
         {
             slot.SetCount(count);
@@ -268,11 +268,11 @@ public class UI_GameScene : UI_Scene
                 return slot2._mercenary.Grade.CompareTo(slot1._mercenary.Grade); // 내림차순
             }
             
-            // // 2. 진화 수준으로 정렬
-            // if (slot1.EnhancementLevel != slot2.EnhancementLevel)
-            // {
-            //     return slot2.EnhancementLevel.CompareTo(slot1.EnhancementLevel); // 내림차순
-            // }
+            // 2. 진화 수준으로 정렬
+            if (slot1._mercenary.CurrentEvolution != slot2._mercenary.CurrentEvolution)
+            {
+                return slot2._mercenary.CurrentEvolution.CompareTo(slot1._mercenary.CurrentEvolution); // 내림차순
+            }
             
             // 3. 개수로 정렬
             return slot2._itemCount.CompareTo(slot1._itemCount); // 내림차순
@@ -339,11 +339,12 @@ public class UI_GameScene : UI_Scene
     }
 
     // 용병으로 슬롯 찾기
-    public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary)
+    public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary, bool isEvolution = true)
     {
+        // 용병의 정보를 토대로 슬롯 찾기
         foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
-            if (slot._mercenary.IsSameMercenary(mercenary) == true)
+            if (slot._mercenary.IsSameMercenary(mercenary, isEvolution) == true)
                 return slot;
         }
 

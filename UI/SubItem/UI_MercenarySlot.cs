@@ -5,6 +5,11 @@ using UnityEngine.EventSystems;
 
 public class UI_MercenarySlot : UI_ItemDragSlot
 {
+    enum GameObjects
+    {
+        StarGrid,
+    }
+
     enum Images
     {
         Background,
@@ -19,17 +24,24 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     }
 
     public MercenaryStat        _mercenary;
-    public Define.EvolutionType _evolution;
 
-    private bool            isScroll = false;
+    private bool                _isScroll = false;
+    private List<GameObject>    _starIcons = new List<GameObject>();
     
     public override bool Init()
     {
         if (base.Init() == false)
             return false;
 
+        BindObject(typeof(GameObjects));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
+
+        foreach(Transform child in GetObject((int)GameObjects.StarGrid).transform)
+        {
+            _starIcons.Add(child.gameObject);
+            child.gameObject.SetActive(false);
+        }
         
         _icon = GetImage((int)Images.Icon);
 
@@ -41,7 +53,6 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     public void SetInfo(MercenaryStat mercenary, int count = 1)
     {
         _mercenary = mercenary;
-        _evolution = _mercenary.CurrentEvolution;
 
         SetCount(count);
 
@@ -60,6 +71,14 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         }
 
         SetColor(255);
+
+        // 별 모두 비활성화
+        for(int i=0; i<_starIcons.Count; i++)
+            _starIcons[i].SetActive(false);
+
+        // 진화한 만큼 별 활성화
+        for(int i=0; i<((int)_mercenary.CurrentEvolution); i++)
+            _starIcons[i].SetActive(true);
 
         _icon.sprite = _mercenary.Icon;
         GetText((int)Texts.ItemCountText).text = _itemCount.ToString();
@@ -108,9 +127,9 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
         // 왼쪽, 오른쪽으로 움직이면 탭 스크롤 조작
         if (dir == Vector2.left || dir == Vector2.right)
-            isScroll = true;
+            _isScroll = true;
 
-        if (isScroll == true)
+        if (_isScroll == true)
         {
             // 스크롤 시작
             Managers.Game.GameScene._mercenaryTabScroll.OnBeginDrag(eventData);
@@ -130,7 +149,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     protected override void OnDragEvent(PointerEventData eventData)
     {
         // 스크롤 중이라면
-        if (isScroll == true)
+        if (_isScroll == true)
         {
             Managers.Game.GameScene._mercenaryTabScroll.OnDrag(eventData);
             return;
@@ -145,10 +164,10 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     {
         UI_DragSlot.instance.ClearSlot();
 
-        if (isScroll == true)
+        if (_isScroll == true)
         {
             Managers.Game.GameScene._mercenaryTabScroll.OnEndDrag(eventData);
-            isScroll = false;
+            _isScroll = false;
         }
     }
 
