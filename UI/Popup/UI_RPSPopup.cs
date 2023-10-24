@@ -163,7 +163,7 @@ public class UI_RPSPopup : UI_Popup
             // 첫 확인 누를 시 리셋 버튼 비활성화
             isCheckButton = true;
             isResetButton = false;
-            GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_BlueGray");
+            GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Green");
             SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
             SetColor(GetButton((int)Buttons.ADButton).image, 0.3f);
 

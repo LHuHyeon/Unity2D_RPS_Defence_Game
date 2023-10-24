@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UI_PausePopup : UI_Popup
 {
@@ -22,7 +23,8 @@ public class UI_PausePopup : UI_Popup
         WaveText,
     }
 
-    private float _currentGameSpeed;
+    private float   _currentGameSpeed;
+    private bool    _isActive = false;
 
     public override bool Init()
     {
@@ -57,6 +59,9 @@ public class UI_PausePopup : UI_Popup
             return;
 
         GetText((int)Texts.WaveText).text = $"Wave {Managers.Game.CurrentWave.waveLevel}";
+
+        if (_isActive == false)
+            StartCoroutine(CallPopup());
     }
 
     private void OnClickSettingButton()
@@ -70,8 +75,7 @@ public class UI_PausePopup : UI_Popup
     {
         Debug.Log("OnClickContinueButton");
 
-        Managers.UI.ClosePopupUI(this);
-        Time.timeScale = _currentGameSpeed;
+        StartCoroutine(ExitPopup());
     }
 
     private void OnClickGiveUpButton()
@@ -79,5 +83,60 @@ public class UI_PausePopup : UI_Popup
         Debug.Log("OnClickGiveUpButton");
 
         // TODO : 게임 로비로 나가기
+    }
+
+    private float maxAlpha = 220f/255f;  // 투명도 최대치
+    private IEnumerator CallPopup()
+    {
+        _isActive = true;
+
+        // 배경 가져오기
+        Transform background = GetObject((int)GameObjects.ExitBackground).transform;
+        Image icon = background.GetComponent<Image>();
+
+        SetColor(icon, 0);
+
+        // 배경 어둡게
+        float currentAlpha = 0f;
+        while (currentAlpha < maxAlpha)
+        {
+            yield return null;
+
+            currentAlpha += 0.1f;
+            SetColor(icon, currentAlpha);
+        }
+    }
+
+    private IEnumerator ExitPopup()
+    {
+        // 배경 가져오기
+        Transform background = GetObject((int)GameObjects.ExitBackground).transform;
+        Image icon = background.GetComponent<Image>();
+
+        // 배경 어둡게
+        float currentAlpha = maxAlpha;
+        while (currentAlpha > 0)
+        {
+            yield return null;
+
+            currentAlpha -= 0.1f;
+            SetColor(icon, currentAlpha);
+        }
+
+        Clear();
+    }
+
+    private void SetColor(Image icon, float alpha)
+    {
+        Color color = icon.color;
+        color.a = alpha;
+        icon.color = color;
+    }
+
+    public void Clear()
+    {
+        _isActive = false;
+        Time.timeScale = _currentGameSpeed;
+        Managers.UI.ClosePopupUI(this);
     }
 }
