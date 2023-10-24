@@ -12,12 +12,10 @@ public class UI_GameScene : UI_Scene
     {
         MercenaryTab,
         UpgradeTab,
-        CompositionTab,
         MercenaryContent,
         StatusGold,
         MercenaryFocus,
         UpgradeFocus,
-        CompositionFocus,
         UpgradeGrid,
     }
 
@@ -47,7 +45,6 @@ public class UI_GameScene : UI_Scene
         GameSpeedButtonText,
         MercenaryText,
         UpgradeText,
-        CompositionText,
     }
 
     public enum PlayTab
@@ -65,7 +62,10 @@ public class UI_GameScene : UI_Scene
     private GameManagerEx   _game;
     private WaveData        _wave;
 
-    private PlayTab         _tab = PlayTab.None;
+    private PlayTab         _tab = PlayTab.None;    // 현재 탭
+
+    private float           _currentGameSpeed = 1f; // 게임 속도
+    private bool            _isGamePause = false;   // 게임 정지 여부
 
     public override bool Init()
     {
@@ -86,7 +86,6 @@ public class UI_GameScene : UI_Scene
 
         GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
         GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
-        GetButton((int)Buttons.CompositionButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Composition); });
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
@@ -200,13 +199,10 @@ public class UI_GameScene : UI_Scene
 
         GetObject((int)GameObjects.MercenaryTab).SetActive(false);
         GetObject((int)GameObjects.UpgradeTab).SetActive(false);
-        GetObject((int)GameObjects.CompositionTab).SetActive(false);
         GetObject((int)GameObjects.MercenaryFocus).SetActive(false);
         GetObject((int)GameObjects.UpgradeFocus).SetActive(false);
-        GetObject((int)GameObjects.CompositionFocus).SetActive(false);
         GetText((int)Texts.MercenaryText).color = darkGrayColor;
         GetText((int)Texts.UpgradeText).color = darkGrayColor;
-        GetText((int)Texts.CompositionText).color = darkGrayColor;
 
         switch(_tab)
         {
@@ -220,11 +216,6 @@ public class UI_GameScene : UI_Scene
                 GetObject((int)GameObjects.UpgradeTab).SetActive(true);
                 GetObject((int)GameObjects.UpgradeFocus).SetActive(true);
                 GetText((int)Texts.UpgradeText).color = yellowColor;
-                break;
-            case PlayTab.Composition:
-                GetObject((int)GameObjects.CompositionTab).SetActive(true);
-                GetObject((int)GameObjects.CompositionFocus).SetActive(true);
-                GetText((int)Texts.CompositionText).color = yellowColor;
                 break;
         }
     }
@@ -254,9 +245,7 @@ public class UI_GameScene : UI_Scene
 
     // 용병 슬롯 정렬
     public void SortMercenarySlot()
-    {   
-        // TODO : 전사, 궁수, 법사 필터도 구현하기
-
+    {
         if (_mercenarySlots.Count < 2)
             return;
 
@@ -299,15 +288,31 @@ public class UI_GameScene : UI_Scene
     private void OnClickPauseButton(PointerEventData eventData)
     {
         Debug.Log("OnClickPauseButton");
+        
+        _isGamePause = !_isGamePause;
 
-        // TODO : 게임 일시 정지
+        if (_isGamePause == true)
+        {
+            // TODO : 정지 Popup 호출하기
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = _currentGameSpeed;
+        }
     }
 
     private void OnClickGameSpeedButton(PointerEventData eventData)
     {
         Debug.Log("OnClickGameSpeedButton");
 
-        // TODO : 게임 속도 상승 or 다운 (최대 2배속)
+        _currentGameSpeed += 0.5f;
+
+        if (_currentGameSpeed > 2f)
+            _currentGameSpeed = 1f;
+
+        GetText((int)Texts.GameSpeedButtonText).text = $"{_currentGameSpeed}X";
+        Time.timeScale = _currentGameSpeed;
     }
 
     private void SetEventHandler()

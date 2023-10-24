@@ -170,6 +170,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         {
             evolutionSlider.value = evolutionSlider.maxValue;
             GetText((int)Texts.EvolutionButtonText).text = "Max";
+            GetText((int)Texts.EvolutionGaugeText).text = "Max";
             _isEvolution = false;
         }
         else
@@ -225,15 +226,15 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         // 첫 진화된 용병은 다른 슬롯에 등록
         if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
         {
-            MercenaryStat mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone();
-            mercenary.CurrentEvolution++;
+            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone();
+            _mercenary.CurrentEvolution++;
 
-            Managers.Game.GameScene.MercenaryRegister(mercenary, 1);
+            Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
         }
         else
             _mercenary.CurrentEvolution++;
 
-            // TODO : 진화 후 슬롯도 RefreshUI 호출시켜주기
+        Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
 
         RefreshUI();
     }

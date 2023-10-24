@@ -15,6 +15,9 @@ public class UI_ItemDragSlot : UI_ItemSlot
         _itemCount += count;
 
         RefreshUI();
+
+        // 용병 슬롯들 정렬
+        Managers.Game.GameScene?.SortMercenarySlot();
         
         // 개수가 없다면
         if (_itemCount <= 0)
