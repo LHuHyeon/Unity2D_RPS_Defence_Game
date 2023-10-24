@@ -104,8 +104,8 @@ public class UIManager
 
 		if (parent != null)
 			go.transform.SetParent(parent);
-		else if (SceneUI != null)
-			go.transform.SetParent(SceneUI.transform);
+		// else if (SceneUI != null)
+		// 	go.transform.SetParent(SceneUI.transform);
 		else
 			go.transform.SetParent(Root.transform);
 

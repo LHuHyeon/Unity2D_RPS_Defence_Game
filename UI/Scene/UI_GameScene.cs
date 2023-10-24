@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ public class UI_GameScene : UI_Scene
     private PlayTab         _tab = PlayTab.None;    // 현재 탭
 
     private float           _currentGameSpeed = 1f; // 게임 속도
-    private bool            _isGamePause = false;   // 게임 정지 여부
+    private float           _maxGameSpeed = 1.5f;   // 게임 최고 속도
 
     public override bool Init()
     {
@@ -89,7 +90,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[Random.Range(35, 43)]);
+            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(35, 43)]);
         });
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
@@ -139,7 +140,7 @@ public class UI_GameScene : UI_Scene
     private float noTime = 10f;
     public void RefreshWaveTime(bool isFormat, float time)
     {
-        // 색 설정 (noTime(10f)부터 빨간색)
+        // 색 설정 (noTime 부터 빨간색)
         GetText((int)Texts.WaveTimeText).color = time <= noTime && isFormat ? Color.red : Color.white;
 
         // 시간 설정
@@ -172,6 +173,7 @@ public class UI_GameScene : UI_Scene
     }
 
     // 골드
+    public Action _onRefreshGoldAction;
     public void RefreshGold(int goldCount = 0)
     {
         if (_init == false)
@@ -185,6 +187,8 @@ public class UI_GameScene : UI_Scene
             DamageNumber goldText = Managers.Resource.Load<DamageNumber>("Prefabs/Text/Gold").Spawn(Vector3.zero, goldCount);
             goldText.SetAnchoredPosition(GetObject((int)GameObjects.StatusGold).transform, new Vector2(0, 0));
         }
+
+        _onRefreshGoldAction?.Invoke();
     }
 
     public void ShowTab(PlayTab tab)
@@ -289,17 +293,8 @@ public class UI_GameScene : UI_Scene
     {
         Debug.Log("OnClickPauseButton");
         
-        _isGamePause = !_isGamePause;
-
-        if (_isGamePause == true)
-        {
-            // TODO : 정지 Popup 호출하기
-            Time.timeScale = 0f;
-        }
-        else
-        {
-            Time.timeScale = _currentGameSpeed;
-        }
+        Time.timeScale = 0f;
+        Managers.UI.ShowPopupUI<UI_PausePopup>().SetInfo(_currentGameSpeed);
     }
 
     private void OnClickGameSpeedButton(PointerEventData eventData)
@@ -308,7 +303,7 @@ public class UI_GameScene : UI_Scene
 
         _currentGameSpeed += 0.5f;
 
-        if (_currentGameSpeed > 2f)
+        if (_currentGameSpeed > _maxGameSpeed)
             _currentGameSpeed = 1f;
 
         GetText((int)Texts.GameSpeedButtonText).text = $"{_currentGameSpeed}X";

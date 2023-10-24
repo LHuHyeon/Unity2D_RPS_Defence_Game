@@ -108,10 +108,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         Debug.Log("OnClickEvent");
 
         // 용병 정보 팝업 호출
-        UI_MercenaryInfoPopup infoPopup = Managers.UI.FindPopup<UI_MercenaryInfoPopup>();
-        if (infoPopup.IsFakeNull() == true)
-            infoPopup = Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
-
+        UI_MercenaryInfoPopup infoPopup = Managers.UI.FindPopup<UI_MercenaryInfoPopup>() ?? Managers.UI.ShowPopupUI<UI_MercenaryInfoPopup>();
         infoPopup.SetInfoSlot(this);
     }
 

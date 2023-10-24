@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class UI_UpgradeButton : UI_Base
@@ -22,6 +23,8 @@ public class UI_UpgradeButton : UI_Base
     private int             _currentLevel = 0;
     private UpgradeData     _nextUpgradeData;
 
+    private Image           _background;
+
     public override bool Init()
     {
         if (base.Init() == false)
@@ -31,8 +34,13 @@ public class UI_UpgradeButton : UI_Base
         BindText(typeof(Texts));
 
         GetImage((int)Images.UpgradeIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Upgrade_"+_raceType.ToString());
+        GetText((int)Texts.UpgradeNameText).text = _raceType.ToString();
 
         gameObject.BindEvent(OnClickUpgradeButton);
+        _background = GetComponent<Image>();
+
+        Managers.Game.GameScene._onRefreshGoldAction -= RefreshUI;
+        Managers.Game.GameScene._onRefreshGoldAction += RefreshUI;
 
         RefreshUI();
 
@@ -52,7 +60,11 @@ public class UI_UpgradeButton : UI_Base
         if (_init == false)
             return;
 
-        GetText((int)Texts.UpgradeNameText).text    = _raceType.ToString();
+        if (Managers.Game.GameGold >= _nextUpgradeData.prime)
+            _background.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Green");
+        else
+            _background.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Dark");
+
         GetText((int)Texts.UpgradeLevelText).text   = "Lv. " + _currentLevel;
         GetText((int)Texts.UpgradeGoldText).text    = $@"<color=yellow>G {_nextUpgradeData.prime}</color>";
     }
