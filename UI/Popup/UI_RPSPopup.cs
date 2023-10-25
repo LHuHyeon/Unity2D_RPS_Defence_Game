@@ -41,9 +41,15 @@ public class UI_RPSPopup : UI_Popup
         CheckButton,
     }
 
-    private int     maxCardCount    = 5;        // 카드 최대 개수
-    private bool    isCheckButton   = false;
-    private bool    isResetButton   = true;
+    enum Texts
+    {
+        CheckButtonText,
+    }
+
+    private int     _resetPrice     = 10;       // 리셋 금액
+    private int     _maxCardCount   = 5;        // 카드 최대 개수
+    private bool    _isCheckButton  = false;    // 확인 버튼 여부
+    private bool    _isResetButton  = true;     // 리셋 버튼 여부
 
     private List<UI_RPSCard>                    _cardList           = new List<UI_RPSCard>();
     private List<UI_MercenaryViewSlot>          _viewSlots          = new List<UI_MercenaryViewSlot>();
@@ -58,6 +64,7 @@ public class UI_RPSPopup : UI_Popup
 
         BindObject(typeof(GameObjects));
         BindButton(typeof(Buttons));
+        BindText(typeof(Texts));
 
         GetButton((int)Buttons.HelperButton).onClick.AddListener(OnClickHelperButton);
         GetButton((int)Buttons.ResetButton).onClick.AddListener(OnClickResetButton);
@@ -97,6 +104,15 @@ public class UI_RPSPopup : UI_Popup
         SetColor(GetButton((int)Buttons.ResetButton).image, 1f);
         SetColor(GetButton((int)Buttons.ADButton).image, 1f);
 
+        GetText((int)Texts.CheckButtonText).text = "뽑기";
+
+        // 리셋할 돈이 없으면 비활성화
+        if (Managers.Game.GameGold < _resetPrice)
+        {
+            SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
+            _isResetButton = false;
+        }
+
         StartCoroutine(CallPopup());
     }
 
@@ -107,7 +123,7 @@ public class UI_RPSPopup : UI_Popup
         foreach(Transform child in rpsGrid)
             Managers.Resource.Destroy(child.gameObject);
         
-        for(int i=0; i<maxCardCount; i++)
+        for(int i=0; i<_maxCardCount; i++)
         {
             UI_RPSCard rpsCard = Managers.UI.MakeSubItem<UI_RPSCard>(rpsGrid);
             rpsCard.SetInfo();
@@ -125,10 +141,11 @@ public class UI_RPSPopup : UI_Popup
     {
         Debug.Log("OnClickResetButton");
         
-        if (isResetButton == false)
+        if (_isResetButton == false)
             return;
 
-        isResetButton = false;
+        _isResetButton = false;
+        Managers.Game.GameGold -= _resetPrice;
 
         // 카드 리셋
         for(int i=0; i<_cardList.Count; i++)
@@ -144,7 +161,7 @@ public class UI_RPSPopup : UI_Popup
 
         Debug.Log("OnClickADButton");
 
-        if (isCheckButton == true)
+        if (_isCheckButton == true)
             return;
 
         // 카드 리셋
@@ -158,12 +175,15 @@ public class UI_RPSPopup : UI_Popup
     {
         Debug.Log("OnClickCheckButton");
 
-        if (isCheckButton == false)
+        if (_isCheckButton == false)
         {
             // 첫 확인 누를 시 리셋 버튼 비활성화
-            isCheckButton = true;
-            isResetButton = false;
+            _isCheckButton = true;
+            _isResetButton = false;
+            
             GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Green");
+            GetText((int)Texts.CheckButtonText).text = "확인";
+
             SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);
             SetColor(GetButton((int)Buttons.ADButton).image, 0.3f);
 
@@ -291,8 +311,8 @@ public class UI_RPSPopup : UI_Popup
     public void Clear()
     {
         _viewSlots.Clear();
-        isCheckButton = false;
-        isResetButton = true;
+        _isCheckButton = false;
+        _isResetButton = true;
         Managers.UI.ClosePopupUI(this);
     }
 }

@@ -58,10 +58,13 @@ public class EnemyStat : MonoBehaviour
     }
 
     // 공격 당하면
-    public void OnAttacked(int damage)
+    public void OnAttacked(int damage, AbilityData deBuff = null)
     {
         if (damage <= 0)
             return;
+
+        // 디버프 부여
+        OnDeBuff(deBuff);
 
         // 방어력이 존재하면 -1 차감 후 종료
         if (Defence > 0)
@@ -84,6 +87,30 @@ public class EnemyStat : MonoBehaviour
 
         if (Hp <= 0)
             GetComponent<EnemyController>().State = Define.State.Dead;
+    }
+
+    private void OnDeBuff(AbilityData debuff)
+    {
+        if (debuff.IsNull() == true)
+            return;
+
+        /*
+        TODO
+        - 기본 지속 효과 : 5초
+        - 기절/경직 : 능력 value에서 가져오기
+        - 코루틴 돌려서 디버프 지속시키기
+        - 디버프에 걸리면 체력바 좌측 상단에 icon 배치시키기
+        */
+
+        switch (debuff.abilityType)
+        {
+            case Define.AbilityType.DefenceDecrease:    // 방어력 감소
+                break;
+            case Define.AbilityType.Slow:               // 이동속도 감소
+                break;
+            case Define.AbilityType.Stun:               // 기절/경직
+                break;
+        }
     }
 
     // 데미지 텍스트 Effect 생성

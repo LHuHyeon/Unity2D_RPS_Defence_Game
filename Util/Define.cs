@@ -56,11 +56,19 @@ public class Define
 	public enum AbilityType
 	{
 		Unknown			= 0,
-		Damage			= 1,	// 공격력
-		DamageParcent 	= 2,	// 공격력 % 증가
-		AttackSpeed		= 3,	// 공격 속도
-		AttackRange		= 4,	// 공격 사거리
-		MultiShot		= 5,	// 멀티샷
+		Buff			= 100,	// [ 자신 버프 구간 ]
+		Damage			= 101,	// 공격력
+		DamageParcent 	= 102,	// 공격력 % 증가
+		AttackSpeed		= 103,	// 공격 속도
+		AttackRange		= 104,	// 공격 사거리
+
+		DeBuff			= 200,	// [ 몬스터 디버프 구간 ]
+		DefenceDecrease	= 201,	// 방어력 감소
+		Slow			= 202,	// 이동속도 감소
+		Stun			= 203,	// 기절/경직
+
+		Skill			= 300,	// [ 스킬 구간 ]
+		MultiShot		= 301,	// 멀티샷
 	}
 
 	public enum EvolutionType

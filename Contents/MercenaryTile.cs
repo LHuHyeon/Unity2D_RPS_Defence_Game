@@ -19,7 +19,7 @@ public class MercenaryTile : MonoBehaviour
         _mercenary = go;
 
         _mercenary.transform.SetParent(transform);
-        _mercenary.transform.localPosition = Vector3.up * -0.35f;
+        _mercenary.transform.localPosition = Vector3.up * -0.37f;
     }
 
     public void Clear()

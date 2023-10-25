@@ -43,7 +43,7 @@ public class MercenaryStat
     public RuntimeAnimatorController    AnimatorController   { get { return _animatorController; }    set { _animatorController = value; }}
 
     public int      Damage                  { get { return _damage + AddDamage; }              set { _damage = value; } }
-    public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }      set { _attackSpeed = value; } }
+    public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }     set { _attackSpeed = value; } }
     public float    AttackRange             { get { return _attackRange + AddAttackRange; }    set { _attackRange = value; } }
 
     public int      AddDamage               { get; set; } = 0;
@@ -62,7 +62,7 @@ public class MercenaryStat
         if (Id != mercenary.Id)
             return false;
 
-        // id와 진화 정보가 같은지?
+        // 진화 정보가 같은지?
         if (isEvolution == true)
         {
             if (CurrentEvolution == mercenary.CurrentEvolution)
@@ -103,7 +103,7 @@ public class MercenaryStat
                     AddDamage += (int)Abilities[i].value;
                     break;
                 case Define.AbilityType.DamageParcent:
-                    AddDamage += _damage / (int)(Abilities[i].value * 0.1f);
+                    AddDamage += Mathf.RoundToInt(Damage * (Abilities[i].value * 0.01f));
                     break;
                 case Define.AbilityType.AttackSpeed:
                     AddAttackRate += Abilities[i].value;

@@ -43,10 +43,11 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     public MercenaryStat    _mercenary;
 
+    private int             _evolutionPlanCount = 0;    // 진화 목표수
+    private int             _mercenarySalePrice = 0;    // 용병 판매 금액
+
     private bool            _isActive       = false;    // 팝업 활성화 여부
     private bool            _isEvolution    = false;    // 진화 가능 여부
-
-    private int             _evolutionPlanCount = 0;    // 진화 목표수
     
     private List<Image>             _starIcons = new List<Image>();
     private List<UI_EvolutionText>  _evolutionTexts = new List<UI_EvolutionText>();
@@ -116,12 +117,14 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     public void RefreshInfo()
     {
+        _mercenarySalePrice = _mercenary.SalePrice * ((int)_mercenary.CurrentEvolution+1);
+
         GetImage((int)Images.IconBackground).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
         GetImage((int)Images.Icon).sprite = _mercenary.Icon;
 
         GetText((int)Texts.RaceText).text       = $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>";
         GetText((int)Texts.JobText).text        = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
-        GetText((int)Texts.SaleGoldText).text   = _mercenary.SalePrice.ToString();
+        GetText((int)Texts.SaleGoldText).text   = _mercenarySalePrice.ToString();
 
         string addDamageText        = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
         string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
@@ -243,11 +246,11 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     {
         Debug.Log("OnClickSaleButton");
 
-        string saleText = Define.SaleConfirmText + "\n" + $@"<color=yellow>Gold {_mercenary.SalePrice}</color>";
+        string saleText = Define.SaleConfirmText + "\n" + $@"<color=yellow>Gold {_mercenarySalePrice}</color>";
 
         Managers.UI.ShowPopupUI<UI_ConfirmPopup>().SetInfo(()=>
         {
-            Managers.Game.GameGold += _mercenary.SalePrice;
+            Managers.Game.GameGold += _mercenarySalePrice;
 
             if (_tile.IsFakeNull() == false)
             {
