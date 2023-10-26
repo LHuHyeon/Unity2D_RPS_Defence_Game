@@ -56,6 +56,8 @@ public class MercenaryStat
     public Define.EvolutionType     CurrentEvolution    { get { return _cureentEvolution; } set { _cureentEvolution = value; }}
     public List<AbilityData>        Abilities           { get; set; } = new List<AbilityData>();
 
+    public AbilityData              DebuffAbility       { get; set; }
+
     // 들어온 용병 정보와 내 정보가 같은지 확인
     public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
     {
@@ -97,28 +99,47 @@ public class MercenaryStat
         // 진화된 수만큼 능력 확인 후 적용
         for(int i=0; i<((int)CurrentEvolution); i++)
         {
-            switch(Abilities[i].abilityType)
-            {
-                case Define.AbilityType.Damage:
-                    AddDamage += (int)Abilities[i].value;
-                    break;
-                case Define.AbilityType.DamageParcent:
-                    AddDamage += Mathf.RoundToInt(Damage * (Abilities[i].value * 0.01f));
-                    break;
-                case Define.AbilityType.AttackSpeed:
-                    AddAttackRate += Abilities[i].value;
-                    break;
-                case Define.AbilityType.AttackRange:
-                    AddAttackRange += Abilities[i].value;
-                    break;
-                case Define.AbilityType.MultiShot:
-                    MaxMultiShotCount  += (int)Abilities[i].value;
-                    IsMultiShot        = MaxMultiShotCount > 0;
-                    break;
-                default:
-                    break;
-            }
+            AbilityData ability = Abilities[i];
+
+            AbilityStat(ability);
+            AbilityDebuff(ability);
         }
+    }
+
+    private void AbilityStat(AbilityData ability)
+    {
+        // 버프 구간 확인
+        if (ability.abilityType >= Define.AbilityType.DeBuff)
+            return;
+
+        switch(ability.abilityType)
+        {
+            case Define.AbilityType.Damage:
+                AddDamage += (int)ability.value;
+                break;
+            case Define.AbilityType.DamageParcent:
+                AddDamage += Mathf.RoundToInt(Damage * (ability.value * 0.01f));
+                break;
+            case Define.AbilityType.AttackSpeed:
+                AddAttackRate += ability.value;
+                break;
+            case Define.AbilityType.AttackRange:
+                AddAttackRange += ability.value;
+                break;
+            case Define.AbilityType.MultiShot:
+                MaxMultiShotCount  += (int)ability.value;
+                IsMultiShot        = MaxMultiShotCount > 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void AbilityDebuff(AbilityData ability)
+    {
+        // 디버프 구간 확인
+        if (Define.AbilityType.DeBuff <= ability.abilityType && ability.abilityType < Define.AbilityType.Skill)
+            DebuffAbility = ability;
     }
 
     // 종족 강화에 따른 공격력 적용
