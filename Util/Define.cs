@@ -52,23 +52,22 @@ public class Define
 		Enemy,
 	}
 
-	// 능력 종류
-	public enum AbilityType
+	// 고정 버프
+	public enum OriginalBuffType
 	{
-		Unknown			= 0,
-		Buff			= 100,	// [ 자신 버프 구간 ]
-		Damage			= 101,	// 공격력
-		DamageParcent 	= 102,	// 공격력 % 증가
-		AttackSpeed		= 103,	// 공격 속도
-		AttackRange		= 104,	// 공격 사거리
+		Damage			= 1,	// 공격력
+		DamageParcent 	= 2,	// 공격력 % 증가
+		AttackSpeed		= 3,	// 공격 속도
+		AttackRange		= 4,	// 공격 사거리
+		MultiShot		= 5,	// 멀티샷
+	}
 
-		DeBuff			= 200,	// [ 몬스터 디버프 구간 ]
-		DefenceDecrease	= 201,	// 방어력 감소
-		Slow			= 202,	// 이동속도 감소
-		Stun			= 203,	// 기절/경직
-
-		Skill			= 300,	// [ 스킬 구간 ]
-		MultiShot		= 301,	// 멀티샷
+	// 일시적인 버프/디버프
+	public enum InstantBuffType
+	{
+		DefenceDecrease	= 1,	// 방어력 감소
+		Slow			= 2,	// 이동속도 감소
+		Stun			= 3,	// 기절/경직
 	}
 
 	public enum EvolutionType
@@ -118,10 +117,12 @@ public class Define
 		Devil		= 6,	// 악마
 	}
 
-	public const string WaveDataNumber = "1279670946";
-	public const string MercenaryDataNumber = "1983187163";
-	public const string UpgradeDataNumber = "2068092916";
-	public const string EvolutionDataNumber = "279655201";
+	public const string WaveDataNumber 			= "1279670946";
+	public const string MercenaryDataNumber 	= "1983187163";
+	public const string UpgradeDataNumber 		= "2068092916";
+	public const string EvolutionDataNumber 	= "279655201";
+	public const string OriginalBuffDataNumber 	= "1888981556";
+	public const string InstantBuffDataNumber 			= "1364019981";
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
 }

@@ -12,6 +12,7 @@ public class DataManager : MonoBehaviour
 
     public Dictionary<int, WaveData>        Waves       { get; private set; }
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
+    public Dictionary<int, BuffData>        Buff        { get; private set; }
     public Dictionary<int, UpgradeData>     Upgrades    { get; private set; }
 
     // 등급마다 직업별로 용병들이 존재한 이중 딕셔너리
@@ -19,8 +20,12 @@ public class DataManager : MonoBehaviour
 
 	public void Init()
     {
+        Buff = new Dictionary<int, BuffData>();
+
         StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
         StartCoroutine(DataRequest(MercenaryRequest, Define.MercenaryDataNumber));
+        StartCoroutine(DataRequest(OriginalBuffRequest, Define.OriginalBuffDataNumber));
+        StartCoroutine(DataRequest(InstantBuffRequest, Define.InstantBuffDataNumber));
         StartCoroutine(DataRequest(UpgradeRequest, Define.UpgradeDataNumber));
     }
 
@@ -28,7 +33,8 @@ public class DataManager : MonoBehaviour
     {
         if (Waves.IsNull()      == true  ||
             Mercenarys.IsNull() == true  ||
-            Upgrades.IsNull()   == true   )
+            Upgrades.IsNull()   == true  || 
+            Buff.IsNull()       == true)
             return false;
 
         return true;
@@ -162,6 +168,92 @@ public class DataManager : MonoBehaviour
         mercenaryHash.Add(mercenary);
     }
 
+    private void EvolutionRequest(string data)
+    {
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            for(int i=1; i<=3; i++)
+            {
+                BuffData buff = Buff[int.Parse(row[i])];    // id에 맞는 버프 가져오기
+                Mercenarys[y].Buffs.Add(buff);              // 추가
+            }
+        }
+    }
+
+    private void OriginalBuffRequest(string data)
+    {
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            OriginalBuffData buff = new OriginalBuffData()
+            {
+                id = int.Parse(row[0]),
+                buffType = (Define.OriginalBuffType)int.Parse(row[1]),
+                value = int.Parse(row[2]),
+            };
+
+            // 능력 설명
+            switch (buff.buffType)
+            {
+                case Define.OriginalBuffType.Damage:         buff.descripition = $"공격력 {buff.value} 증가";   break;
+                case Define.OriginalBuffType.DamageParcent:  buff.descripition = $"공격력 {buff.value}% 증가";  break;
+                case Define.OriginalBuffType.AttackSpeed:    buff.descripition = $"공격속도 {buff.value} 증가"; break;
+                case Define.OriginalBuffType.AttackRange:    buff.descripition = $"공격범위 {buff.value} 증가"; break;
+                case Define.OriginalBuffType.MultiShot:      buff.descripition = $"멀티샷 {buff.value} 증가";   break;
+            }
+
+            Buff.Add(buff.id, buff);
+        }
+    }
+
+    private void InstantBuffRequest(string data)
+    {
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            InstantBuffData buff = new InstantBuffData()
+            {
+                id = int.Parse(row[0]),
+                isDeBuff = Convert.ToBoolean(int.Parse(row[1])),
+                buffType = (Define.InstantBuffType)int.Parse(row[2]),
+                value = int.Parse(row[3]),
+                parcentage = int.Parse(row[4]),
+                time = float.Parse(row[5]),
+            };
+
+            buff.descripition = $"{buff.parcentage}% 확률로 {buff.time}초 동안 ";
+
+            // 능력 설명
+            switch (buff.buffType)
+            {
+                case Define.InstantBuffType.DefenceDecrease:    buff.descripition += $"방어력 {buff.value}% 감소 부여";   break;
+                case Define.InstantBuffType.Slow:               buff.descripition += $"이동속도 {buff.value}% 감소 부여";  break;
+                case Define.InstantBuffType.Stun:               buff.descripition += $"기절 부여"; break;
+            }
+
+            Buff.Add(buff.id, buff);
+        }
+    }
+
     // 종족 강화 데이터
     private void UpgradeRequest(string data)
     {
@@ -189,41 +281,6 @@ public class DataManager : MonoBehaviour
         }
 
         Upgrades = dict;
-    }
-
-    private void EvolutionRequest(string data)
-    {
-        string[] lines = data.Split("\n");
-
-        for(int y = 1; y < lines.Length; y++)
-        {
-            string[] row = Row(lines[y]);
-
-            if (row.IsNull() == true)
-                continue;
-
-            for(int i=1; i<=6; i+=2)
-            {
-                AbilityData ability = new AbilityData()
-                {
-                    abilityType = (Define.AbilityType)int.Parse(row[i]),
-                    value = float.Parse(row[i+1]),
-                };
-
-                // 능력 설명
-                switch (ability.abilityType)
-                {
-                    case Define.AbilityType.Damage:         ability.descripition = $"공격력 {(int)ability.value} 증가";     break;
-                    case Define.AbilityType.DamageParcent:  ability.descripition = $"공격력 {(int)ability.value}% 증가";    break;
-                    case Define.AbilityType.AttackSpeed:    ability.descripition = $"공격속도 {ability.value} 증가";        break;
-                    case Define.AbilityType.AttackRange:    ability.descripition = $"공격범위 {ability.value} 증가";        break;
-                    case Define.AbilityType.MultiShot:      ability.descripition = $"멀티샷 {(int)ability.value} 증가";     break;
-                    default: break;
-                }
-
-                Mercenarys[y].Abilities.Add(ability);
-            }
-        }
     }
 
     // 가로 줄 읽기 (csv)

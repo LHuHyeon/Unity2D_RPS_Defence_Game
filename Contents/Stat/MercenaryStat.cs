@@ -54,9 +54,9 @@ public class MercenaryStat
     public bool     IsMultiShot             { get; set; } = false;
 
     public Define.EvolutionType     CurrentEvolution    { get { return _cureentEvolution; } set { _cureentEvolution = value; }}
-    public List<AbilityData>        Abilities           { get; set; } = new List<AbilityData>();
+    public List<BuffData>           Buffs               { get; set; } = new List<BuffData>();
 
-    public AbilityData              DebuffAbility       { get; set; }
+    public InstantBuffData          DebuffAbility       { get; set; }
 
     // 들어온 용병 정보와 내 정보가 같은지 확인
     public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
@@ -99,35 +99,36 @@ public class MercenaryStat
         // 진화된 수만큼 능력 확인 후 적용
         for(int i=0; i<((int)CurrentEvolution); i++)
         {
-            AbilityData ability = Abilities[i];
+            BuffData buff = Buffs[i];
 
-            AbilityStat(ability);
-            AbilityDebuff(ability);
+            OriginalBuff(buff);     // 고정 버프 능력 확인
+            InstantBuff(buff);      // 일시 버프 확인
         }
     }
 
-    private void AbilityStat(AbilityData ability)
+    private void OriginalBuff(BuffData buffData)
     {
-        // 버프 구간 확인
-        if (ability.abilityType >= Define.AbilityType.DeBuff)
+        if ((buffData is OriginalBuffData) == false)
             return;
 
-        switch(ability.abilityType)
+        OriginalBuffData buff = buffData as OriginalBuffData;
+
+        switch(buff.buffType)
         {
-            case Define.AbilityType.Damage:
-                AddDamage += (int)ability.value;
+            case Define.OriginalBuffType.Damage:
+                AddDamage += (int)buff.value;
                 break;
-            case Define.AbilityType.DamageParcent:
-                AddDamage += Mathf.RoundToInt(Damage * (ability.value * 0.01f));
+            case Define.OriginalBuffType.DamageParcent:
+                AddDamage += Mathf.RoundToInt(Damage * (buff.value * 0.01f));
                 break;
-            case Define.AbilityType.AttackSpeed:
-                AddAttackRate += ability.value;
+            case Define.OriginalBuffType.AttackSpeed:
+                AddAttackRate += buff.value * 0.01f;
                 break;
-            case Define.AbilityType.AttackRange:
-                AddAttackRange += ability.value;
+            case Define.OriginalBuffType.AttackRange:
+                AddAttackRange += buff.value * 0.01f;
                 break;
-            case Define.AbilityType.MultiShot:
-                MaxMultiShotCount  += (int)ability.value;
+            case Define.OriginalBuffType.MultiShot:
+                MaxMultiShotCount  += (int)buff.value;
                 IsMultiShot        = MaxMultiShotCount > 0;
                 break;
             default:
@@ -135,11 +136,21 @@ public class MercenaryStat
         }
     }
 
-    private void AbilityDebuff(AbilityData ability)
+    private void InstantBuff(BuffData buffData)
     {
-        // 디버프 구간 확인
-        if (Define.AbilityType.DeBuff <= ability.abilityType && ability.abilityType < Define.AbilityType.Skill)
-            DebuffAbility = ability;
+        if ((buffData is InstantBuffData) == false)
+            return;
+
+        InstantBuffData buff = buffData as InstantBuffData;
+
+        switch(buff.buffType)
+        {
+            case Define.InstantBuffType.DefenceDecrease:
+            case Define.InstantBuffType.Slow:
+            case Define.InstantBuffType.Stun:
+                DebuffAbility = buff;
+                break;
+        }
     }
 
     // 종족 강화에 따른 공격력 적용
@@ -183,7 +194,8 @@ public class MercenaryStat
             MaxMultiShotCount   = this.MaxMultiShotCount,
             IsMultiShot         = this.IsMultiShot,
             CurrentEvolution    = this.CurrentEvolution,
-            Abilities           = this.Abilities,
+            Buffs               = this.Buffs,
+            DebuffAbility       = this.DebuffAbility,
         };
     }
 }

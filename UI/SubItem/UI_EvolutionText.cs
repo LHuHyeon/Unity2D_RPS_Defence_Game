@@ -20,7 +20,7 @@ public class UI_EvolutionText : UI_Base
 
     private Define.EvolutionType _currentEvolution;
 
-    private AbilityData _ability;
+    private BuffData _buff;
 
     public override bool Init()
     {
@@ -37,9 +37,9 @@ public class UI_EvolutionText : UI_Base
         return true;
     }
 
-    public void SetInfo(AbilityData ability, Define.EvolutionType evolutionType)
+    public void SetInfo(BuffData buff, Define.EvolutionType evolutionType)
     {
-        _ability = ability;
+        _buff = buff;
         _currentEvolution = evolutionType;
 
         RefreshUI();
@@ -50,7 +50,7 @@ public class UI_EvolutionText : UI_Base
         if (_init == false)
             return;
 
-        GetText((int)Texts.EvolutionText).text = _ability.descripition;
+        GetText((int)Texts.EvolutionText).text = _buff.descripition;
         SetColor(GetText((int)Texts.EvolutionText), (_currentEvolution >= _evolutionType ? 1f : 0.5f));
     }
 

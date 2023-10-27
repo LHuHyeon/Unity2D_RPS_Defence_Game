@@ -17,84 +17,25 @@ public class EnemyStat : MonoBehaviour
     [SerializeField] protected int              _maxHp;         // 최대 체력
     [SerializeField] protected int              _defence;       // 방어력
     [SerializeField] protected int              _maxDefence;    // 최대 방어력
-    [SerializeField] protected int              _dropGold;      // 골드 드랍
     [SerializeField] protected float            _movespeed;     // 이동 속도
+    [SerializeField] protected float            _maxMovespeed;  // 최대 이동 속도
+    [SerializeField] protected int              _dropGold;      // 골드 드랍
 
-    public int              Id          { get { return _id; }           set { _id = value; } }
-    public string           Name        { get { return _name; }         set { _name = value; } }
-    public Define.RaceType  Race        { get { return _race; }         set { _race = value; } }
-    public int              Hp          { get { return _hp; }           set { _hp = Mathf.Clamp(value, 0, MaxHp); } }
-    public int              MaxHp       { get { return _maxHp; }        set { _maxHp = value; Hp = MaxHp; } }
-    public int              Defence     { get { return _defence; }      set { _defence = Mathf.Clamp(value, 0, MaxDefence); } }
-    public int              MaxDefence  { get { return _maxDefence; }   set { _maxDefence = value; Defence = MaxDefence; } }
-    public int              DropGold    { get { return _dropGold; }     set { _dropGold = value; } }
-    public float            MoveSpeed   { get { return _movespeed; }    set { _movespeed = value; } }
+    public int              Id              { get { return _id; }           set { _id = value; } }
+    public string           Name            { get { return _name; }         set { _name = value; } }
+    public Define.RaceType  Race            { get { return _race; }         set { _race = value; } }
+    public int              Hp              { get { return _hp; }           set { _hp = Mathf.Clamp(value, 0, MaxHp); } }
+    public int              MaxHp           { get { return _maxHp; }        set { _maxHp = value; Hp = MaxHp; } }
+    public int              Defence         { get { return _defence; }      set { _defence = Mathf.Clamp(value, 0, MaxDefence); } }
+    public int              MaxDefence      { get { return _maxDefence; }   set { _maxDefence = value; Defence = MaxDefence; } }
+    public float            MoveSpeed       { get { return _movespeed; }    set { _movespeed = Mathf.Clamp(value, 0, MaxMoveSpeed); } }
+    public float            MaxMoveSpeed    { get { return _maxMovespeed; } set { _maxMovespeed = value; MoveSpeed = MaxMoveSpeed; } }
+    public int              DropGold        { get { return _dropGold; }     set { _dropGold = value; } }
 
     private bool            _isDebuffActive = false;
 
     private UI_HpBar        _hpBar;
-    private Dictionary<Define.AbilityType, Debuff> _debuffs = new Dictionary<Define.AbilityType, Debuff>();
-
-    public class Debuff
-    {
-        public Define.AbilityType   debuffType;
-        public EnemyStat            stat;
-
-        public float    tempValue;                  // 임시 값 저장
-        
-        public float    elapsedTime = 0;            // 남은 시간
-
-        public bool     isDebuffActive = false;
-
-        public bool ApplyDebuff(AbilityData _ability, EnemyStat _stat, float _delayTime = 5f)
-        {
-            // 쿨타임 초기화
-            elapsedTime = _delayTime;
-
-            // 이미 진행 중이라면
-            if (isDebuffActive == true)
-                return false;
-
-            stat = _stat;
-            debuffType = _ability.abilityType;
-            
-            switch (_ability.abilityType)
-            {
-                case Define.AbilityType.DefenceDecrease:    // 방어력 감소
-                    tempValue = stat.Defence;
-                    stat.Defence -= Mathf.RoundToInt(stat.MaxDefence * (_ability.value * 0.01f));
-                    break;
-                case Define.AbilityType.Slow:               // 이동속도 감소
-                    tempValue = stat.MoveSpeed;
-                    stat.MoveSpeed -= Mathf.RoundToInt(stat.MoveSpeed * (_ability.value * 0.01f));
-                    break;
-                case Define.AbilityType.Stun:               // 기절/경직
-                    tempValue = stat.MoveSpeed;
-                    stat.MoveSpeed = 0;
-                    break;
-            }
-
-            isDebuffActive = true;
-
-            return true;
-        }
-
-        public void EndDebuff()
-        {
-            switch (debuffType)
-            {
-                case Define.AbilityType.DefenceDecrease:    // 방어력 감소
-                    stat.Defence = ((int)tempValue);
-                    break;
-                case Define.AbilityType.Slow:               // 이동속도 감소
-                case Define.AbilityType.Stun:               // 기절/경직
-                    stat.MoveSpeed = tempValue;
-                    break;
-            }
-
-            isDebuffActive = false;
-        }
-    }
+    private Dictionary<Define.InstantBuffType, DeBuff> _debuffs = new Dictionary<Define.InstantBuffType, DeBuff>();
 
 	enum DamageType
 	{
@@ -111,24 +52,24 @@ public class EnemyStat : MonoBehaviour
     // Wave에 맞게 스탯 수정
     public void SetWaveStat(WaveData waveData)
     {
-        Race        = waveData.race;
-        MaxHp       = waveData.hp;
-        MaxDefence  = waveData.defence;
-        MoveSpeed   = waveData.moveSpeed;
-        DropGold    = waveData.gold;
+        Race            = waveData.race;
+        MaxHp           = waveData.hp;
+        MaxDefence      = waveData.defence;
+        MaxMoveSpeed    = waveData.moveSpeed;
+        DropGold        = waveData.gold;
 
         if (_hpBar.IsNull() == false)
             _hpBar.RefreshUI();
     }
 
     // 공격 당하면
-    public void OnAttacked(int damage, AbilityData ability = null)
+    public void OnAttacked(int damage, InstantBuffData deBuff = null)
     {
         if (damage <= 0)
             return;
 
         // 디버프 부여
-        OnDeBuff(ability);
+        OnDeBuff(deBuff);
 
         // 방어력이 존재하면 -1 차감 후 종료
         if (Defence > 0)
@@ -154,21 +95,22 @@ public class EnemyStat : MonoBehaviour
     }
 
     // Debuff 시작
-    private void OnDeBuff(AbilityData ability)
+    private void OnDeBuff(InstantBuffData deBuffData)
     {
-        if (ability.IsNull() == true)
+        if (deBuffData.IsNull() == true)
             return;
 
         // 진행 중인 디버프가 존재 하는지 확인
-        Debuff debuff;
-        if (_debuffs.TryGetValue(ability.abilityType, out debuff) == false)
+        DeBuff debuff;
+        if (_debuffs.TryGetValue(deBuffData.buffType, out debuff) == false)
         {
-            debuff = new Debuff();
-            _debuffs.Add(ability.abilityType, debuff);
+            debuff = new DeBuff();
+            debuff._enemyStat = this;
+            _debuffs.Add(deBuffData.buffType, debuff);
         }
 
-        // 디버프 시작 or 초기화
-        debuff.ApplyDebuff(ability, this);
+        // 디버프 시작
+        debuff.ApplyDebuff(deBuffData);
 
         // 쿨타임 시작
         if (_isDebuffActive == false)
@@ -181,14 +123,15 @@ public class EnemyStat : MonoBehaviour
 
         while(_debuffs.Count > 0)
         {
-            foreach(Debuff debuff in _debuffs.Values)
+            // TODO : for로 바꾸기
+            foreach(DeBuff debuff in _debuffs.Values)
             {
-                debuff.elapsedTime -= Time.deltaTime;
+                debuff._elapsedTime -= Time.deltaTime;
 
-                if (debuff.elapsedTime <= 0)
+                if (debuff._elapsedTime <= 0)
                 {
                     debuff.EndDebuff();
-                    _debuffs.Remove(debuff.debuffType);
+                    _debuffs.Remove(debuff._deBuffData.buffType);
                 }
             }
 

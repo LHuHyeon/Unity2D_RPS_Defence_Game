@@ -138,7 +138,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         
         // 진화 능력 Text 적용
         for(int i=0; i<_evolutionTexts.Count; i++)
-            _evolutionTexts[i].SetInfo(_mercenary.Abilities[i], _mercenary.CurrentEvolution);
+            _evolutionTexts[i].SetInfo(_mercenary.Buffs[i], _mercenary.CurrentEvolution);
     }
 
     public void RefreshEvolution()
