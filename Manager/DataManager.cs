@@ -87,13 +87,14 @@ public class DataManager : MonoBehaviour
                 waveLevel = int.Parse(row[0]),
                 race = (Define.RaceType)int.Parse(row[1]),
                 hp = int.Parse(row[2]),
-                defence = int.Parse(row[3]),
-                moveSpeed = float.Parse(row[4]),
-                gold = int.Parse(row[5]),
-                waveGold = int.Parse(row[6]),
-                maxEnemyCount = int.Parse(row[7]),
-                spawnTime = float.Parse(row[8]),
-                spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[9]),
+                shield = int.Parse(row[3]),
+                defence = int.Parse(row[4]),
+                moveSpeed = float.Parse(row[5]),
+                gold = int.Parse(row[6]),
+                waveGold = int.Parse(row[7]),
+                maxEnemyCount = int.Parse(row[8]),
+                spawnTime = float.Parse(row[9]),
+                spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[10]),
             };
 
             dict.Add(waveData.waveLevel, waveData);

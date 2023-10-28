@@ -53,7 +53,7 @@ public class UI_HpBar : UI_Base
         float ratio = 0;
 
         // 방어력 or 체력에 따른 색 변경
-        if (_stat.Defence > 0)
+        if (_stat.Shield > 0)
         {
             hpSlider.fillRect.GetComponent<Image>().color = Color.gray;
             ratio = (float)_stat.Defence / _stat.MaxDefence;

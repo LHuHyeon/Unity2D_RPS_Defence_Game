@@ -8,6 +8,7 @@ public class WaveData
     public int              waveLevel;          // 웨이브 레벨
     public Define.RaceType  race;               // 종족
     public int              hp;                 // 체력
+    public int              shield;             // 쉴드량
     public int              defence;            // 방어력
     public float            moveSpeed;          // 이동 속도
     public int              gold;               // 골드

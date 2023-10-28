@@ -146,7 +146,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
         int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false)?._itemCount ?? 0;
         
-        _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1) + 1;
+        _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1);
 
         evolutionSlider.minValue = 0;
         evolutionSlider.maxValue = _evolutionPlanCount;

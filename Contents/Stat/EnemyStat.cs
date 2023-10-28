@@ -13,24 +13,26 @@ public class EnemyStat : MonoBehaviour
     [SerializeField] protected int              _id;
     [SerializeField] protected string           _name = "NoName";
     [SerializeField] protected Define.RaceType  _race;
-    [SerializeField] protected int              _hp;            // 체력
-    [SerializeField] protected int              _maxHp;         // 최대 체력
-    [SerializeField] protected int              _defence;       // 방어력
-    [SerializeField] protected int              _maxDefence;    // 최대 방어력
-    [SerializeField] protected float            _movespeed;     // 이동 속도
-    [SerializeField] protected float            _maxMovespeed;  // 최대 이동 속도
     [SerializeField] protected int              _dropGold;      // 골드 드랍
+    [SerializeField] protected int              _shield;        // 쉴드량
+    [SerializeField] protected int              _hp;            // 체력
+    [SerializeField] protected int              _defence;       // 방어력
+    [SerializeField] protected float            _movespeed;     // 이동 속도
+    [SerializeField] protected int              _maxHp;         // 최대 체력
+    [SerializeField] protected int              _maxDefence;    // 최대 방어력
+    [SerializeField] protected float            _maxMovespeed;  // 최대 이동 속도
 
     public int              Id              { get { return _id; }           set { _id = value; } }
     public string           Name            { get { return _name; }         set { _name = value; } }
     public Define.RaceType  Race            { get { return _race; }         set { _race = value; } }
-    public int              Hp              { get { return _hp; }           set { _hp = Mathf.Clamp(value, 0, MaxHp); } }
-    public int              MaxHp           { get { return _maxHp; }        set { _maxHp = value; Hp = MaxHp; } }
-    public int              Defence         { get { return _defence; }      set { _defence = Mathf.Clamp(value, 0, MaxDefence); } }
-    public int              MaxDefence      { get { return _maxDefence; }   set { _maxDefence = value; Defence = MaxDefence; } }
-    public float            MoveSpeed       { get { return _movespeed; }    set { _movespeed = Mathf.Clamp(value, 0, MaxMoveSpeed); } }
-    public float            MaxMoveSpeed    { get { return _maxMovespeed; } set { _maxMovespeed = value; MoveSpeed = MaxMoveSpeed; } }
     public int              DropGold        { get { return _dropGold; }     set { _dropGold = value; } }
+    public int              Shield          { get { return _shield; }       set { _shield = value; } }
+    public int              Hp              { get { return _hp; }           set { _hp           = Mathf.Clamp(value, 0, MaxHp); } }
+    public int              Defence         { get { return _defence; }      set { _defence      = Mathf.Clamp(value, 0, MaxDefence); } }
+    public float            MoveSpeed       { get { return _movespeed; }    set { _movespeed    = Mathf.Clamp(value, 0, MaxMoveSpeed); } }
+    public int              MaxHp           { get { return _maxHp; }        set { _maxHp        = value; Hp = MaxHp; } }
+    public int              MaxDefence      { get { return _maxDefence; }   set { _maxDefence   = value; Defence = MaxDefence; } }
+    public float            MaxMoveSpeed    { get { return _maxMovespeed; } set { _maxMovespeed = value; MoveSpeed = MaxMoveSpeed; } }
 
     private bool            _isDebuffActive = false;
 
@@ -41,7 +43,7 @@ public class EnemyStat : MonoBehaviour
 	{
 		Default,
 		Critical,
-		Defence,
+		Shield,
 	}
 
     void Start()
@@ -57,6 +59,7 @@ public class EnemyStat : MonoBehaviour
         MaxDefence      = waveData.defence;
         MaxMoveSpeed    = waveData.moveSpeed;
         DropGold        = waveData.gold;
+        Shield          = waveData.shield;
 
         if (_hpBar.IsNull() == false)
             _hpBar.RefreshUI();
@@ -71,15 +74,17 @@ public class EnemyStat : MonoBehaviour
         // 디버프 부여
         OnDeBuff(deBuff);
 
-        // 방어력이 존재하면 -1 차감 후 종료
-        if (Defence > 0)
+        // 쉴드가 존재하면 -1 차감 후 종료
+        if (Shield > 0)
         {
-            Defence--;
-            DamageTextEffect(DamageType.Defence, 1);
+            Shield--;
+            DamageTextEffect(DamageType.Shield, 1);
             return;
         }
 
-        int hitDamage = damage;
+        // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
+        int hitDamage = damage - Mathf.RoundToInt(damage * (Defence * 0.01f));
+        Debug.Log(hitDamage + " = " + damage + " - " + Mathf.RoundToInt(damage * (Defence * 0.01f)) + " (" + damage + " * " + (Defence * 0.01f) + ")");
 
         // TODO : 100 랜덤 수 중 10 이하면 크리티컬! (나중에 크리티컬 확률 완성 시 수정)
         bool isCritical = Random.Range(0, 101) < 10;
@@ -123,7 +128,6 @@ public class EnemyStat : MonoBehaviour
 
         while(_debuffs.Count > 0)
         {
-            // TODO : for로 바꾸기
             foreach(DeBuff debuff in _debuffs.Values)
             {
                 debuff._elapsedTime -= Time.deltaTime;
@@ -132,6 +136,7 @@ public class EnemyStat : MonoBehaviour
                 {
                     debuff.EndDebuff();
                     _debuffs.Remove(debuff._deBuffData.buffType);
+                    break;
                 }
             }
 
