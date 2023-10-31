@@ -26,6 +26,8 @@ public class Projectile : MonoBehaviour
     {
         _attackTarget = target;
         _stat = stat;
+
+        GetComponent<SpriteRenderer>().sprite = _stat.ProjectileIcon;
     }
 
     void FixedUpdate()

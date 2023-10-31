@@ -31,10 +31,13 @@ public class MercenaryController : BaseController
     private Transform           _mainAttackTarget;  // 주 공격 대상
 
     private MercenaryStat       _stat;              // 스탯
-    private EnemyController     _enemy;              // 적 정보
+    private EnemyController     _enemy;             // 적 정보
 
     private int                 _currentMultiShotCount  = 0;
+
     private List<Transform>     _multiShotTargets = new List<Transform>();
+
+    private UI_EvolutionBar     _evolutionBar;
 
     public MercenaryStat GetStat() { return _stat; }
 
@@ -47,6 +50,9 @@ public class MercenaryController : BaseController
         _stat.Mercenary = this.gameObject;
 
         _stat.RefreshAddData();
+
+        _evolutionBar = Managers.UI.MakeWorldSpaceUI<UI_EvolutionBar>(transform);
+        _evolutionBar.SetInfo(_stat);
 
         _anim.SetFloat("AttackSpeed", _stat.AttackSpeed);
 
@@ -176,8 +182,8 @@ public class MercenaryController : BaseController
         {
             Transform target = _multiShotTargets[i];
 
-            // 거리 체크 or 존재 여부 체크
-            if (IsAttackRangeCheck(target) == false || target.gameObject.isValid() == false)
+            // 거리 체크 or 주 공격 대상인지 or 존재 여부 체크
+            if (IsAttackRangeCheck(target) == false || target == _mainAttackTarget || target.gameObject.isValid() == false)
             {
                 --_currentMultiShotCount;
                 _multiShotTargets.Remove(target);

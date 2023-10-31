@@ -13,10 +13,9 @@ public class UI_HpBar : UI_Base
     private float           _posY = 0;   // 체력바 높이
 
     private EnemyStat       _stat;
-    private EnemyController _enemy;
 
-    private Slider          hpSlider;
-    private Transform       parent;
+    private Slider          _hpSlider;
+    private Transform       _parent;
 
     public override bool Init()
     {
@@ -25,24 +24,17 @@ public class UI_HpBar : UI_Base
 
         BindObject(typeof(GameObjects));
 
-        hpSlider = GetObject((int)GameObjects.HpSlider).GetComponent<Slider>();
+        _hpSlider = GetObject((int)GameObjects.HpSlider).GetComponent<Slider>();
         
-        parent  = transform.parent;
+        _parent = transform.parent;
 
-        _stat   = parent.GetComponent<EnemyStat>();
-        _enemy  = parent.GetComponent<EnemyController>();
+        _stat   = _parent.GetComponent<EnemyStat>();
 
-        _posY = (parent.GetComponent<Collider>().bounds.size.y + parent.GetComponent<Collider>().bounds.size.y / 5);
+        _posY   = (_parent.GetComponent<Collider>().bounds.size.y + _parent.GetComponent<Collider>().bounds.size.y / 5);
 
         RefreshUI();
 
         return true;
-    }
-
-    void FixedUpdate()
-    {
-        // 체력바 위치 설정
-        transform.position = parent.position + Vector3.up * _posY;
     }
 
     public void RefreshUI()
@@ -55,15 +47,18 @@ public class UI_HpBar : UI_Base
         // 방어력 or 체력에 따른 색 변경
         if (_stat.Shield > 0)
         {
-            hpSlider.fillRect.GetComponent<Image>().color = Color.gray;
-            ratio = (float)_stat.Defence / _stat.MaxDefence;
+            _hpSlider.fillRect.GetComponent<Image>().color = Color.gray;
+            ratio = (float)_stat.Shield / _stat.MaxShield;
         }
         else
         {
-            hpSlider.fillRect.GetComponent<Image>().color = Color.red;
+            _hpSlider.fillRect.GetComponent<Image>().color = Color.red;
             ratio = (float)_stat.Hp / _stat.MaxHp;
         }
         
-        hpSlider.value = ratio;
+        _hpSlider.value = ratio;
+        
+        // 체력바 위치 설정
+        transform.position = _parent.position + Vector3.up * _posY;
     }
 }

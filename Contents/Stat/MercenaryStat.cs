@@ -21,10 +21,11 @@ public class MercenaryStat
     protected GameObject                    _mercenary;             // 용병 Object
     protected SpriteLibraryAsset            _spriteLibrary;         // 캐릭터 파츠
     protected Sprite                        _icon;                  // 이미지
+    protected Sprite                        _projectileIcon;        // 발사체 이미지
     protected RuntimeAnimatorController     _animatorController;    // 애니메이션 컨트롤러
 
     protected int                           _damage;                // 공격력
-    protected float                         _attackSpeed;            // 공격 속도
+    protected float                         _attackSpeed;           // 공격 속도
     protected float                         _attackRange;           // 공격 사거리
 
     protected Define.EvolutionType          _cureentEvolution = Define.EvolutionType.Unknown;   // 현재 진화 단계
@@ -39,6 +40,7 @@ public class MercenaryStat
     public GameObject           Mercenary       { get { return _mercenary; }        set { _mercenary = value; } }
     public SpriteLibraryAsset   SpriteLibrary   { get { return _spriteLibrary; }    set { _spriteLibrary = value; }}
     public Sprite               Icon            { get { return _icon; }             set { _icon = value; }}
+    public Sprite               ProjectileIcon  { get { return _projectileIcon; }   set { _projectileIcon = value; }}
 
     public RuntimeAnimatorController    AnimatorController   { get { return _animatorController; }    set { _animatorController = value; }}
 
@@ -106,6 +108,7 @@ public class MercenaryStat
         }
     }
 
+    // 고정적인 효과를 주는 버프
     private void OriginalBuff(BuffData buffData)
     {
         if ((buffData is OriginalBuffData) == false)
@@ -136,6 +139,7 @@ public class MercenaryStat
         }
     }
 
+    // 일시적인 효과를 주는 버프or디버프
     private void InstantBuff(BuffData buffData)
     {
         if ((buffData is InstantBuffData) == false)
@@ -184,6 +188,7 @@ public class MercenaryStat
             Mercenary           = this.Mercenary,
             SpriteLibrary       = this.SpriteLibrary,
             Icon                = this.Icon,
+            ProjectileIcon      = this.ProjectileIcon,
             AnimatorController  = this.AnimatorController,
             Damage              = this.Damage,
             AttackSpeed         = this.AttackSpeed,

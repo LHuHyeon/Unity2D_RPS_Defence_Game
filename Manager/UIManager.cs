@@ -55,7 +55,7 @@ public class UIManager
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.worldCamera = Camera.main;
 
-		canvas.sortingOrder = 10;	// 2D 오브젝트 중 제일 앞에 보여야 하기 때문에 설정
+		canvas.sortingOrder = 100;	// 2D 오브젝트 중 제일 앞에 보여야 하기 때문에 설정
 
         return go.GetOrAddComponent<T>();
     }

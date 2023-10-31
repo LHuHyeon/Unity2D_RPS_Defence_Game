@@ -129,10 +129,16 @@ public class DataManager : MonoBehaviour
                 AttackSpeed = float.Parse(row[6]),
                 AttackRange = float.Parse(row[7]),
                 SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[8]),
-                AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+row[9]),
-                Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+row[10]),
+                ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[9]),
             };
+            
+            // 발사체 Prefab
+            if (mercenaryStat.Race == Define.RaceType.WereWolf)
+                mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/WereWolf");
+            else
+                mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+mercenaryStat.Job.ToString());
 
+            mercenaryStat.AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+mercenaryStat.Job.ToString());
             mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
 
             SetJobByGrade(mercenaryStat);
