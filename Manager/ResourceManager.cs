@@ -8,6 +8,7 @@ public class ResourceManager
 {
 	public Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
 	public Dictionary<string, DamageNumber> _damageTexts = new Dictionary<string, DamageNumber>();
+	public Dictionary<string, RuntimeAnimatorController> _animController = new Dictionary<string, RuntimeAnimatorController>();
 
     public void Init()
     {
@@ -31,6 +32,8 @@ public class ResourceManager
 			return DictLoad<Sprite>(_sprites, path) as T;
 		else if (typeof(T) == typeof(DamageNumber))
 			return DictLoad<DamageNumber>(_damageTexts, path) as T;
+		else if (typeof(T) == typeof(RuntimeAnimatorController))
+			return DictLoad<RuntimeAnimatorController>(_animController, path) as T;
 
 		return Resources.Load<T>(path);
 	}

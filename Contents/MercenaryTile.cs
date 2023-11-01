@@ -7,7 +7,10 @@ public class MercenaryTile : MonoBehaviour
 {
     public GameObject _mercenary;
 
-    public MercenaryController GetMercenary() { return _mercenary.GetComponent<MercenaryController>(); }
+    public MercenaryController GetMercenary()
+    {
+        return _mercenary.GetComponent<MercenaryController>(); 
+    }
 
     void Start()
     {
@@ -48,7 +51,7 @@ public class MercenaryTile : MonoBehaviour
     {
         // 용병이 존재 시 슬롯으로 이동 or 없으면 객체 생성
         if (_mercenary.IsFakeNull() == true)
-            SetMercenary(Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/Mercenary", transform));
+            SetMercenary(Managers.Game.Spawn(Define.WorldObject.Mercenary, "Mercenary/"+slot._mercenary.Job.ToString(), transform));
         else
             Managers.Game.GameScene.MercenaryRegister(GetMercenary().GetStat());
 

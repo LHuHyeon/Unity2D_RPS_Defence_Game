@@ -131,14 +131,25 @@ public class DataManager : MonoBehaviour
                 SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[8]),
                 ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[9]),
             };
-            
-            // 발사체 Prefab
-            if (mercenaryStat.Race == Define.RaceType.WereWolf)
-                mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/WereWolf");
-            else
-                mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/"+mercenaryStat.Job.ToString());
 
-            mercenaryStat.AnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+mercenaryStat.Job.ToString());
+            string projectilePath;
+
+            if (mercenaryStat.Race == Define.RaceType.WereWolf)
+                projectilePath = "Moon";
+            else
+            {
+                switch (mercenaryStat.Job)
+                {
+                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
+                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
+                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
+                    default:    projectilePath = ""; break;
+                }
+            }
+
+            // 발사체 Prefab 가져오기
+            mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);
+
             mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
 
             SetJobByGrade(mercenaryStat);

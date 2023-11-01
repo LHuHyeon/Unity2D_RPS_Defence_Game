@@ -242,7 +242,7 @@ public class UI_RPSPopup : UI_Popup
         List<MercenaryStat> mercenarys = Managers.Data.GetMercenarys(card.cardGrade, (Define.JobType)card.cardType);
 
         // 랜덤 용병 뽑기
-        MercenaryStat mercenary = mercenarys[Random.Range(0, mercenarys.Count)];
+        MercenaryStat mercenary = mercenarys[Random.Range(0, mercenarys.Count)].MercenaryClone<MercenaryStat>();
         _rewardMercenary.Add(mercenary);
 
         // viewSlot 생성

@@ -229,7 +229,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         // 첫 진화된 용병은 다른 슬롯에 등록
         if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
         {
-            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone();
+            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
             _mercenary.CurrentEvolution++;
 
             Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);

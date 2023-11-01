@@ -23,6 +23,7 @@ public class EnemyStat : MonoBehaviour
     [SerializeField] protected int              _maxDefence;    // 최대 방어력
     [SerializeField] protected float            _maxMovespeed;  // 최대 이동 속도
 
+
     public int              Id              { get { return _id; }           set { _id = value; } }
     public string           Name            { get { return _name; }         set { _name = value; } }
     public Define.RaceType  Race            { get { return _race; }         set { _race = value; } }

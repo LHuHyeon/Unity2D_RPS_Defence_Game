@@ -24,30 +24,24 @@ using UnityEngine;
  *
  */
 
-public class MercenaryController : BaseController
+public abstract class MercenaryController : BaseController
 {
-    private int                 _mask = (1 << (int)Define.LayerType.Enemy);
+    protected int                 _mask = (1 << (int)Define.LayerType.Enemy);
 
-    private Transform           _mainAttackTarget;  // 주 공격 대상
+    protected Transform           _mainAttackTarget;  // 주 공격 대상
 
-    private MercenaryStat       _stat;              // 스탯
-    private EnemyController     _enemy;             // 적 정보
+    protected MercenaryStat       _stat;              // 스탯
+    protected EnemyController     _enemy;             // 적 정보
 
-    private int                 _currentMultiShotCount  = 0;
-
-    private List<Transform>     _multiShotTargets = new List<Transform>();
-
-    private UI_EvolutionBar     _evolutionBar;
+    protected UI_EvolutionBar     _evolutionBar;
 
     public MercenaryStat GetStat() { return _stat; }
 
     // 생성 시 설정
-    public void SetStat(MercenaryStat stat)
+    public virtual void SetStat(MercenaryStat stat)
     {
-        _stat = stat;
         _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
-        _anim.runtimeAnimatorController = stat.AnimatorController;
-        _stat.Mercenary = this.gameObject;
+        _anim.runtimeAnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+_stat.Job.ToString());
 
         _stat.RefreshAddData();
 
@@ -99,19 +93,16 @@ public class MercenaryController : BaseController
     }
 
     // 공격 시작 [ Animation Event ]
-    private void StartAttackEvent()
+    protected virtual void StartAttackEvent()
     {
         if (_mainAttackTarget.IsFakeNull() == true)
             return;
 
         StartAttack(_mainAttackTarget);
-
-        if (_stat.IsMultiShot == true)
-            StartMultiShot();
     }
 
     // 공격 중단 [ Animation Event ]
-    private void StopAttackEvent()
+    protected virtual void StopAttackEvent()
     {
         // 대상이 공격 사거리 안에 있으면 Attack
         if (IsAttackRangeCheck(_mainAttackTarget) == true)
@@ -121,9 +112,9 @@ public class MercenaryController : BaseController
     }
 
     // 공격 시작
-    private void StartAttack(Transform target)
+    protected void StartAttack(Transform target)
     {
-        // 발사체 생성
+        // 발사체 Prefab 생성
         GameObject projectile = Managers.Resource.Instantiate(_stat.Projectile);
 
         // 발사!
@@ -132,7 +123,7 @@ public class MercenaryController : BaseController
     }
 
     // 타겟과의 거리 체크
-    private bool IsAttackRangeCheck(Transform target)
+    protected bool IsAttackRangeCheck(Transform target)
     {
         if (target.IsFakeNull() == true)
             return false;
@@ -146,7 +137,7 @@ public class MercenaryController : BaseController
     }
 
     // 타겟 바라보기
-    private void LookTarget()
+    protected void LookTarget()
     {
         // 회전 방향 설정
         Vector3 direction = (_mainAttackTarget.position - transform.position).normalized;
@@ -160,64 +151,9 @@ public class MercenaryController : BaseController
     }
 
     // 공격 중단
-    private void StopAttack()
+    protected virtual void StopAttack()
     {
         _mainAttackTarget = null;
         State = Define.State.Idle;
-
-        _multiShotTargets.Clear();
-        _currentMultiShotCount = 0;
     }
-
-#region 멀티샷
-
-    // 여러 타겟 공격 시작
-    private void StartMultiShot()
-    {
-        // 여러 적 탐지
-        TargetsDetection();
-
-        // 탐지된 적들 공격
-        for(int i=0; i<_multiShotTargets.Count; i++)
-        {
-            Transform target = _multiShotTargets[i];
-
-            // 거리 체크 or 주 공격 대상인지 or 존재 여부 체크
-            if (IsAttackRangeCheck(target) == false || target == _mainAttackTarget || target.gameObject.isValid() == false)
-            {
-                --_currentMultiShotCount;
-                _multiShotTargets.Remove(target);
-                continue;
-            }
-            
-            // 공격 시작
-            StartAttack(target);
-        }
-    }
-    
-    // 여러 적 탐지
-    private void TargetsDetection()
-    {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, _stat.AttackRange, _mask);
-        
-        foreach(Collider collider in colliders)
-        {
-            // 목표물인지 확인 (첫 공격 대상인지?)
-            if (collider.transform == _mainAttackTarget)
-                continue;
-
-            // 이미 탐지된 적인지 확인
-            if (_multiShotTargets.Contains(collider.transform) == true)
-                continue;
-
-            // 탐지 개수 확인
-            if (_currentMultiShotCount >= _stat.MaxMultiShotCount)
-                return;
-
-            _currentMultiShotCount++;
-            _multiShotTargets.Add(collider.transform);
-        }
-    }
-
-#endregion
 }

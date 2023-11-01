@@ -90,7 +90,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(35, 43)], 10);
+            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(35, 43)].MercenaryClone<MercenaryStat>(), 10);
         });
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;

@@ -11,18 +11,16 @@ using UnityEngine.U2D.Animation;
 
 public class MercenaryStat
 {
-    protected int                           _id;                    // 아이디
-    protected string                        _name = "NoName";       // 이름
+    protected int                           _id;
+    protected string                        _name = "NoName";
+    protected Define.RaceType               _race;
     protected int                           _salePrice;             // 판매 가격
-    protected Define.RaceType               _race;                  // 종족
     protected Define.GradeType              _grade;                 // 등급
     protected Define.JobType                _job;                   // 직업
-    protected GameObject                    _projectile;            // 발사체 Prefab
-    protected GameObject                    _mercenary;             // 용병 Object
     protected SpriteLibraryAsset            _spriteLibrary;         // 캐릭터 파츠
     protected Sprite                        _icon;                  // 이미지
+    protected GameObject                    _projectile;            // 발사체 Prefab
     protected Sprite                        _projectileIcon;        // 발사체 이미지
-    protected RuntimeAnimatorController     _animatorController;    // 애니메이션 컨트롤러
 
     protected int                           _damage;                // 공격력
     protected float                         _attackSpeed;           // 공격 속도
@@ -32,17 +30,14 @@ public class MercenaryStat
 
     public int                  Id              { get { return _id; }               set { _id = value; } }
     public string               Name            { get { return _name; }             set { _name = value; } }
-    public int                  SalePrice       { get { return _salePrice; }        set { _salePrice = value; } }
     public Define.RaceType      Race            { get { return _race; }             set { _race = value; } }
+    public int                  SalePrice       { get { return _salePrice; }        set { _salePrice = value; } }
     public Define.GradeType     Grade           { get { return _grade; }            set { _grade = value; } }
     public Define.JobType       Job             { get { return _job; }              set { _job = value; } }
-    public GameObject           Projectile      { get { return _projectile; }       set { _projectile = value; } }
-    public GameObject           Mercenary       { get { return _mercenary; }        set { _mercenary = value; } }
     public SpriteLibraryAsset   SpriteLibrary   { get { return _spriteLibrary; }    set { _spriteLibrary = value; }}
     public Sprite               Icon            { get { return _icon; }             set { _icon = value; }}
+    public GameObject           Projectile      { get { return _projectile; }       set { _projectile = value; }}
     public Sprite               ProjectileIcon  { get { return _projectileIcon; }   set { _projectileIcon = value; }}
-
-    public RuntimeAnimatorController    AnimatorController   { get { return _animatorController; }    set { _animatorController = value; }}
 
     public int      Damage                  { get { return _damage + AddDamage; }              set { _damage = value; } }
     public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }     set { _attackSpeed = value; } }
@@ -51,9 +46,6 @@ public class MercenaryStat
     public int      AddDamage               { get; set; } = 0;
     public float    AddAttackRate           { get; set; } = 0;
     public float    AddAttackRange          { get; set; } = 0;
-
-    public int      MaxMultiShotCount       { get; set; } = 0;
-    public bool     IsMultiShot             { get; set; } = false;
 
     public Define.EvolutionType     CurrentEvolution    { get { return _cureentEvolution; } set { _cureentEvolution = value; }}
     public List<BuffData>           Buffs               { get; set; } = new List<BuffData>();
@@ -81,12 +73,11 @@ public class MercenaryStat
         return false;
     }
 
-    public void RefreshAddData()
+    public virtual void RefreshAddData()
     {
         AddDamage = 0;
         AddAttackRate = 0;
         AddAttackRange = 0;
-        MaxMultiShotCount = 0;
 
         // 종족 강화 적용
         AddDamage += GetRaceAddDamage(_race);
@@ -109,7 +100,7 @@ public class MercenaryStat
     }
 
     // 고정적인 효과를 주는 버프
-    private void OriginalBuff(BuffData buffData)
+    protected virtual void OriginalBuff(BuffData buffData)
     {
         if ((buffData is OriginalBuffData) == false)
             return;
@@ -129,10 +120,6 @@ public class MercenaryStat
                 break;
             case Define.OriginalBuffType.AttackRange:
                 AddAttackRange += buff.value * 0.01f;
-                break;
-            case Define.OriginalBuffType.MultiShot:
-                MaxMultiShotCount  += (int)buff.value;
-                IsMultiShot        = MaxMultiShotCount > 0;
                 break;
             default:
                 break;
@@ -174,9 +161,9 @@ public class MercenaryStat
 	}
 
     // 깊은 복사 (DeepCopy)
-    public MercenaryStat MercenaryClone()
+    public T MercenaryClone<T>() where T : MercenaryStat, new()
     {
-        return new MercenaryStat()
+        return new T()
         {
             Id                  = this.Id,
             Name                = this.Name,
@@ -184,20 +171,16 @@ public class MercenaryStat
             Race                = this.Race,
             Grade               = this.Grade,
             Job                 = this.Job,
-            Projectile          = this.Projectile,
-            Mercenary           = this.Mercenary,
             SpriteLibrary       = this.SpriteLibrary,
             Icon                = this.Icon,
+            Projectile          = this.Projectile,
             ProjectileIcon      = this.ProjectileIcon,
-            AnimatorController  = this.AnimatorController,
             Damage              = this.Damage,
             AttackSpeed         = this.AttackSpeed,
             AttackRange         = this.AttackRange,
             AddDamage           = this.AddDamage,
             AddAttackRate       = this.AddAttackRate,
             AddAttackRange      = this.AddAttackRange,
-            MaxMultiShotCount   = this.MaxMultiShotCount,
-            IsMultiShot         = this.IsMultiShot,
             CurrentEvolution    = this.CurrentEvolution,
             Buffs               = this.Buffs,
             DebuffAbility       = this.DebuffAbility,
