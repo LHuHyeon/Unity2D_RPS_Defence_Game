@@ -71,7 +71,7 @@ public class EnemyController : BaseController
         transform.position += _direction * _stat.MoveSpeed * Time.deltaTime;
 
         // 도착할 위치에 0.1f 만큼 가까워지면 다음 위치 설정
-        if ((_wayPoints[currentWayPointIndex].position - transform.position).magnitude < 0.01f)
+        if ((_wayPoints[currentWayPointIndex].position - transform.position).magnitude < 0.05f)
         {
             // 몬스터 위치를 정확하게 목표 위치로 설정
             transform.position = _wayPoints[currentWayPointIndex].position;

@@ -126,10 +126,12 @@ public class UI_MercenaryInfoPopup : UI_Popup
         GetText((int)Texts.JobText).text        = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
         GetText((int)Texts.SaleGoldText).text   = _mercenarySalePrice.ToString();
 
+        // 추가 능력치 확인
         string addDamageText        = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
         string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
         string addAttackRangeText   = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
 
+        // 능력치 정보 문자열
         GetText((int)Texts.InfoText).text = 
 $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 공격력 {_mercenary.Damage}{addDamageText}
@@ -150,6 +152,17 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
         evolutionSlider.minValue = 0;
         evolutionSlider.maxValue = _evolutionPlanCount;
+
+        // [슬롯에서 왔을 때] : 현재 용병이 진화가 안되어 있다면 -1 차감
+        if (_slot.IsNull() == false)
+        {
+            if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
+                mercenaryCount--;
+        }
+
+        // [타일에서 왔을 때] : 현재 용병과 같은 필드의 용병 개수 가져오기
+        if (_tile.IsNull() == false)
+            mercenaryCount += Managers.Game.GetMercenaryCount(_mercenary);
 
         // 현재 용병 수 / 필요 수
         GetText((int)Texts.EvolutionGaugeText).text = $"{mercenaryCount} / {_evolutionPlanCount}";
@@ -189,9 +202,6 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         // 나머지 별 비활성화
         for(int i=((int)_mercenary.CurrentEvolution); i<_starIcons.Count; i++)
             _starIcons[i].sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_DeStar");
-
-        // 타일에서의 용병은 진화 불가
-        GetButton((int)Buttons.EvolutionButton).gameObject.SetActive(_tile.IsNull());
     }
 
     private int _maxStarCount = 3;  // 진화 별 최대 개수
@@ -220,22 +230,18 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
         // 진화 재료로 사용될 slot 가져오기
         UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false);
-        if (slot.IsNull() == true)
-            return;
 
-        // 진화 목표수 만큼 차감
-        slot.SetCount(-_evolutionPlanCount);
-
-        // 첫 진화된 용병은 다른 슬롯에 등록
-        if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
+        // 슬롯에서 진화 시
+        if (_slot.IsNull() == false)
         {
-            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
-            _mercenary.CurrentEvolution++;
+            if (slot.IsNull() == true)
+                return;
 
-            Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+            EvolutionSlot(slot);
         }
-        else
-            _mercenary.CurrentEvolution++;
+        // 타일에서 진화 시
+        else if (_tile.IsNull() == false)
+            EvolutionTile(slot);
 
         Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
 
@@ -256,11 +262,16 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
             {
                 Managers.Game.Despawn(_tile._mercenary);
                 _tile.Clear();
+                Clear();
             }
             else if (_slot.IsFakeNull() == false)
+            {
                 _slot.SetCount(-1);
 
-            Clear();
+                if (_slot.IsFakeNull() == true)
+                    Clear();
+            }
+
         }, saleText);
     }
 
@@ -270,6 +281,58 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         
         if (_isActive == true)
             StartCoroutine(ExitPopup());
+    }
+
+    // 슬롯에서 진화
+    private void EvolutionSlot(UI_MercenarySlot slot)
+    {
+        // 진화 목표수 만큼 차감
+        slot.SetCount(-_evolutionPlanCount);
+
+        // 진화를 아직 안했다면 새 슬롯에서 진행
+        if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
+        {
+            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
+            _mercenary.CurrentEvolution++;
+
+            Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+        }
+        else
+            _mercenary.CurrentEvolution++;
+    }
+
+    // 타일에서 진화
+    private void EvolutionTile(UI_MercenarySlot slot)
+    {
+        // 슬롯 개수 먼저 차감 후 재료가 부족하면 필드 용병 차감
+        int currentCount = _evolutionPlanCount;
+
+        if (slot.IsFakeNull() == false)
+        {
+            currentCount -= slot._itemCount;
+            slot.SetCount(-_evolutionPlanCount);
+        }
+
+        // 슬롯을 차감해도 재료가 부족하면 필드 용병 차감
+        if (currentCount > 0)
+        {
+            List<GameObject> mercenarys = Managers.Game.GetMercenarys(_mercenary);
+            for(int i=0; i<currentCount; i++)
+            {
+                if (_tile._mercenary == mercenarys[i])
+                {
+                    currentCount++;
+                    continue;
+                }
+
+                mercenarys[i].GetComponent<MercenaryController>()._tile.Clear();
+                Managers.Game.Despawn(mercenarys[i]);
+            }
+        }
+
+        // 재료가 충족 됐으니 진화 진행
+        _mercenary.CurrentEvolution++;
+        _mercenary.RefreshAddData();
     }
 
     private float lerpTime      = 0.5f;  // Lerp 시간
@@ -383,7 +446,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         switch (_mercenary.Job)
         {
             case Define.JobType.Warrior:
-                colorName = "#CCCC33";      // 짖은 노랑
+                colorName = "#CCCC33";      // 짙은 노랑
                 break;
             case Define.JobType.Archer:
                 colorName = "#FF6666";      // 연한 빨강?

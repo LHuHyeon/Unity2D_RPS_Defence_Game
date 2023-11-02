@@ -52,20 +52,24 @@ public class MercenaryStat
 
     public InstantBuffData          DebuffAbility       { get; set; }
 
+    public MercenaryController  _mercenary;
+
     // 들어온 용병 정보와 내 정보가 같은지 확인
     public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
     {
         if (Id != mercenary.Id)
             return false;
 
-        // 진화 정보가 같은지?
+        // 진화 정보를 확인할 것인가?
         if (isEvolution == true)
         {
+            // 진화 정보가 같은지 확인
             if (CurrentEvolution == mercenary.CurrentEvolution)
                 return true;
         }
         else
         {
+            // 진화가 안된 상태인지 확인
             if (CurrentEvolution == Define.EvolutionType.Unknown)
                 return true;
         }
@@ -84,6 +88,10 @@ public class MercenaryStat
 
         // 진화 능력 적용
         OnAbility();
+
+        // 진화 수 만큼 별 표시
+        if (_mercenary.IsNull() == false)
+            _mercenary._evolutionBar.RefreshUI();
     }
 
     // 진화에 따른 능력 적용
@@ -107,6 +115,9 @@ public class MercenaryStat
 
         OriginalBuffData buff = buffData as OriginalBuffData;
 
+        Debug.Log("강화 전 AddDamage : " + AddDamage);
+        Debug.Log("강화 전 Damage : " + Damage);
+
         switch(buff.buffType)
         {
             case Define.OriginalBuffType.Damage:
@@ -124,6 +135,9 @@ public class MercenaryStat
             default:
                 break;
         }
+
+        Debug.Log("강화 후 AddDamage : " + AddDamage);
+        Debug.Log("강화 후 Damage : " + Damage);
     }
 
     // 일시적인 효과를 주는 버프or디버프
@@ -175,12 +189,9 @@ public class MercenaryStat
             Icon                = this.Icon,
             Projectile          = this.Projectile,
             ProjectileIcon      = this.ProjectileIcon,
-            Damage              = this.Damage,
+            Damage              = this.Damage - this.AddDamage,
             AttackSpeed         = this.AttackSpeed,
             AttackRange         = this.AttackRange,
-            AddDamage           = this.AddDamage,
-            AddAttackRate       = this.AddAttackRate,
-            AddAttackRange      = this.AddAttackRange,
             CurrentEvolution    = this.CurrentEvolution,
             Buffs               = this.Buffs,
             DebuffAbility       = this.DebuffAbility,

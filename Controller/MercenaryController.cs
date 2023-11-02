@@ -26,14 +26,15 @@ using UnityEngine;
 
 public abstract class MercenaryController : BaseController
 {
-    protected int                 _mask = (1 << (int)Define.LayerType.Enemy);
+    protected int               _mask = (1 << (int)Define.LayerType.Enemy);
 
-    protected Transform           _mainAttackTarget;  // 주 공격 대상
+    protected Transform         _mainAttackTarget;  // 주 공격 대상
 
-    protected MercenaryStat       _stat;              // 스탯
-    protected EnemyController     _enemy;             // 적 정보
+    protected MercenaryStat     _stat;              // 스탯
+    protected EnemyController   _enemy;             // 적 정보
 
-    protected UI_EvolutionBar     _evolutionBar;
+    public MercenaryTile        _tile;
+    public UI_EvolutionBar      _evolutionBar;
 
     public MercenaryStat GetStat() { return _stat; }
 
@@ -43,10 +44,13 @@ public abstract class MercenaryController : BaseController
         _spriteLibrary.spriteLibraryAsset = _stat.SpriteLibrary;
         _anim.runtimeAnimatorController = Managers.Resource.Load<RuntimeAnimatorController>("Animator/"+_stat.Job.ToString());
 
-        _stat.RefreshAddData();
-
-        _evolutionBar = Managers.UI.MakeWorldSpaceUI<UI_EvolutionBar>(transform);
+        if (_evolutionBar.IsFakeNull() == true)
+            _evolutionBar = Managers.UI.MakeWorldSpaceUI<UI_EvolutionBar>(transform);
+            
         _evolutionBar.SetInfo(_stat);
+
+        _stat._mercenary = this;
+        _stat.RefreshAddData();
 
         _anim.SetFloat("AttackSpeed", _stat.AttackSpeed);
 

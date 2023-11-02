@@ -106,7 +106,7 @@ public class UI_RPSPopup : UI_Popup
 
         GetText((int)Texts.CheckButtonText).text = "뽑기";
 
-        // 리셋할 돈이 없으면 비활성화
+        // [리셋버튼] : 리셋할 돈이 없으면 비활성화
         if (Managers.Game.GameGold < _resetPrice)
         {
             SetColor(GetButton((int)Buttons.ResetButton).image, 0.3f);

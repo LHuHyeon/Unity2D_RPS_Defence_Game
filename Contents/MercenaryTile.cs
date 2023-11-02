@@ -21,12 +21,15 @@ public class MercenaryTile : MonoBehaviour
     {
         _mercenary = go;
 
+        GetMercenary()._tile = this;
+
         _mercenary.transform.SetParent(transform);
         _mercenary.transform.localPosition = Vector3.up * -0.37f;
     }
 
     public void Clear()
     {
+        GetMercenary()._tile = null;
         _mercenary = null;
     }
 

@@ -34,8 +34,6 @@ public class UI_EvolutionBar : UI_Base
     {
         _stat = stat;
 
-        transform.localPosition = Vector3.up * 0.015f;
-
         RefreshUI();
     }
 
@@ -43,6 +41,11 @@ public class UI_EvolutionBar : UI_Base
     {
         if (_init == false)
             return;
+
+        transform.localPosition = Vector3.up * 0.015f;
+
+        for(int i=0; i<_stars.Count; i++)
+            _stars[i].SetActive(false);
 
         for(int i=0; i<((int)_stat.CurrentEvolution); i++)
             _stars[i].SetActive(true);

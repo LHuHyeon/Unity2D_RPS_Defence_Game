@@ -17,10 +17,10 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private float           _attackSpeed = 7f;
-    private MercenaryStat   _stat;
+    protected   MercenaryStat   _stat;
 
-    private Transform       _attackTarget;
+    private     float           _attackSpeed = 7f;
+    private     Transform       _attackTarget;
 
     public void SetTarget(Transform target, MercenaryStat stat)
     {
@@ -57,9 +57,12 @@ public class Projectile : MonoBehaviour
         // 접촉하면 공격
         if ((_attackTarget.position - transform.position).magnitude < 0.3f)
         {
-            // TODO : 접촉 후 또 다른 효과 확인 (폭발, 감전 등)
+            TouchAbility();
             _attackTarget.GetComponent<EnemyStat>().OnAttacked(_stat.Damage, _stat.DebuffAbility);
             Managers.Resource.Destroy(this.gameObject);
         }
     }
+
+    // 접촉할 경우 실행되는 능력
+    protected virtual void TouchAbility() {}
 }

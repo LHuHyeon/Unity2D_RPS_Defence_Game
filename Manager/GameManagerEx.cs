@@ -149,9 +149,49 @@ public class GameManagerEx
 	// 용병 새로고침
 	public void RefreshMercenary()
 	{
-		// 용병의 추가 데이터 새로고침
+		// 용병 정보 새로고침
 		foreach(var mercenary in _mercenarys)
-			mercenary.GetComponent<MercenaryController>().GetStat().RefreshAddData();
+		{
+			MercenaryController mercenaryController = mercenary.GetComponent<MercenaryController>();
+
+			mercenaryController._evolutionBar.RefreshUI();		// 진화 별 표시 새로고침
+			mercenaryController.GetStat().RefreshAddData();		// 추가 능력 새로고침
+		}
+	}
+
+	// stat과 같은 필드 용별들 객체 가져오기
+	public List<GameObject> GetMercenarys(MercenaryStat stat)
+	{
+		List<GameObject> mercenarys = new List<GameObject>();
+
+		// id 검사
+		foreach(var mercenary in _mercenarys)
+		{
+			MercenaryStat mercenaryStat = mercenary.GetComponent<MercenaryController>().GetStat();
+			if (mercenaryStat.IsSameMercenary(stat, false) == true)
+				mercenarys.Add(mercenary);
+		}
+
+		return mercenarys;
+	}
+
+	// stat과 같은 필드 용병들 개수 가져오기
+	public int GetMercenaryCount(MercenaryStat stat)
+	{
+		int count = 0;
+
+		// id 검사
+		foreach(var mercenary in _mercenarys)
+		{
+			MercenaryStat mercenaryStat = mercenary.GetComponent<MercenaryController>().GetStat();
+			if (mercenaryStat.IsSameMercenary(stat, false) == true)
+			{
+				if (stat != mercenaryStat)
+					count++;
+			}
+		}
+
+		return count;
 	}
 
     // 캐릭터 소환

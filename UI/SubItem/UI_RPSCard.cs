@@ -63,6 +63,9 @@ public class UI_RPSCard : UI_Base
         if (_init == false)
             return;
 
+        // 카드 회전 초기화
+        GetObject((int)GameObjects.CardBg).transform.localRotation = Quaternion.identity;
+
         RefreshRPSIcon();
         RefreshResetColor();
     }
