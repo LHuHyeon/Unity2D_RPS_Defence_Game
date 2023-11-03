@@ -13,19 +13,21 @@ public class UI_MercenaryInfoPopup : UI_Popup
         ExitBackground,
         StarGrid,
         EvolutionTextGrid,
-        EvolutionGauge,
+        InformationBar,
+        UI_Evolution,
     }
 
     enum Buttons
     {
         SaleButton,
-        EvolutionButton,
+        FoldButton,
     }
 
     enum Images
     {
         Icon,
         IconBackground,
+        FoldIcon,
     }
 
     enum Texts
@@ -34,8 +36,6 @@ public class UI_MercenaryInfoPopup : UI_Popup
         JobText,
         InfoText,
         SaleGoldText,
-        EvolutionGaugeText,
-        EvolutionButtonText,
     }
 
     public MercenaryTile    _tile;
@@ -43,11 +43,12 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     public MercenaryStat    _mercenary;
 
-    private int             _evolutionPlanCount = 0;    // 진화 목표수
     private int             _mercenarySalePrice = 0;    // 용병 판매 금액
 
-    private bool            _isActive       = false;    // 팝업 활성화 여부
-    private bool            _isEvolution    = false;    // 진화 가능 여부
+    private bool            _isActive = false;          // 팝업 활성화 여부
+    private bool            _isFold = false;            // 정보를 접은 상태
+
+    private UI_Evolution    _evolution;
     
     private List<Image>             _starIcons = new List<Image>();
     private List<UI_EvolutionText>  _evolutionTexts = new List<UI_EvolutionText>();
@@ -64,13 +65,13 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         GetObject((int)GameObjects.ExitBackground).BindEvent(OnClickExitButton);
         GetButton((int)Buttons.SaleButton).gameObject.BindEvent(OnClickSaleButton);
-        GetButton((int)Buttons.EvolutionButton).gameObject.BindEvent(OnClickEvolutionButton);
+        GetButton((int)Buttons.FoldButton).gameObject.BindEvent(OnClickFoldButton);
         
         // 진화 등급(별) Icon 가져오기
         foreach(Transform child in GetObject((int)GameObjects.StarGrid).transform)
             _starIcons.Add(child.GetComponent<Image>());
 
-        PopulateEvolutionText();    // 진화 능력 Text 채우기
+        PopulateEvolution();    // 진화 정보 채우기
 
         RefreshUI();
 
@@ -80,20 +81,22 @@ public class UI_MercenaryInfoPopup : UI_Popup
     // 타일 정보를 받아올 때
     public void SetInfoTile(MercenaryTile tile)
     {
-        _tile = tile;
+        _tile   = tile;
+        _slot   = null;
+
         _mercenary = _tile.GetMercenary().GetStat();
 
-        _slot = null;
         RefreshUI();
     }
 
     // 슬롯 정보를 받아올 때
     public void SetInfoSlot(UI_MercenarySlot slot)
     {
-        _slot = slot;
-        _mercenary = _slot._mercenary;
+        _slot   = slot;
+        _tile   = null;
 
-        _tile = null;
+        _mercenary  = _slot._mercenary;
+
         RefreshUI();
     }
 
@@ -108,11 +111,15 @@ public class UI_MercenaryInfoPopup : UI_Popup
         _mercenary.RefreshAddData();
 
         RefreshInfo();
-        RefreshEvolution();
 
-        // 팝업이 비활성화일 때 호출이면 코루틴 작동
-        if (_isActive == false)
+        _evolution.SetInfo();
+
+        // 팝업이 비활성화이고, 정보가 접힌 상태가 아니라면
+        if (_isActive == false && _isFold == false)
+        {
+            _isActive = true;
             StartCoroutine(CallPopup());
+        }
     }
 
     public void RefreshInfo()
@@ -137,63 +144,14 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 공격력 {_mercenary.Damage}{addDamageText}
 공격속도 {_mercenary.AttackSpeed}{addAttackRateText}
 사거리 {_mercenary.AttackRange}{addAttackRangeText}";
+
+        // 타일에서 정보가 왔으면 True
+        _isFold = _tile.IsNull() == false ? true : false;
+        OnFold();
         
         // 진화 능력 Text 적용
         for(int i=0; i<_evolutionTexts.Count; i++)
             _evolutionTexts[i].SetInfo(_mercenary.Buffs[i], _mercenary.CurrentEvolution);
-    }
-
-    public void RefreshEvolution()
-    {
-        Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
-        int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false)?._itemCount ?? 0;
-        
-        _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1);
-
-        evolutionSlider.minValue = 0;
-        evolutionSlider.maxValue = _evolutionPlanCount;
-
-        // [슬롯에서 왔을 때] : 현재 용병이 진화가 안되어 있다면 -1 차감
-        if (_slot.IsNull() == false)
-        {
-            if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
-                mercenaryCount--;
-        }
-
-        // [타일에서 왔을 때] : 현재 용병과 같은 필드의 용병 개수 가져오기
-        if (_tile.IsNull() == false)
-            mercenaryCount += Managers.Game.GetMercenaryCount(_mercenary);
-
-        // 현재 용병 수 / 필요 수
-        GetText((int)Texts.EvolutionGaugeText).text = $"{mercenaryCount} / {_evolutionPlanCount}";
-
-        // 진화 버튼 활성화/비활성화 투명도 설정
-        if (mercenaryCount >= _evolutionPlanCount)
-        {
-            _isEvolution = true;
-            SetColor(GetButton((int)Buttons.EvolutionButton).image, 1);
-            SetColor(GetText((int)Texts.EvolutionButtonText), 1);
-        }
-        else
-        {
-            _isEvolution = false;
-            SetColor(GetButton((int)Buttons.EvolutionButton).image, 0.5f);
-            SetColor(GetText((int)Texts.EvolutionButtonText), 0.5f);
-        }
-
-        // 슬라이더 값 적용
-        if (_mercenary.CurrentEvolution >= Define.EvolutionType.Star3)
-        {
-            evolutionSlider.value = evolutionSlider.maxValue;
-            GetText((int)Texts.EvolutionButtonText).text = "Max";
-            GetText((int)Texts.EvolutionGaugeText).text = "Max";
-            _isEvolution = false;
-        }
-        else
-        {
-            evolutionSlider.value = mercenaryCount;
-            GetText((int)Texts.EvolutionButtonText).text = "진화";
-        }
 
         // 용병 진화 수 만큼 별 활성화
         for(int i=0; i<((int)_mercenary.CurrentEvolution); i++)
@@ -205,8 +163,9 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     }
 
     private int _maxStarCount = 3;  // 진화 별 최대 개수
-    private void PopulateEvolutionText()
+    private void PopulateEvolution()
     {
+        // 진화 정보 Text 객체 가져오기
         Transform parent = GetObject((int)GameObjects.EvolutionTextGrid).transform;
 
         foreach(Transform child in parent)
@@ -219,33 +178,10 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
             _evolutionTexts.Add(evolution);
         }
-    }
 
-    private void OnClickEvolutionButton(PointerEventData eventData)
-    {
-        Debug.Log("OnClickEvolutionButton");
-
-        if (_isEvolution == false)
-            return;
-
-        // 진화 재료로 사용될 slot 가져오기
-        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false);
-
-        // 슬롯에서 진화 시
-        if (_slot.IsNull() == false)
-        {
-            if (slot.IsNull() == true)
-                return;
-
-            EvolutionSlot(slot);
-        }
-        // 타일에서 진화 시
-        else if (_tile.IsNull() == false)
-            EvolutionTile(slot);
-
-        Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
-
-        RefreshUI();
+        // 진화 진행 객체 가져오기
+        _evolution = GetObject((int)GameObjects.UI_Evolution).GetComponent<UI_Evolution>();
+        _evolution._infoPopup = this;
     }
 
     private void OnClickSaleButton(PointerEventData eventData)
@@ -254,18 +190,24 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
 
         string saleText = Define.SaleConfirmText + "\n" + $@"<color=yellow>Gold {_mercenarySalePrice}</color>";
 
+        // 확인 Popup 생성
         Managers.UI.ShowPopupUI<UI_ConfirmPopup>().SetInfo(()=>
         {
+            //* <-- 확인을 눌렀을 때 실행되는 기능 -->
+
+            // 판매 금액 받기
             Managers.Game.GameGold += _mercenarySalePrice;
 
             if (_tile.IsFakeNull() == false)
             {
+                // 타일의 용병 정보라면 삭제
                 Managers.Game.Despawn(_tile._mercenary);
                 _tile.Clear();
                 Clear();
             }
             else if (_slot.IsFakeNull() == false)
             {
+                // 슬롯의 용병 정보라면 -1 차감
                 _slot.SetCount(-1);
 
                 if (_slot.IsFakeNull() == true)
@@ -275,64 +217,51 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         }, saleText);
     }
 
+    private void OnClickFoldButton(PointerEventData eventData)
+    {
+        Debug.Log("OnClickFoldButton");
+
+        _isFold = !_isFold;
+        OnFold();
+    }
+
+    private void OnFold()
+    {
+        int     posY            = _isFold == true ? 800 : 300;          // Background Pos Y
+        int     bgHeight        = _isFold == true ? 415 : 950;          // Background Height
+        int     bgExitHeight    = _isFold == true ? 430 : 1380;         // Exit Background Height
+        string  iconPathName    = _isFold == true ? "Down" : "Up";      // Icon Sprite Path Name
+
+        // Background 크기, 높이 설정
+        RectTransform rectBg = GetObject((int)GameObjects.Background).GetComponent<RectTransform>();
+        rectBg.anchoredPosition = new Vector2(0, posY);
+        rectBg.sizeDelta        = new Vector2(rectBg.sizeDelta.x, bgHeight);
+
+        // Exit Background 크기 설정
+        rectBg = GetObject((int)GameObjects.ExitBackground).GetComponent<RectTransform>();
+        rectBg.sizeDelta = new Vector2(rectBg.sizeDelta.x, bgExitHeight);
+
+        // Background의 Mask 비활성화
+        GetObject((int)GameObjects.Background).GetComponent<Mask>().enabled = false;
+
+        // Fold Icon Sprite 설정
+        GetImage((int)Images.FoldIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Fold_" + iconPathName);
+
+        // 정보Bar 활성화/비활성화 설정
+        GetObject((int)GameObjects.InformationBar).SetActive(!_isFold);
+    }
+
     private void OnClickExitButton(PointerEventData eventData)
     {
         Debug.Log("OnClickExitButton");
         
         if (_isActive == true)
-            StartCoroutine(ExitPopup());
-    }
-
-    // 슬롯에서 진화
-    private void EvolutionSlot(UI_MercenarySlot slot)
-    {
-        // 진화 목표수 만큼 차감
-        slot.SetCount(-_evolutionPlanCount);
-
-        // 진화를 아직 안했다면 새 슬롯에서 진행
-        if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
         {
-            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
-            _mercenary.CurrentEvolution++;
-
-            Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+            if (_isFold == true)
+                Clear();
+            else
+                StartCoroutine(ExitPopup());
         }
-        else
-            _mercenary.CurrentEvolution++;
-    }
-
-    // 타일에서 진화
-    private void EvolutionTile(UI_MercenarySlot slot)
-    {
-        // 슬롯 개수 먼저 차감 후 재료가 부족하면 필드 용병 차감
-        int currentCount = _evolutionPlanCount;
-
-        if (slot.IsFakeNull() == false)
-        {
-            currentCount -= slot._itemCount;
-            slot.SetCount(-_evolutionPlanCount);
-        }
-
-        // 슬롯을 차감해도 재료가 부족하면 필드 용병 차감
-        if (currentCount > 0)
-        {
-            List<GameObject> mercenarys = Managers.Game.GetMercenarys(_mercenary);
-            for(int i=0; i<currentCount; i++)
-            {
-                if (_tile._mercenary == mercenarys[i])
-                {
-                    currentCount++;
-                    continue;
-                }
-
-                mercenarys[i].GetComponent<MercenaryController>()._tile.Clear();
-                Managers.Game.Despawn(mercenarys[i]);
-            }
-        }
-
-        // 재료가 충족 됐으니 진화 진행
-        _mercenary.CurrentEvolution++;
-        _mercenary.RefreshAddData();
     }
 
     private float lerpTime      = 0.5f;  // Lerp 시간
@@ -341,7 +270,8 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     private Vector3 endPos      = Vector3.up * 300f;
     private IEnumerator CallPopup()
     {
-        _isActive = true;
+        // Background의 Mask 활성화
+        GetObject((int)GameObjects.Background).GetComponent<Mask>().enabled = true;
 
         Image icon = GetObject((int)GameObjects.Background).GetComponent<Image>();
 
@@ -376,6 +306,9 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
     private IEnumerator ExitPopup()
     {
         _isActive = false;
+        
+        // Background의 Mask 활성화
+        GetObject((int)GameObjects.Background).GetComponent<Mask>().enabled = true;
 
         Image icon = GetObject((int)GameObjects.Background).GetComponent<Image>();
 
@@ -403,7 +336,6 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         Clear();
     }
 
-    private void SetColor(TextMeshProUGUI text, float alpha)    { text.color = SetColor(text.color, alpha); }
     private void SetColor(Image icon, float alpha)              { icon.color = SetColor(icon.color, alpha); }
 
     // 투명도 설정
