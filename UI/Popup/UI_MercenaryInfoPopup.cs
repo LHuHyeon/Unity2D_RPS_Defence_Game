@@ -45,7 +45,9 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     private int             _mercenarySalePrice = 0;    // 용병 판매 금액
 
+    [SerializeField]
     private bool            _isActive = false;          // 팝업 활성화 여부
+    [SerializeField]
     private bool            _isFold = false;            // 정보를 접은 상태
 
     private UI_Evolution    _evolution;
@@ -115,10 +117,12 @@ public class UI_MercenaryInfoPopup : UI_Popup
         _evolution.SetInfo();
 
         // 팝업이 비활성화이고, 정보가 접힌 상태가 아니라면
-        if (_isActive == false && _isFold == false)
+        if (_isActive == false)
         {
             _isActive = true;
-            StartCoroutine(CallPopup());
+
+            if (_isFold == false)
+                StartCoroutine(CallPopup());
         }
     }
 

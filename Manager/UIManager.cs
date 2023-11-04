@@ -112,6 +112,8 @@ public class UIManager
 		go.transform.localScale = Vector3.one;
 		go.transform.localPosition = prefab.transform.position;
 
+        Managers.UI.SetCanvas(go, true);
+
 		return popup;
 	}
 
