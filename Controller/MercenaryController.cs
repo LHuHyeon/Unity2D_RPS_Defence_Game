@@ -116,7 +116,7 @@ public abstract class MercenaryController : BaseController
     }
 
     // 공격 시작
-    protected void StartAttack(Transform target)
+    protected virtual void StartAttack(Transform target)
     {
         // 발사체 Prefab 생성
         GameObject projectile = Managers.Resource.Instantiate(_stat.Projectile);

@@ -226,11 +226,12 @@ public class DataManager : MonoBehaviour
             // 능력 설명
             switch (buff.buffType)
             {
-                case Define.OriginalBuffType.Damage:         buff.descripition = $"공격력 {buff.value} 증가";   break;
-                case Define.OriginalBuffType.DamageParcent:  buff.descripition = $"공격력 {buff.value}% 증가";  break;
-                case Define.OriginalBuffType.AttackSpeed:    buff.descripition = $"공격속도 {buff.value} 증가"; break;
-                case Define.OriginalBuffType.AttackRange:    buff.descripition = $"공격범위 {buff.value} 증가"; break;
-                case Define.OriginalBuffType.MultiShot:      buff.descripition = $"멀티샷 {buff.value} 증가";   break;
+                case Define.OriginalBuffType.Damage:        buff.descripition = $"공격력 {buff.value} 증가";   break;
+                case Define.OriginalBuffType.DamageParcent: buff.descripition = $"공격력 {buff.value}% 증가";  break;
+                case Define.OriginalBuffType.AttackSpeed:   buff.descripition = $"공격속도 {buff.value} 증가"; break;
+                case Define.OriginalBuffType.AttackRange:   buff.descripition = $"공격범위 {buff.value} 증가"; break;
+                case Define.OriginalBuffType.MultiShot:     buff.descripition = $"멀티샷 {buff.value} 증가";   break;
+                case Define.OriginalBuffType.Splash:        buff.descripition = $"확산 피해 범위 {buff.value} 증가";   break;
             }
 
             Buff.Add(buff.id, buff);

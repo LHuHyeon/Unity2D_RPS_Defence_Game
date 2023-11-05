@@ -17,6 +17,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    protected   int             _mask = (1 << (int)Define.LayerType.Enemy);
+
     protected   MercenaryStat   _stat;
 
     private     float           _attackSpeed = 7f;
@@ -63,6 +65,30 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    // TODO: 접촉 능력 개수가 늘어나면 Class로 관리
     // 접촉할 경우 실행되는 능력
-    protected virtual void TouchAbility() {}
+    protected virtual void TouchAbility()
+    {
+        if ((_stat is WizardStat) == false)
+            return;
+
+        WizardStat wizardStat = _stat as WizardStat;
+
+        if (wizardStat.IsSplash == false)
+            return;
+
+        GameObject explostion           = Managers.Resource.Instantiate("Explosion/Hit01");
+        explostion.transform.position   = _attackTarget.position;
+        explostion.transform.localScale = Vector3.one * wizardStat.SplashRange;
+
+        // 주변 Enemy 탐색
+        Collider[] colliders = Physics.OverlapSphere(transform.position, wizardStat.SplashRange, _mask);
+
+        // 감지된 Enemy 공격
+        foreach(Collider collider in colliders)
+        {
+            if (collider.gameObject != this)
+                collider.GetComponent<EnemyStat>().OnAttacked(_stat.Damage, _stat.DebuffAbility);
+        }
+    }
 }

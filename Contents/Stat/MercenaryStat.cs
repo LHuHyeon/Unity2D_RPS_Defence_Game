@@ -24,7 +24,7 @@ public class MercenaryStat
 
     protected int                           _damage;                // 공격력
     protected float                         _attackSpeed;           // 공격 속도
-    protected float                         _attackRange;           // 공격 사거리
+    protected float                         _attackRange;           // 공격 범위
 
     protected Define.EvolutionType          _cureentEvolution = Define.EvolutionType.Unknown;   // 현재 진화 단계
 
@@ -115,9 +115,6 @@ public class MercenaryStat
 
         OriginalBuffData buff = buffData as OriginalBuffData;
 
-        Debug.Log("강화 전 AddDamage : " + AddDamage);
-        Debug.Log("강화 전 Damage : " + Damage);
-
         switch(buff.buffType)
         {
             case Define.OriginalBuffType.Damage:
@@ -135,9 +132,6 @@ public class MercenaryStat
             default:
                 break;
         }
-
-        Debug.Log("강화 후 AddDamage : " + AddDamage);
-        Debug.Log("강화 후 Damage : " + Damage);
     }
 
     // 일시적인 효과를 주는 버프or디버프

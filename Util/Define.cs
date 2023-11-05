@@ -60,6 +60,7 @@ public class Define
 		AttackSpeed		= 3,	// 공격 속도
 		AttackRange		= 4,	// 공격 사거리
 		MultiShot		= 5,	// 멀티샷
+		Splash			= 6,	// 스플래쉬
 	}
 
 	// 일시적인 버프/디버프
