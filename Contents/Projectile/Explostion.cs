@@ -5,7 +5,7 @@ using UnityEngine;
 public class Explostion : MonoBehaviour
 {
     [SerializeField]
-    private float disableTime = 1f;
+    private float   _disableTime = 1f;
 
     void OnEnable()
     {
@@ -14,7 +14,7 @@ public class Explostion : MonoBehaviour
 
     private IEnumerator DisableCoroutine()
     {
-        yield return new WaitForSeconds(disableTime);
+        yield return new WaitForSeconds(_disableTime);
 
         Managers.Resource.Destroy(this.gameObject);
     }

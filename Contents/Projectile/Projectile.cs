@@ -17,7 +17,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    protected   int             _mask = (1 << (int)Define.LayerType.Enemy);
+    private     int             _mask = (1 << (int)Define.LayerType.Enemy);
 
     protected   MercenaryStat   _stat;
 
@@ -65,8 +65,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    // TODO: 접촉 능력 개수가 늘어나면 Class로 관리
-    // 접촉할 경우 실행되는 능력
+    // 접촉할 경우 실행되는 능력 (능력 추가 시 클래스 분류 진행)
     protected virtual void TouchAbility()
     {
         if ((_stat is WizardStat) == false)
@@ -77,7 +76,13 @@ public class Projectile : MonoBehaviour
         if (wizardStat.IsSplash == false)
             return;
 
-        GameObject explostion           = Managers.Resource.Instantiate("Explosion/Hit01");
+        string explostionPath = "";
+
+        if      (wizardStat.SplashRange > 0.5f)    explostionPath = "Explosion/Hit03";
+        else if (wizardStat.SplashRange > 0.2f)    explostionPath = "Explosion/Hit02";
+        else if (wizardStat.SplashRange > 0.0f)    explostionPath = "Explosion/Hit01";
+
+        GameObject explostion           = Managers.Resource.Instantiate(explostionPath);
         explostion.transform.position   = _attackTarget.position;
         explostion.transform.localScale = Vector3.one * wizardStat.SplashRange;
 
@@ -88,7 +93,10 @@ public class Projectile : MonoBehaviour
         foreach(Collider collider in colliders)
         {
             if (collider.gameObject != this)
+            {
+                Debug.Log(collider.name);
                 collider.GetComponent<EnemyStat>().OnAttacked(_stat.Damage, _stat.DebuffAbility);
+            }
         }
     }
 }

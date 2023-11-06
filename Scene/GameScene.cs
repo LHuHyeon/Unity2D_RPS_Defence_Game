@@ -23,7 +23,8 @@ public class GameScene : BaseScene
 		while(Managers.Data.IsData() == false)
 			yield return null;
 
-		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
+		// Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
+		Managers.UI.ShowPopupUI<UI_DrawAbilityPopup>();
 		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage01").GetComponent<WaveSystem>();
 	}
 }
