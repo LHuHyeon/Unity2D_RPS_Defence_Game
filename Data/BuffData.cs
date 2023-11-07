@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BuffData
 {
-    public int                      id;             // 버프 id
-    public int                      value;          // 값
-    public string                   descripition;   // 설명
+    public int      id;             // 버프 id
+    public int      value;          // 값
+    public string   descripition;   // 설명
 }

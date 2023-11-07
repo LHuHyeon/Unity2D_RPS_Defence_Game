@@ -123,6 +123,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
             if (_isFold == false)
                 StartCoroutine(CallPopup());
+            else
+                SetColor(GetObject((int)GameObjects.Background).GetComponent<Image>(), maxAlpha);
         }
     }
 

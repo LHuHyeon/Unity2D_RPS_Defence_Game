@@ -18,7 +18,8 @@ public class UI_AbilityCard : UI_Base
         DescripitionText,
     }
 
-    public bool _isChoice = false;
+    public AbilityData  _ability;
+    public bool         _isChoice = false;
 
     public override bool Init()
     {

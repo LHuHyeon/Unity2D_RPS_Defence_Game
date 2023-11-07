@@ -52,6 +52,17 @@ public class Define
 		Enemy,
 	}
 
+	// 능력 카드
+	public enum AbilityType
+	{
+		JobDamageParcent	= 1,	// 직업 공격력 	% 상승
+		RaceDamageParcent 	= 2,	// 종족 공격력 	% 상승
+		DefenceDecrease 	= 3,	// 적 방어력 	% 감소
+		ShieldDecrease 		= 4,	// 적 쉴드 		% 감소
+		SpeedDecerase		= 5,	// 적 이동속도	% 감소
+		GoldParcent 		= 6,	// % 확률로 +1 Gold 획득
+	}
+
 	// 고정 버프
 	public enum OriginalBuffType
 	{
@@ -123,7 +134,8 @@ public class Define
 	public const string UpgradeDataNumber 		= "2068092916";
 	public const string EvolutionDataNumber 	= "279655201";
 	public const string OriginalBuffDataNumber 	= "1888981556";
-	public const string InstantBuffDataNumber 			= "1364019981";
+	public const string InstantBuffDataNumber	= "1364019981";
+	public const string AbilityDataNumber		= "275010908";
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
 }

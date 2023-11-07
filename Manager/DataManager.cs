@@ -15,6 +15,8 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, BuffData>        Buff        { get; private set; }
     public Dictionary<int, UpgradeData>     Upgrades    { get; private set; }
 
+    public Dictionary<Define.AbilityType, AbilityData>  Abilities { get; private set; }
+
     // 등급마다 직업별로 용병들이 존재한 이중 딕셔너리
     public Dictionary<Define.GradeType, Dictionary<Define.JobType, List<MercenaryStat>>> JobByGrade { get; private set; }
 
@@ -27,6 +29,7 @@ public class DataManager : MonoBehaviour
         StartCoroutine(DataRequest(OriginalBuffRequest, Define.OriginalBuffDataNumber));
         StartCoroutine(DataRequest(InstantBuffRequest, Define.InstantBuffDataNumber));
         StartCoroutine(DataRequest(UpgradeRequest, Define.UpgradeDataNumber));
+        StartCoroutine(DataRequest(AbilityRequest, Define.AbilityDataNumber));
     }
 
     public bool IsData()
@@ -94,11 +97,13 @@ public class DataManager : MonoBehaviour
                 waveGold = int.Parse(row[7]),
                 maxEnemyCount = int.Parse(row[8]),
                 spawnTime = float.Parse(row[9]),
-                spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[10]),
             };
 
             dict.Add(waveData.waveLevel, waveData);
         }
+
+        // string Data 가져오기
+        WaveStringData(dict);
 
         Waves = dict;
     }
@@ -128,38 +133,19 @@ public class DataManager : MonoBehaviour
                 Damage = int.Parse(row[5]),
                 AttackSpeed = float.Parse(row[6]),
                 AttackRange = float.Parse(row[7]),
-                SpriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[8]),
-                ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[9]),
             };
-
-            string projectilePath;
-
-            if (mercenaryStat.Race == Define.RaceType.WereWolf)
-                projectilePath = "Moon";
-            else
-            {
-                switch (mercenaryStat.Job)
-                {
-                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
-                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
-                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
-                    default:    projectilePath = ""; break;
-                }
-            }
-
-            // 발사체 Prefab 가져오기
-            mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);
-
-            mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
 
             SetJobByGrade(mercenaryStat);
             dict.Add(mercenaryStat.Id, mercenaryStat);
         }
 
-        Mercenarys = dict;
-
         // 진화 능력 가져오기
         StartCoroutine(DataRequest(EvolutionRequest, Define.EvolutionDataNumber));
+
+        // string Data 가져오기
+        MercenaryStringData(dict);
+
+        Mercenarys = dict;
     }
 
     // 등급별로 직업을 나누고, 직업안에 List으로 용병 저장.
@@ -302,6 +288,116 @@ public class DataManager : MonoBehaviour
         Upgrades = dict;
     }
 
+    // 능력 데이터
+    private void AbilityRequest(string data)
+    {
+        Dictionary<Define.AbilityType, AbilityData> dict = new Dictionary<Define.AbilityType, AbilityData>();
+
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            AbilityData abilityData = new AbilityData()
+            {
+                abilityType = (Define.AbilityType)int.Parse(row[0]),
+                value = float.Parse(row[1]),
+            };
+
+            dict.Add(abilityData.abilityType, abilityData);
+        }
+
+        AbilityStringData(dict);
+
+        Abilities = dict;
+    }
+
+#endregion
+
+#region String Data
+
+    private void WaveStringData(Dictionary<int, WaveData> dict)
+    {
+        string[] lines = Resources.Load<TextAsset>($"Data/WaveData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            int waveLevel = int.Parse(row[0]);
+
+            dict[waveLevel].spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[1]);
+        }
+    }
+
+    private void MercenaryStringData(Dictionary<int, MercenaryStat> dict)
+    {
+        string[] lines = Resources.Load<TextAsset>($"Data/MercenaryData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            int id = int.Parse(row[0]);
+
+            MercenaryStat mercenaryStat = dict[id];
+
+            mercenaryStat.SpriteLibrary  = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[1]);
+            mercenaryStat.ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[2]);
+
+            string projectilePath;
+
+            if (mercenaryStat.Race == Define.RaceType.WereWolf)
+                projectilePath = "Moon";
+            else
+            {
+                switch (mercenaryStat.Job)
+                {
+                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
+                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
+                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
+                    default:    projectilePath = ""; break;
+                }
+            }
+
+            // 발사체 Prefab 가져오기
+            mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);
+            mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
+
+            dict[id] = mercenaryStat;
+        }
+    }
+
+    private void AbilityStringData(Dictionary<Define.AbilityType, AbilityData> dict)
+    {
+        string[] lines = Resources.Load<TextAsset>($"Data/AbilityData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            Define.AbilityType abilityType = (Define.AbilityType)int.Parse(row[0]);
+
+            dict[abilityType].name = row[1];
+            dict[abilityType].descripition = row[2];
+        }
+    }
+
+#endregion
+
     // 가로 줄 읽기 (csv)
     private string[] Row(string line)
     {
@@ -314,6 +410,4 @@ public class DataManager : MonoBehaviour
 
         return row;
     }
-
-#endregion
 }
