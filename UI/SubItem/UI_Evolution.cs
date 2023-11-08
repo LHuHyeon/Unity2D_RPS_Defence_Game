@@ -130,12 +130,11 @@ public class UI_Evolution : UI_Base
                 return;
 
             EvolutionSlot(slot);
+            Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
         }
         // 타일에서 진화 시
         else if (_tile.IsFakeNull() == false)
             EvolutionTile(slot);
-
-        Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
 
         _infoPopup.RefreshUI();
     }

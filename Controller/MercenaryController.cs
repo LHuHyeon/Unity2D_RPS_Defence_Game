@@ -52,9 +52,15 @@ public abstract class MercenaryController : BaseController
         _stat._mercenary = this;
         _stat.RefreshAddData();
 
-        _anim.SetFloat("AttackSpeed", _stat.AttackSpeed);
+        RefreshObject();
 
         State = Define.State.Idle;
+    }
+
+    public void RefreshObject()
+    {
+        _anim.SetFloat("AttackSpeed", _stat.AttackSpeed);
+        _evolutionBar.RefreshUI();
     }
 
     protected override void Init()

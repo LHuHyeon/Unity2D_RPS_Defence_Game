@@ -13,7 +13,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         ExitBackground,
         StarGrid,
         EvolutionTextGrid,
-        InformationBar,
+        StatBar,
         UI_Evolution,
     }
 
@@ -32,9 +32,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     enum Texts
     {
-        RaceText,
-        JobText,
         InfoText,
+        StatText,
         SaleGoldText,
     }
 
@@ -132,28 +131,36 @@ public class UI_MercenaryInfoPopup : UI_Popup
     {
         _mercenarySalePrice = _mercenary.SalePrice * ((int)_mercenary.CurrentEvolution+1);
 
+        GetImage((int)Images.Icon).sprite           = _mercenary.Icon;
         GetImage((int)Images.IconBackground).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Bg_Grade_"+_mercenary.Grade.ToString());
-        GetImage((int)Images.Icon).sprite = _mercenary.Icon;
 
-        GetText((int)Texts.RaceText).text       = $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>";
-        GetText((int)Texts.JobText).text        = $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>";
         GetText((int)Texts.SaleGoldText).text   = _mercenarySalePrice.ToString();
 
         // 추가 능력치 확인
         string addDamageText        = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
+        string addRaceDamageText    = _mercenary.AddRaceDamage > 0 ? $@"<color=yellow>[+{_mercenary.AddRaceDamage}]</color>" : "";
         string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
         string addAttackRangeText   = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
 
         // 능력치 정보 문자열
-        GetText((int)Texts.InfoText).text = 
-$@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
-공격력 {_mercenary.Damage}{addDamageText}
-공격속도 {_mercenary.AttackSpeed}{addAttackRateText}
-사거리 {_mercenary.AttackRange}{addAttackRangeText}";
+        GetText((int)Texts.StatText).text = 
+        $@"공격력 {_mercenary.Damage}{addRaceDamageText}{addDamageText}" + "\n" +
+        $@"공격속도 {_mercenary.AttackSpeed}{addAttackRateText}" + "\n" +
+        $@"사거리 {_mercenary.AttackRange}{addAttackRangeText}";
 
-        // 타일에서 정보가 왔으면 True
-        _isFold = _tile.IsNull() == false ? true : false;
-        OnFold();
+        // 용병 정보 문자열
+        GetText((int)Texts.InfoText).text = 
+        $@"직업 <color={GetJobColor()}>{_mercenary.Job.ToString()}</color>" + "\n" +
+        $@"종족 <color={GetRaceColor()}>{_mercenary.Race.ToString()}</color>" + "\n" +
+        $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>";
+
+        // 팝업이 활성화가 안됐다면
+        if (_isActive == false)
+        {
+            // 타일에서 정보가 왔으면 True
+            _isFold = _tile.IsNull() == false;
+            OnFold();
+        }
         
         // 진화 능력 Text 적용
         for(int i=0; i<_evolutionTexts.Count; i++)
@@ -254,7 +261,7 @@ $@"등급 <color={GetGradeColor()}>{_mercenary.Grade.ToString()}</color>
         GetImage((int)Images.FoldIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Fold_" + iconPathName);
 
         // 정보Bar 활성화/비활성화 설정
-        GetObject((int)GameObjects.InformationBar).SetActive(!_isFold);
+        GetObject((int)GameObjects.StatBar).SetActive(!_isFold);
     }
 
     private void OnClickExitButton(PointerEventData eventData)

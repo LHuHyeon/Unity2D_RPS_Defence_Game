@@ -39,11 +39,12 @@ public class MercenaryStat
     public GameObject           Projectile      { get { return _projectile; }       set { _projectile = value; }}
     public Sprite               ProjectileIcon  { get { return _projectileIcon; }   set { _projectileIcon = value; }}
 
-    public int      Damage                  { get { return _damage + AddDamage; }              set { _damage = value; } }
-    public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }     set { _attackSpeed = value; } }
-    public float    AttackRange             { get { return _attackRange + AddAttackRange; }    set { _attackRange = value; } }
+    public int      Damage                  { get { return _damage + AddDamage + AddRaceDamage; }   set { _damage = value; } }
+    public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }          set { _attackSpeed = value; } }
+    public float    AttackRange             { get { return _attackRange + AddAttackRange; }         set { _attackRange = value; } }
 
     public int      AddDamage               { get; set; } = 0;
+    public int      AddRaceDamage           { get; set; } = 0;
     public float    AddAttackRate           { get; set; } = 0;
     public float    AddAttackRange          { get; set; } = 0;
 
@@ -80,18 +81,19 @@ public class MercenaryStat
     public virtual void RefreshAddData()
     {
         AddDamage = 0;
+        AddRaceDamage = 0;
         AddAttackRate = 0;
         AddAttackRange = 0;
 
-        // 종족 강화 적용
-        AddDamage += GetRaceAddDamage(_race);
+        // 종족 강화 데미지
+        AddRaceDamage += GetRaceAddDamage();
 
         // 진화 능력 적용
         OnAbility();
 
-        // 진화 수 만큼 별 표시
+        // 객체 존재 시 스탯 새로고침
         if (_mercenary.IsNull() == false)
-            _mercenary._evolutionBar.RefreshUI();
+            _mercenary.RefreshObject();
     }
 
     // 진화에 따른 능력 적용
@@ -124,10 +126,10 @@ public class MercenaryStat
                 AddDamage += Mathf.RoundToInt(Damage * (buff.value * 0.01f));
                 break;
             case Define.OriginalBuffType.AttackSpeed:
-                AddAttackRate += buff.value * 0.01f;
+                AddAttackRate += buff.value;
                 break;
             case Define.OriginalBuffType.AttackRange:
-                AddAttackRange += buff.value * 0.01f;
+                AddAttackRange += buff.value;
                 break;
             default:
                 break;
@@ -153,9 +155,9 @@ public class MercenaryStat
     }
 
     // 종족 강화에 따른 공격력 적용
-	private int GetRaceAddDamage(Define.RaceType raceType)
+	private int GetRaceAddDamage()
 	{
-		switch (raceType)
+		switch (_race)
 		{
 			case Define.RaceType.Human:
 				return Managers.Game.HumanAddDamage;

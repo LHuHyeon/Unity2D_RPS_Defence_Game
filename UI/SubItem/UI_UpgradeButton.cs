@@ -96,5 +96,7 @@ public class UI_UpgradeButton : UI_Base
             Debug.Log(_raceType.ToString() + " Max Level : " + _currentLevel);
 
         RefreshUI();
+
+        Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.RefreshUI();
     }
 }

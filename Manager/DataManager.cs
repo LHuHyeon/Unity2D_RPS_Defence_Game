@@ -71,6 +71,8 @@ public class DataManager : MonoBehaviour
 
 #region 데이터 파싱
 
+    #region Wave Data
+
     // 웨이브 마다 몬스터 스탯 저장 
     private void WaveRequest(string data)
     {
@@ -107,6 +109,27 @@ public class DataManager : MonoBehaviour
 
         Waves = dict;
     }
+
+    private void WaveStringData(Dictionary<int, WaveData> dict)
+    {
+        string[] lines = Resources.Load<TextAsset>($"Data/WaveData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            int waveLevel = int.Parse(row[0]);
+
+            dict[waveLevel].spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[1]);
+        }
+    }
+
+    #endregion
+
+    #region 용병 Data
 
     // 모든 용병 데이터 저장
     private void MercenaryRequest(string data)
@@ -172,6 +195,51 @@ public class DataManager : MonoBehaviour
         mercenaryHash.Add(mercenary);
     }
 
+    private void MercenaryStringData(Dictionary<int, MercenaryStat> dict)
+    {
+        string[] lines = Resources.Load<TextAsset>($"Data/MercenaryData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            int id = int.Parse(row[0]);
+
+            MercenaryStat mercenaryStat = dict[id];
+
+            mercenaryStat.SpriteLibrary  = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[1]);
+            mercenaryStat.ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[2]);
+
+            string projectilePath;
+
+            if (mercenaryStat.Race == Define.RaceType.WereWolf)
+                projectilePath = "Moon";
+            else
+            {
+                switch (mercenaryStat.Job)
+                {
+                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
+                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
+                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
+                    default:    projectilePath = ""; break;
+                }
+            }
+
+            // 발사체 Prefab 가져오기
+            mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);
+            mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
+
+            dict[id] = mercenaryStat;
+        }
+    }
+
+    #endregion
+
+    #region 진화 Data
+
     private void EvolutionRequest(string data)
     {
         string[] lines = data.Split("\n");
@@ -191,6 +259,10 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region 버프 Data
+
     private void OriginalBuffRequest(string data)
     {
         string[] lines = data.Split("\n");
@@ -206,7 +278,7 @@ public class DataManager : MonoBehaviour
             {
                 id = int.Parse(row[0]),
                 buffType = (Define.OriginalBuffType)int.Parse(row[1]),
-                value = int.Parse(row[2]),
+                value = float.Parse(row[2]),
             };
 
             // 능력 설명
@@ -259,6 +331,10 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region 강화 Data
+
     // 종족 강화 데이터
     private void UpgradeRequest(string data)
     {
@@ -288,6 +364,10 @@ public class DataManager : MonoBehaviour
         Upgrades = dict;
     }
 
+    #endregion
+
+    #region 능력 Data
+
     // 능력 데이터
     private void AbilityRequest(string data)
     {
@@ -316,68 +396,6 @@ public class DataManager : MonoBehaviour
         Abilities = dict;
     }
 
-#endregion
-
-#region String Data
-
-    private void WaveStringData(Dictionary<int, WaveData> dict)
-    {
-        string[] lines = Resources.Load<TextAsset>($"Data/WaveData").text.Split("\n");
-
-        for(int y = 1; y < lines.Length; y++)
-        {
-            string[] row = Row(lines[y]);
-
-            if (row.IsNull() == true)
-                continue;
-
-            int waveLevel = int.Parse(row[0]);
-
-            dict[waveLevel].spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[1]);
-        }
-    }
-
-    private void MercenaryStringData(Dictionary<int, MercenaryStat> dict)
-    {
-        string[] lines = Resources.Load<TextAsset>($"Data/MercenaryData").text.Split("\n");
-
-        for(int y = 1; y < lines.Length; y++)
-        {
-            string[] row = Row(lines[y]);
-
-            if (row.IsNull() == true)
-                continue;
-
-            int id = int.Parse(row[0]);
-
-            MercenaryStat mercenaryStat = dict[id];
-
-            mercenaryStat.SpriteLibrary  = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[1]);
-            mercenaryStat.ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[2]);
-
-            string projectilePath;
-
-            if (mercenaryStat.Race == Define.RaceType.WereWolf)
-                projectilePath = "Moon";
-            else
-            {
-                switch (mercenaryStat.Job)
-                {
-                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
-                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
-                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
-                    default:    projectilePath = ""; break;
-                }
-            }
-
-            // 발사체 Prefab 가져오기
-            mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);
-            mercenaryStat.Icon = mercenaryStat.SpriteLibrary.GetSprite("Block", "0");
-
-            dict[id] = mercenaryStat;
-        }
-    }
-
     private void AbilityStringData(Dictionary<Define.AbilityType, AbilityData> dict)
     {
         string[] lines = Resources.Load<TextAsset>($"Data/AbilityData").text.Split("\n");
@@ -395,6 +413,8 @@ public class DataManager : MonoBehaviour
             dict[abilityType].descripition = row[2];
         }
     }
+
+    #endregion
 
 #endregion
 
