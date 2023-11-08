@@ -25,7 +25,7 @@ public class ArcherStat : MercenaryStat
 
         switch(buff.buffType)
         {
-            case Define.OriginalBuffType.MultiShot:
+            case Define.BuffType.MultiShot:
                 MaxMultiShotCount  += (int)buff.value;
                 IsMultiShot        = MaxMultiShotCount > 0;
                 break;

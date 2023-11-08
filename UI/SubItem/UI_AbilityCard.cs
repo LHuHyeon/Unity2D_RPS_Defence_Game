@@ -18,8 +18,9 @@ public class UI_AbilityCard : UI_Base
         DescripitionText,
     }
 
-    public AbilityData  _ability;
-    public bool         _isChoice = false;
+    public AbilityData      _ability;
+
+    public bool _isChoice = false;
 
     public override bool Init()
     {
@@ -42,7 +43,19 @@ public class UI_AbilityCard : UI_Base
 
     public void RefreshUI()
     {
-        // TODO : 능력 카드 새로고침
+        // 능력 랜덤 뽑기
+        Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
+        _ability = Managers.Data.Abilities[abilityType];
+
+        string name = _ability.abilityType.ToString().Replace("DamageParcent", "");
+
+        _ability.name = _ability.name.Replace("{name}", name);
+        _ability.descripition = _ability.descripition.Replace("{name}", name);
+
+        GetImage((int)Images.Icon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Ability/"+abilityType.ToString());
+
+        GetText((int)Texts.AbilityNameText).text = _ability.name;
+        GetText((int)Texts.DescripitionText).text = _ability.descripition;
     }
 
     private void OnClickAbilityCard(GameObject go)
@@ -69,5 +82,10 @@ public class UI_AbilityCard : UI_Base
         Color color = icon.color;
         color.a = alpha;
         icon.color = color;
+    }
+
+    public void Clear()
+    {
+        
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class InstantBuffData : BuffData
 {
     public bool                     isDeBuff;       // 디버프인가?
-    public Define.InstantBuffType   buffType;       // 버프 종류
+    public Define.DeBuffType        buffType;       // 버프 종류
     public int                      parcentage;     // 확률
     public float                    time;           // 시간
 }

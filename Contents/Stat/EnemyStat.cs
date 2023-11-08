@@ -40,7 +40,7 @@ public class EnemyStat : MonoBehaviour
     private bool            _isDebuffActive = false;
     private UI_HpBar        _hpBar;
 
-    private Dictionary<Define.InstantBuffType, DeBuff> Debuffs = new Dictionary<Define.InstantBuffType, DeBuff>();
+    private Dictionary<Define.DeBuffType, DeBuff> Debuffs = new Dictionary<Define.DeBuffType, DeBuff>();
 
 	enum DamageType
 	{
@@ -88,7 +88,6 @@ public class EnemyStat : MonoBehaviour
 
         // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
         int hitDamage = damage - Mathf.RoundToInt(damage * (Defence * 0.01f));
-        // Debug.Log(hitDamage + " = " + damage + " - " + Mathf.RoundToInt(damage * (Defence * 0.01f)) + " (" + damage + " * " + (Defence * 0.01f) + ")");
 
         // TODO : 100 랜덤 수 중 10 이하면 크리티컬! (나중에 크리티컬 확률 완성 시 수정)
         bool isCritical = Random.Range(0, 101) < 10;

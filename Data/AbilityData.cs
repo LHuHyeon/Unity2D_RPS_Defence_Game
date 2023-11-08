@@ -5,7 +5,7 @@ using UnityEngine;
 public class AbilityData
 {
     public Define.AbilityType   abilityType;    // 능력 타입
-    public float                value;          // 값
+    public int                  value;          // 값
     public string               name;           // 이름
     public string               descripition;   // 설명
 }

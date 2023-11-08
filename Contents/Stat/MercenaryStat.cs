@@ -71,7 +71,7 @@ public class MercenaryStat
         else
         {
             // 진화가 안된 상태인지 확인
-            if (CurrentEvolution == Define.EvolutionType.Unknown && mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
+            if (CurrentEvolution == Define.EvolutionType.Unknown)
                 return true;
         }
 
@@ -119,16 +119,16 @@ public class MercenaryStat
 
         switch(buff.buffType)
         {
-            case Define.OriginalBuffType.Damage:
+            case Define.BuffType.Damage:
                 AddDamage += (int)buff.value;
                 break;
-            case Define.OriginalBuffType.DamageParcent:
+            case Define.BuffType.DamageParcent:
                 AddDamage += Mathf.RoundToInt(Damage * (buff.value * 0.01f));
                 break;
-            case Define.OriginalBuffType.AttackSpeed:
+            case Define.BuffType.AttackSpeed:
                 AddAttackRate += buff.value;
                 break;
-            case Define.OriginalBuffType.AttackRange:
+            case Define.BuffType.AttackRange:
                 AddAttackRange += buff.value;
                 break;
             default:
@@ -146,9 +146,9 @@ public class MercenaryStat
 
         switch(buff.buffType)
         {
-            case Define.InstantBuffType.DefenceDecrease:
-            case Define.InstantBuffType.Slow:
-            case Define.InstantBuffType.Stun:
+            case Define.DeBuffType.DefenceDecrease:
+            case Define.DeBuffType.Slow:
+            case Define.DeBuffType.Stun:
                 DebuffAbility = buff;
                 break;
         }

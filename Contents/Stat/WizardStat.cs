@@ -25,7 +25,7 @@ public class WizardStat : MercenaryStat
 
         switch(buff.buffType)
         {
-            case Define.OriginalBuffType.Splash:
+            case Define.BuffType.Splash:
                 SplashRange += buff.value;
                 IsSplash    = SplashRange > 0f;
                 break;

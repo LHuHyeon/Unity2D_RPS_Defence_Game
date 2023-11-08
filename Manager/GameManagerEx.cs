@@ -22,18 +22,29 @@ public class GameData
 	public int CurrentHumanLevel = 0;
 	public int CurrentElfLevel = 0;
 	public int CurrentWereWolfLevel = 0;
+	public int[] CurrentRaceLevel = new int[3];
 
 	// 현재 추가된 종족 데미지
 	public int HumanAddDamage = 0;
 	public int ElfAddDamage = 0;
 	public int WereWolfAddDamage = 0;
+	public int[] RaceAddDamage = new int[3];
+
+	// 현재 추가된 종족 데미지 %량
+	public int HumanAddDamageParcent = 0;
+	public int ElfAddDamageParcent = 0;
+	public int WereWolfAddDamageParcent = 0;
+	public int[] RaceAddDamageParcent = new int[3];
+
+	// 현재 추가된 직업 데미지 %량
+	public int WarriorAddDamageParcent = 0;
+	public int ArcherAddDamageParcent = 0;
+	public int WizardAddDamageParcent = 0;
+	public int[] JobAddDamageParcent = new int[3];
+
+	public List<DeBuffType> DeBuffs = new List<DeBuffType>();
 
 	public WaveData CurrentWave;
-
-	/*
-	필수 데이터
-	1. 용병 컬렉션
-	*/
 }
 
 public class GameManagerEx

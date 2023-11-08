@@ -34,13 +34,13 @@ public class DeBuff
         // 값 적용
         switch (_deBuffData.buffType)
         {
-            case Define.InstantBuffType.DefenceDecrease:    // 방어력 감소
+            case Define.DeBuffType.DefenceDecrease:    // 방어력 감소
                 _enemyStat.Defence = _enemyStat.MaxDefence - Mathf.RoundToInt(_enemyStat.MaxDefence * (_deBuffData.value * 0.01f));
                 break;
-            case Define.InstantBuffType.Slow:               // 이동속도 감소
+            case Define.DeBuffType.Slow:               // 이동속도 감소
                 _enemyStat.MoveSpeed = _enemyStat.MaxMoveSpeed - _enemyStat.MaxMoveSpeed * (_deBuffData.value * 0.01f);
                 break;
-            case Define.InstantBuffType.Stun:               // 기절/경직
+            case Define.DeBuffType.Stun:               // 기절/경직
                 _enemyStat.MoveSpeed = 0;
                 break;
         }
@@ -55,11 +55,11 @@ public class DeBuff
     {
         switch (_deBuffData.buffType)
         {
-            case Define.InstantBuffType.DefenceDecrease:    // 방어력 감소
+            case Define.DeBuffType.DefenceDecrease:    // 방어력 감소
                 _enemyStat.Defence = _enemyStat.MaxDefence;
                 break;
-            case Define.InstantBuffType.Slow:               // 이동속도 감소
-            case Define.InstantBuffType.Stun:               // 기절/경직
+            case Define.DeBuffType.Slow:               // 이동속도 감소
+            case Define.DeBuffType.Stun:               // 기절/경직
                 _enemyStat.MoveSpeed = _enemyStat.MaxMoveSpeed;
                 break;
         }

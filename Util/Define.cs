@@ -55,16 +55,21 @@ public class Define
 	// 능력 카드
 	public enum AbilityType
 	{
-		JobDamageParcent	= 1,	// 직업 공격력 	% 상승
-		RaceDamageParcent 	= 2,	// 종족 공격력 	% 상승
-		DefenceDecrease 	= 3,	// 적 방어력 	% 감소
-		ShieldDecrease 		= 4,	// 적 쉴드 		% 감소
-		SpeedDecerase		= 5,	// 적 이동속도	% 감소
-		GoldParcent 		= 6,	// % 확률로 +1 Gold 획득
+		WarriorDamageParcent	= 1,	// 직업 공격력 	% 상승
+		ArcherDamageParcent		= 2,
+		WizardDamageParcent		= 3,
+		HumanDamageParcent		= 4,	// 종족 공격력 	% 상승
+		ElfDamageParcent		= 5,
+		WereWolfDamageParcent	= 6,
+		DefenceDecrease 		= 7,	// 적 방어력 	% 감소
+		ShieldDecrease 			= 8,	// 적 쉴드 		% 감소
+		SpeedDecerase			= 9,	// 적 이동속도	% 감소
+		GoldParcent 			= 10,	// % 확률로 +1 Gold 획득
+		Max 					= 11,
 	}
 
-	// 고정 버프
-	public enum OriginalBuffType
+	// 버프 타입
+	public enum BuffType
 	{
 		Damage			= 1,	// 공격력
 		DamageParcent 	= 2,	// 공격력 % 증가
@@ -74,12 +79,13 @@ public class Define
 		Splash			= 6,	// 스플래쉬
 	}
 
-	// 일시적인 버프/디버프
-	public enum InstantBuffType
+	// 디버프 타입
+	public enum DeBuffType
 	{
 		DefenceDecrease	= 1,	// 방어력 감소
 		Slow			= 2,	// 이동속도 감소
 		Stun			= 3,	// 기절/경직
+		ShieldDecrease	= 4,	// 쉴드량 감소
 	}
 
 	public enum EvolutionType
@@ -116,6 +122,7 @@ public class Define
 		Warrior	= 1,	// 전사
 		Archer	= 2,	// 궁수
 		Wizard	= 3,	// 마법사
+		Max		= 4,
 	}
 
 	public enum RaceType

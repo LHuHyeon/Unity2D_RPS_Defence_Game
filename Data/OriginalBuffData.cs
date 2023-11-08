@@ -5,5 +5,5 @@ using UnityEngine;
 // 고정 버프
 public class OriginalBuffData : BuffData
 {
-    public Define.OriginalBuffType  buffType;       // 버프 종류
+    public Define.BuffType  buffType;       // 버프 종류
 }

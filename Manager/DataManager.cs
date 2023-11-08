@@ -277,19 +277,19 @@ public class DataManager : MonoBehaviour
             OriginalBuffData buff = new OriginalBuffData()
             {
                 id = int.Parse(row[0]),
-                buffType = (Define.OriginalBuffType)int.Parse(row[1]),
+                buffType = (Define.BuffType)int.Parse(row[1]),
                 value = float.Parse(row[2]),
             };
 
             // 능력 설명
             switch (buff.buffType)
             {
-                case Define.OriginalBuffType.Damage:        buff.descripition = $"공격력 {buff.value} 증가";   break;
-                case Define.OriginalBuffType.DamageParcent: buff.descripition = $"공격력 {buff.value}% 증가";  break;
-                case Define.OriginalBuffType.AttackSpeed:   buff.descripition = $"공격속도 {buff.value} 증가"; break;
-                case Define.OriginalBuffType.AttackRange:   buff.descripition = $"공격범위 {buff.value} 증가"; break;
-                case Define.OriginalBuffType.MultiShot:     buff.descripition = $"멀티샷 {buff.value} 증가";   break;
-                case Define.OriginalBuffType.Splash:        buff.descripition = $"확산 피해 범위 {buff.value} 증가";   break;
+                case Define.BuffType.Damage:        buff.descripition = $"공격력 {buff.value} 증가";   break;
+                case Define.BuffType.DamageParcent: buff.descripition = $"공격력 {buff.value}% 증가";  break;
+                case Define.BuffType.AttackSpeed:   buff.descripition = $"공격속도 {buff.value} 증가"; break;
+                case Define.BuffType.AttackRange:   buff.descripition = $"공격범위 {buff.value} 증가"; break;
+                case Define.BuffType.MultiShot:     buff.descripition = $"멀티샷 {buff.value} 증가";   break;
+                case Define.BuffType.Splash:        buff.descripition = $"확산 피해 범위 {buff.value} 증가";   break;
             }
 
             Buff.Add(buff.id, buff);
@@ -311,7 +311,7 @@ public class DataManager : MonoBehaviour
             {
                 id = int.Parse(row[0]),
                 isDeBuff = Convert.ToBoolean(int.Parse(row[1])),
-                buffType = (Define.InstantBuffType)int.Parse(row[2]),
+                buffType = (Define.DeBuffType)int.Parse(row[2]),
                 value = int.Parse(row[3]),
                 parcentage = int.Parse(row[4]),
                 time = float.Parse(row[5]),
@@ -322,9 +322,9 @@ public class DataManager : MonoBehaviour
             // 능력 설명
             switch (buff.buffType)
             {
-                case Define.InstantBuffType.DefenceDecrease:    buff.descripition += $"방어력 {buff.value}% 감소 부여";   break;
-                case Define.InstantBuffType.Slow:               buff.descripition += $"이동속도 {buff.value}% 감소 부여";  break;
-                case Define.InstantBuffType.Stun:               buff.descripition += $"기절 부여"; break;
+                case Define.DeBuffType.DefenceDecrease:    buff.descripition += $"방어력 {buff.value}% 감소 부여";   break;
+                case Define.DeBuffType.Slow:               buff.descripition += $"이동속도 {buff.value}% 감소 부여";  break;
+                case Define.DeBuffType.Stun:               buff.descripition += $"기절 부여"; break;
             }
 
             Buff.Add(buff.id, buff);
@@ -385,7 +385,7 @@ public class DataManager : MonoBehaviour
             AbilityData abilityData = new AbilityData()
             {
                 abilityType = (Define.AbilityType)int.Parse(row[0]),
-                value = float.Parse(row[1]),
+                value = int.Parse(row[1]),
             };
 
             dict.Add(abilityData.abilityType, abilityData);
@@ -409,8 +409,12 @@ public class DataManager : MonoBehaviour
 
             Define.AbilityType abilityType = (Define.AbilityType)int.Parse(row[0]);
 
-            dict[abilityType].name = row[1];
-            dict[abilityType].descripition = row[2];
+            AbilityData abilityData = dict[abilityType];
+
+            abilityData.name = row[1];
+            abilityData.descripition = row[2].Replace("{value}", abilityData.value.ToString());
+
+            dict[abilityType] = abilityData;
         }
     }
 

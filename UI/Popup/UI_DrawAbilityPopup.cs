@@ -25,6 +25,8 @@ public class UI_DrawAbilityPopup : UI_Popup
 
     public Action<GameObject> _onClickAbilityCard;
 
+    private UI_AbilityCard  _currentAbilityCard;
+
     private int     _cardCount = 3;
     private bool    _isCheck = false;
 
@@ -75,11 +77,16 @@ public class UI_DrawAbilityPopup : UI_Popup
         if (_isCheck == false)
             return;
 
+        // TODO : 능력 적용
+        
+
         Clear();
     }
 
     private void CheckButtonActive(GameObject go)
     {
+        _currentAbilityCard = go.GetComponent<UI_AbilityCard>();
+
         if (_isCheck == true)
             return;
 
