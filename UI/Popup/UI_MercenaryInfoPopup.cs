@@ -314,6 +314,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
         }
 
         SetColor(icon, maxAlpha);
+
+        GetObject((int)GameObjects.Background).GetComponent<Mask>().enabled = false;
     }
 
     private IEnumerator ExitPopup()

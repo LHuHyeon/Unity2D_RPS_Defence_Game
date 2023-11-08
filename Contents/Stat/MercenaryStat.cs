@@ -71,7 +71,7 @@ public class MercenaryStat
         else
         {
             // 진화가 안된 상태인지 확인
-            if (CurrentEvolution == Define.EvolutionType.Unknown)
+            if (CurrentEvolution == Define.EvolutionType.Unknown && mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
                 return true;
         }
 

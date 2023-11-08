@@ -32,6 +32,7 @@ public class UI_GameScene : UI_Scene
         MercenaryButton,
         UpgradeButton,
         CompositionButton,
+        StartButton,
         TestRegistarButton,
     }
     
@@ -84,6 +85,7 @@ public class UI_GameScene : UI_Scene
 
         GetButton((int)Buttons.PauseButton).gameObject.BindEvent(OnClickPauseButton);
         GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
+        GetButton((int)Buttons.StartButton).gameObject.BindEvent(OnClickStartButton);
 
         GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
         GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
@@ -92,6 +94,8 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
             MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(35, 43)].MercenaryClone<MercenaryStat>(), 10);
         });
+
+        Managers.Game.GameScene.ActiveStartButton(false);
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
         _game.OnEnemySpawnEvent += RefreshEnemyBar;
@@ -253,22 +257,23 @@ public class UI_GameScene : UI_Scene
         if (_mercenarySlots.Count < 2)
             return;
 
+        // 내림차순 정렬
         _mercenarySlots.Sort((slot1, slot2) =>
         {
             // 1. 등급으로 정렬
             if (slot1._mercenary.Grade != slot2._mercenary.Grade)
             {
-                return slot2._mercenary.Grade.CompareTo(slot1._mercenary.Grade); // 내림차순
+                return slot2._mercenary.Grade.CompareTo(slot1._mercenary.Grade);
             }
             
             // 2. 진화 수준으로 정렬
             if (slot1._mercenary.CurrentEvolution != slot2._mercenary.CurrentEvolution)
             {
-                return slot2._mercenary.CurrentEvolution.CompareTo(slot1._mercenary.CurrentEvolution); // 내림차순
+                return slot2._mercenary.CurrentEvolution.CompareTo(slot1._mercenary.CurrentEvolution);
             }
             
             // 3. 개수로 정렬
-            return slot2._itemCount.CompareTo(slot1._itemCount); // 내림차순
+            return slot2._itemCount.CompareTo(slot1._itemCount);
         });
 
         for(int i=0; i<_mercenarySlots.Count; i++)
@@ -310,6 +315,16 @@ public class UI_GameScene : UI_Scene
         Time.timeScale = _currentGameSpeed;
     }
 
+    private void OnClickStartButton(PointerEventData eventData)
+    {
+        Debug.Log("OnClickStartButton");
+
+        // 웨이브 시작
+        Managers.Game.WaveSystem.WaveStart();
+
+        ActiveStartButton(false);
+    }
+
     private void SetEventHandler()
     {
         // 용병 슬롯 탭 Drop 설정
@@ -337,6 +352,9 @@ public class UI_GameScene : UI_Scene
 
         }, Define.UIEvent.Drop);
     }
+
+    // Start Button 활성화 여부
+    public void ActiveStartButton(bool isActive) { GetButton((int)Buttons.StartButton).gameObject.SetActive(isActive); }
 
     // 용병으로 슬롯 찾기
     public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary, bool isEvolution = true)

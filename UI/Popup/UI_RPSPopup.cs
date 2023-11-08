@@ -196,8 +196,8 @@ public class UI_RPSPopup : UI_Popup
             for(int i=0; i<_rewardMercenary.Count; i++)
                 Managers.Game.GameScene.MercenaryRegister(_rewardMercenary[i]);
             
-            // 웨이브 시작
-            Managers.Game.WaveSystem.WaveStart();
+            // 게임 시작 버튼 활성화
+            Managers.Game.GameScene.ActiveStartButton(true);
             Clear();
         }
     }

@@ -178,6 +178,9 @@ public class UI_Evolution : UI_Base
             List<GameObject> mercenarys = Managers.Game.GetMercenarys(_mercenary);
             for(int i=0; i<currentCount; i++)
             {
+                if (mercenarys[i].IsFakeNull() == true)
+                    return;
+                    
                 if (_tile._mercenary == mercenarys[i])
                 {
                     currentCount++;

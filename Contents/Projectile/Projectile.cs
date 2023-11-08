@@ -78,9 +78,9 @@ public class Projectile : MonoBehaviour
 
         string explostionPath = "";
 
-        if      (wizardStat.SplashRange > 0.5f)    explostionPath = "Explosion/Hit03";
-        else if (wizardStat.SplashRange > 0.2f)    explostionPath = "Explosion/Hit02";
-        else if (wizardStat.SplashRange > 0.0f)    explostionPath = "Explosion/Hit01";
+        if      (wizardStat.Damage > 200)   explostionPath = "Explosion/Hit03";
+        else if (wizardStat.Damage > 100)   explostionPath = "Explosion/Hit02";
+        else if (wizardStat.Damage > 0)     explostionPath = "Explosion/Hit01";
 
         GameObject explostion           = Managers.Resource.Instantiate(explostionPath);
         explostion.transform.position   = _attackTarget.position;
