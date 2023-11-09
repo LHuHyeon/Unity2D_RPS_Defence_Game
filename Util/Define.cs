@@ -55,12 +55,16 @@ public class Define
 	// 능력 카드
 	public enum AbilityType
 	{
+		Unknown					= 0,
+
 		WarriorDamageParcent	= 1,	// 직업 공격력 	% 상승
 		ArcherDamageParcent		= 2,
 		WizardDamageParcent		= 3,
+
 		HumanDamageParcent		= 4,	// 종족 공격력 	% 상승
 		ElfDamageParcent		= 5,
 		WereWolfDamageParcent	= 6,
+
 		DefenceDecrease 		= 7,	// 적 방어력 	% 감소
 		ShieldDecrease 			= 8,	// 적 쉴드 		% 감소
 		SpeedDecerase			= 9,	// 적 이동속도	% 감소
@@ -127,13 +131,15 @@ public class Define
 
 	public enum RaceType
 	{
-		Unknown		= 0,
-		Human		= 1,	// 인간
-		Elf			= 2,	// 엘프
-		WereWolf	= 3,	// 웨어 울프
-		Goblin		= 4,	// 고블린
-		Undead		= 5,	// 언데드
-		Devil		= 6,	// 악마
+		Unknown			= 0,
+		Human			= 1,	// 인간
+		Elf				= 2,	// 엘프
+		WereWolf		= 3,	// 웨어 울프
+		MaxMercenary 	= 4,
+
+		Goblin			= 4,	// 고블린
+		Undead			= 5,	// 언데드
+		Devil			= 6,	// 악마
 	}
 
 	public const string WaveDataNumber 			= "1279670946";

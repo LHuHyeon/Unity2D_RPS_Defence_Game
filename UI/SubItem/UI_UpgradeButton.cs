@@ -76,21 +76,7 @@ public class UI_UpgradeButton : UI_Base
 
         Managers.Game.GameGold -= _nextUpgradeData.prime;
 
-        switch (_raceType)
-        {
-            case Define.RaceType.Human:
-                Managers.Game.HumanAddDamage = _nextUpgradeData.humanDamage;
-                _currentLevel = ++Managers.Game.CurrentHumanLevel;
-                break;
-            case Define.RaceType.Elf:
-                Managers.Game.ElfAddDamage = _nextUpgradeData.elfDamage;
-                _currentLevel = ++Managers.Game.CurrentElfLevel;
-                break;
-            case Define.RaceType.WereWolf:
-                Managers.Game.WereWolfAddDamage = _nextUpgradeData.werewolfDamage;
-                _currentLevel = ++Managers.Game.CurrentWereWolfLevel;
-                break;
-        }
+        _currentLevel = Managers.Game.RaceUpgradeDamage(_raceType, _nextUpgradeData.raceDamage[((int)_raceType)]);
 
         if (Managers.Data.Upgrades.TryGetValue(_currentLevel + 1, out _nextUpgradeData) == false)
             Debug.Log(_raceType.ToString() + " Max Level : " + _currentLevel);

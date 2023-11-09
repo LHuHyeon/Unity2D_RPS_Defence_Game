@@ -86,7 +86,7 @@ public class MercenaryStat
         AddAttackRange = 0;
 
         // 종족 강화 데미지
-        AddRaceDamage += GetRaceAddDamage();
+        AddRaceDamage += Managers.Game.GetRaceAddDamage(_race);
 
         // 진화 능력 적용
         OnAbility();
@@ -153,22 +153,6 @@ public class MercenaryStat
                 break;
         }
     }
-
-    // 종족 강화에 따른 공격력 적용
-	private int GetRaceAddDamage()
-	{
-		switch (_race)
-		{
-			case Define.RaceType.Human:
-				return Managers.Game.HumanAddDamage;
-			case Define.RaceType.Elf:
-				return Managers.Game.ElfAddDamage;
-			case Define.RaceType.WereWolf:
-				return Managers.Game.WereWolfAddDamage;
-			default:
-				return 0;
-		}
-	}
 
     // 깊은 복사 (DeepCopy)
     public T MercenaryClone<T>() where T : MercenaryStat, new()

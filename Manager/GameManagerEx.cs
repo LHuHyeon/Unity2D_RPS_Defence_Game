@@ -11,38 +11,28 @@ using static Define;
 [Serializable]
 public class GameData
 {
-	public string Name;
-
 	public int Money;
 	public int GameGold;
 
 	public float PlayTime;
 
 	// 현재 종족 레벨
-	public int CurrentHumanLevel = 0;
-	public int CurrentElfLevel = 0;
-	public int CurrentWereWolfLevel = 0;
-	public int[] CurrentRaceLevel = new int[3];
+	public int[] CurrentRaceLevel = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
 
 	// 현재 추가된 종족 데미지
-	public int HumanAddDamage = 0;
-	public int ElfAddDamage = 0;
-	public int WereWolfAddDamage = 0;
-	public int[] RaceAddDamage = new int[3];
+	public int[] RaceAddDamage = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
 
 	// 현재 추가된 종족 데미지 %량
-	public int HumanAddDamageParcent = 0;
-	public int ElfAddDamageParcent = 0;
-	public int WereWolfAddDamageParcent = 0;
-	public int[] RaceAddDamageParcent = new int[3];
+	public int[] RaceAddDamageParcent = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
 
 	// 현재 추가된 직업 데미지 %량
-	public int WarriorAddDamageParcent = 0;
-	public int ArcherAddDamageParcent = 0;
-	public int WizardAddDamageParcent = 0;
-	public int[] JobAddDamageParcent = new int[3];
+	public int[] JobAddDamageParcent = new int[((int)Define.JobType.Max)] {0, 0, 0, 0};
 
-	public List<DeBuffType> DeBuffs = new List<DeBuffType>();
+	// 적 고정 디버프
+	public List<Define.DeBuffType> DeBuffs = new List<Define.DeBuffType>();
+
+	// 획득한 능력들
+	public List<Define.AbilityType> Abilities = new List<AbilityType>();
 
 	public WaveData CurrentWave;
 }
@@ -60,15 +50,6 @@ public class GameManagerEx
 
 	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
-
-	#region 스탯
-	public string Name
-	{
-		get { return _gameData.Name; }
-		set { _gameData.Name = value; }
-	}
-
-	#endregion
 
 	#region 재화
 	public int Money
@@ -103,41 +84,57 @@ public class GameManagerEx
 
 	#endregion
 
-	public int CurrentHumanLevel
+	#region 스탯
+
+	public int[] CurrentRaceLevel
 	{
-		get { return _gameData.CurrentHumanLevel; }
-		set { _gameData.CurrentHumanLevel = value; }
+		get { return _gameData.CurrentRaceLevel; }
+		set { _gameData.CurrentRaceLevel = value; }
 	}
 
-	public int CurrentElfLevel
+	public int[] RaceAddDamage
 	{
-		get { return _gameData.CurrentElfLevel; }
-		set { _gameData.CurrentElfLevel = value; }
+		get { return _gameData.RaceAddDamage; }
+		set { _gameData.RaceAddDamage = value; }
 	}
 
-	public int CurrentWereWolfLevel
+	public int[] RaceAddDamageParcent
 	{
-		get { return _gameData.CurrentWereWolfLevel; }
-		set { _gameData.CurrentWereWolfLevel = value; }
+		get { return _gameData.RaceAddDamageParcent; }
+		set { _gameData.RaceAddDamageParcent = value; }
 	}
 
-	public int HumanAddDamage
+	public int[] JobAddDamageParcent
 	{
-		get { return _gameData.HumanAddDamage; }
-		set { _gameData.HumanAddDamage = value; }
+		get { return _gameData.JobAddDamageParcent; }
+		set { _gameData.JobAddDamageParcent = value; }
 	}
 
-	public int ElfAddDamage
+	public List<Define.DeBuffType> DeBuffs
 	{
-		get { return _gameData.ElfAddDamage; }
-		set { _gameData.ElfAddDamage = value; }
+		get { return _gameData.DeBuffs; }
+		set { _gameData.DeBuffs = value; }
 	}
 
-	public int WereWolfAddDamage
+	public List<Define.AbilityType> Abilities
 	{
-		get { return _gameData.WereWolfAddDamage; }
-		set { _gameData.WereWolfAddDamage = value; }
+		get { return _gameData.Abilities; }
+		set { _gameData.Abilities = value; }
 	}
+
+	// 현재 종족 강화 레벨
+	public int GetRaceCurrentLevel(Define.RaceType raceType) { return CurrentRaceLevel[((int)raceType)]; }
+
+	// 종족별 추가 데미지
+	public int GetRaceAddDamage(Define.RaceType raceType) { return RaceAddDamage[((int)raceType)]; }
+
+	// 종족별 추가 데미지 %
+	public int GetRaceAddDamageParcent(Define.RaceType raceType) { return RaceAddDamageParcent[((int)raceType)]; }
+
+	// 직업별 추가 데미지 %
+	public int GetJobAddDamageParcent(Define.JobType jobType) { return JobAddDamageParcent[((int)jobType)]; }
+
+	#endregion
 
 	public WaveData CurrentWave
 	{
@@ -157,17 +154,19 @@ public class GameManagerEx
 		GameScene.OnRPSPopup();
 	}
 
-	// 용병 새로고침
+	// 종족별 데미지 강화
+	public int RaceUpgradeDamage(Define.RaceType raceType, int upgradeDamage)
+	{
+		Managers.Game.RaceAddDamage[((int)raceType)] = upgradeDamage;
+		return ++Managers.Game.CurrentRaceLevel[((int)raceType)];
+	}
+
+	// 소환된 용병들 새로고침
 	public void RefreshMercenary()
 	{
 		// 용병 정보 새로고침
 		foreach(var mercenary in _mercenarys)
-		{
-			MercenaryController mercenaryController = mercenary.GetComponent<MercenaryController>();
-
-			mercenaryController._evolutionBar.RefreshUI();		// 진화 별 표시 새로고침
-			mercenaryController.GetStat().RefreshAddData();		// 추가 능력 새로고침
-		}
+			mercenary.GetComponent<MercenaryController>().GetStat().RefreshAddData();
 	}
 
 	// stat과 같은 필드 용별들 객체 가져오기

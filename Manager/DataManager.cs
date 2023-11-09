@@ -353,9 +353,7 @@ public class DataManager : MonoBehaviour
             {
                 level = int.Parse(row[0]),
                 prime = int.Parse(row[1]),
-                humanDamage = int.Parse(row[2]),
-                elfDamage = int.Parse(row[3]),
-                werewolfDamage = int.Parse(row[4]),
+                raceDamage = new int[((int)Define.RaceType.MaxMercenary)] {0, int.Parse(row[2]), int.Parse(row[3]), int.Parse(row[4])},
             };
 
             dict.Add(upgradeData.level, upgradeData);

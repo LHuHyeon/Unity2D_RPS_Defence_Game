@@ -287,7 +287,7 @@ public class UI_GameScene : UI_Scene
         foreach(Transform child in grid)
             Managers.Resource.Destroy(child.gameObject);
         
-        for(int i=1; i<=(int)Define.RaceType.WereWolf; i++)
+        for(int i=1; i<(int)Define.RaceType.MaxMercenary; i++)
         {
             UI_UpgradeButton upgradeButton = Managers.UI.MakeSubItem<UI_UpgradeButton>(grid);
             upgradeButton.SetInfo((Define.RaceType)i);
