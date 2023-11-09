@@ -39,12 +39,17 @@ public class MercenaryStat
     public GameObject           Projectile      { get { return _projectile; }       set { _projectile = value; }}
     public Sprite               ProjectileIcon  { get { return _projectileIcon; }   set { _projectileIcon = value; }}
 
-    public int      Damage                  { get { return _damage + AddDamage + AddRaceDamage; }   set { _damage = value; } }
     public float    AttackSpeed             { get { return _attackSpeed + AddAttackRate; }          set { _attackSpeed = value; } }
     public float    AttackRange             { get { return _attackRange + AddAttackRange; }         set { _attackRange = value; } }
+    public int      Damage
+    {
+        get { return _damage + AddDamage + AddRaceDamage + AddAbilityDamage; }
+        set { _damage = value; } 
+    }
 
     public int      AddDamage               { get; set; } = 0;
     public int      AddRaceDamage           { get; set; } = 0;
+    public int      AddAbilityDamage        { get; set; } = 0;
     public float    AddAttackRate           { get; set; } = 0;
     public float    AddAttackRange          { get; set; } = 0;
 
@@ -82,6 +87,7 @@ public class MercenaryStat
     {
         AddDamage = 0;
         AddRaceDamage = 0;
+        AddAbilityDamage = 0;
         AddAttackRate = 0;
         AddAttackRange = 0;
 
@@ -90,6 +96,9 @@ public class MercenaryStat
 
         // 진화 능력 적용
         OnAbility();
+
+        AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetRaceAddDamageParcent(_race) * 0.01f));
+        AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetJobAddDamageParcent(_job) * 0.01f));
 
         // 객체 존재 시 스탯 새로고침
         if (_mercenary.IsNull() == false)

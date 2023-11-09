@@ -84,7 +84,13 @@ public class EnemyController : BaseController
     {
         GetComponent<Collider>().enabled = false;
 
-        Managers.Game.GameGold += _stat.DropGold;
+        int gold = _stat.DropGold;
+
+        // 확률적인 추가 골드
+        if (Managers.Game.GoldParcent >= Random.Range(1, 101))
+            gold += Managers.Game.AddGold;
+
+        Managers.Game.GameGold += gold;
 
         yield return new WaitForSeconds(0.15f);
 

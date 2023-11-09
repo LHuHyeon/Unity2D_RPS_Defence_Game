@@ -65,6 +65,11 @@ public class EnemyStat : MonoBehaviour
         MaxDefence      = waveData.defence;
         MaxMoveSpeed    = waveData.moveSpeed;
 
+        // 고정 디버프 적용
+        MaxDefence      = MaxDefence    - Mathf.RoundToInt(MaxDefence * Managers.Game.GetDebuff(Define.DeBuffType.DefenceDecrease));
+        MaxShield       = MaxShield     - Mathf.RoundToInt(MaxShield * Managers.Game.GetDebuff(Define.DeBuffType.ShieldDecrease));
+        MaxMoveSpeed    = MaxMoveSpeed  - (MaxMoveSpeed * Managers.Game.GetDebuff(Define.DeBuffType.Slow));
+
         if (_hpBar.IsNull() == false)
             _hpBar.RefreshUI();
     }

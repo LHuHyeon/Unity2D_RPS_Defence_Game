@@ -137,7 +137,8 @@ public class UI_GameScene : UI_Scene
 
     public void RefreshUI()
     {
-
+        if (_init == false)
+            return;
     }
 
     // 웨이브 시간

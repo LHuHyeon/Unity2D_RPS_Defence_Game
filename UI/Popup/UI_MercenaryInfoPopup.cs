@@ -138,13 +138,14 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         // 추가 능력치 확인
         string addDamageText        = _mercenary.AddDamage > 0 ? $@"<color=green>[+{_mercenary.AddDamage}]</color>" : "";
+        string addAbilityDamageText = _mercenary.AddAbilityDamage > 0 ? $@"<color=#58FAF4>[+{_mercenary.AddAbilityDamage}]</color>" : "";
         string addRaceDamageText    = _mercenary.AddRaceDamage > 0 ? $@"<color=yellow>[+{_mercenary.AddRaceDamage}]</color>" : "";
         string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
         string addAttackRangeText   = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
 
         // 능력치 정보 문자열
         GetText((int)Texts.StatText).text = 
-        $@"공격력 {_mercenary.Damage}{addRaceDamageText}{addDamageText}" + "\n" +
+        $@"공격력 {_mercenary.Damage}{addAbilityDamageText}{addRaceDamageText}{addDamageText}" + "\n" +
         $@"공격속도 {_mercenary.AttackSpeed}{addAttackRateText}" + "\n" +
         $@"사거리 {_mercenary.AttackRange}{addAttackRangeText}";
 

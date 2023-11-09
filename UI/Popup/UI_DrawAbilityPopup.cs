@@ -55,6 +55,9 @@ public class UI_DrawAbilityPopup : UI_Popup
 
     public void RefreshUI()
     {
+        if (_init == false)
+            return;
+
         foreach(UI_AbilityCard abilityCard in _abilityCards)
             abilityCard.RefreshUI();
 
@@ -77,10 +80,14 @@ public class UI_DrawAbilityPopup : UI_Popup
         if (_isCheck == false)
             return;
 
-        // TODO : 능력 적용
-        
+        // 뽑은 능력 적용
+        Managers.Game.Abilities.Add(_currentAbilityCard._ability);
+        Managers.Game.RefreshAbility();
 
         Clear();
+
+        // 카드 뽑기
+        Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); 
     }
 
     private void CheckButtonActive(GameObject go)
