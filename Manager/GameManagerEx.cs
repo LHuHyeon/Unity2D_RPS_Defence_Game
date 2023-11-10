@@ -194,25 +194,34 @@ public class GameManagerEx
 				case Define.AbilityType.WarriorDamageParcent:
 				case Define.AbilityType.ArcherDamageParcent:
 				case Define.AbilityType.WizardDamageParcent:
-					JobAddDamageParcent[(int)abilityData.abilityType] += Managers.Data.Abilities[abilityData.abilityType].value;
+					JobAddDamageParcent[(int)abilityData.abilityType] += abilityData.currentValue;
 					break;
 				// 종족별 공격력 강화 %
 				case Define.AbilityType.HumanDamageParcent:
 				case Define.AbilityType.ElfDamageParcent:
 				case Define.AbilityType.WereWolfDamageParcent:
-					RaceAddDamageParcent[(int)abilityData.abilityType-3] += Managers.Data.Abilities[abilityData.abilityType].value;
+					RaceAddDamageParcent[(int)abilityData.abilityType-3] += abilityData.currentValue;
 					break;
 				// 디버프 적용
-				case Define.AbilityType.DefenceDecrease: 	DeBuffs.Add(Define.DeBuffType.DefenceDecrease, abilityData.value); 	break;
-				case Define.AbilityType.ShieldDecrease: 	DeBuffs.Add(Define.DeBuffType.ShieldDecrease, abilityData.value); 	break;
-				case Define.AbilityType.SpeedDecerase: 		DeBuffs.Add(Define.DeBuffType.Slow, abilityData.value); 			break;
+				case Define.AbilityType.DefenceDecrease:	SetDebuff(Define.DeBuffType.DefenceDecrease, abilityData.currentValue); break;
+				case Define.AbilityType.ShieldDecrease: 	SetDebuff(Define.DeBuffType.ShieldDecrease, abilityData.currentValue); 	break;
+				case Define.AbilityType.SpeedDecerase: 		SetDebuff(Define.DeBuffType.Slow, abilityData.currentValue); 			break;
 				// 골드 버프
 				case Define.AbilityType.GoldParcent:
-					GoldParcent += Managers.Data.Abilities[abilityData.abilityType].value;
+					GoldParcent += abilityData.currentValue;
 					AddGold++;
 					break;
 			}
 		}
+	}
+
+	// 디버프 추가
+	private void SetDebuff(Define.DeBuffType deBuffType, int value)
+	{
+		if (DeBuffs.ContainsKey(deBuffType) == false)
+			DeBuffs.Add(deBuffType, value);
+		else
+			DeBuffs[deBuffType] += value;
 	}
 
 	// 소환된 용병들 새로고침

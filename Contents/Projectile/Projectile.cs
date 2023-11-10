@@ -84,7 +84,7 @@ public class Projectile : MonoBehaviour
 
         GameObject explostion           = Managers.Resource.Instantiate(explostionPath);
         explostion.transform.position   = _attackTarget.position;
-        explostion.transform.localScale = Vector3.one * wizardStat.SplashRange;
+        explostion.transform.localScale = Vector3.one * (wizardStat.SplashRange / 2);
 
         // 주변 Enemy 탐색
         Collider[] colliders = Physics.OverlapSphere(transform.position, wizardStat.SplashRange, _mask);

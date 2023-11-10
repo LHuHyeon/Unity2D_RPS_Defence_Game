@@ -22,6 +22,8 @@ public class UI_AbilityCard : UI_Base
 
     public bool _isChoice = false;
 
+
+
     public override bool Init()
     {
         if (base.Init() == false)
@@ -46,19 +48,22 @@ public class UI_AbilityCard : UI_Base
         if (_init == false)
             return;
 
+        IsChoice(false);
+
         // 능력 랜덤 뽑기
         Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
         _ability = Managers.Data.Abilities[abilityType];
 
-        string name = _ability.abilityType.ToString().Replace("DamageParcent", "");
+        // 능력 값 랜덤 뽑기
+        int value = _ability.values[Random.Range(0, _ability.values.Count)];
+        _ability.currentValue = value;
 
-        _ability.name = _ability.name.Replace("{name}", name);
-        _ability.descripition = _ability.descripition.Replace("{name}", name);
+        string descripition = _ability.descripition.Replace("{value}", value.ToString());
 
         GetImage((int)Images.Icon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Ability/"+abilityType.ToString());
 
         GetText((int)Texts.AbilityNameText).text = _ability.name;
-        GetText((int)Texts.DescripitionText).text = _ability.descripition;
+        GetText((int)Texts.DescripitionText).text = descripition;
     }
 
     private void OnClickAbilityCard(GameObject go)
@@ -66,18 +71,26 @@ public class UI_AbilityCard : UI_Base
         if (go == this.gameObject)
             return;
 
-        _isChoice = false;
-        SetColor(GetImage((int)Images.ChoiceFrame), 100f/255f);
+        IsChoice(false);
     }
 
     private void OnClickAbilityCard()
     {
         Debug.Log("OnClickAbilityCard");
 
-        _isChoice = true;
-        SetColor(GetImage((int)Images.ChoiceFrame), 1f);
+        IsChoice(true);
 
         Managers.UI.FindPopup<UI_DrawAbilityPopup>()?._onClickAbilityCard.Invoke(this.gameObject);
+    }
+
+    private void IsChoice(bool isChoice)
+    {
+        _isChoice = isChoice;
+        
+        if (_isChoice == true)
+            SetColor(GetImage((int)Images.ChoiceFrame), 1f);
+        else
+            SetColor(GetImage((int)Images.ChoiceFrame), 100f/255f);
     }
     
     private void SetColor(Image icon, float alpha)

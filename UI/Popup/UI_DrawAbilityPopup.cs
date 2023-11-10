@@ -9,6 +9,7 @@ public class UI_DrawAbilityPopup : UI_Popup
     enum GameObjects
     {
         Background,
+        Objects,
         AbilityGrid,
     }
 
@@ -60,6 +61,8 @@ public class UI_DrawAbilityPopup : UI_Popup
 
         foreach(UI_AbilityCard abilityCard in _abilityCards)
             abilityCard.RefreshUI();
+
+        GetButton((int)Buttons.CheckButton).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_DarkGray");
 
         StartCoroutine(CallPopup());
     }

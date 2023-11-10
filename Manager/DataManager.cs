@@ -380,13 +380,16 @@ public class DataManager : MonoBehaviour
             if (row.IsNull() == true)
                 continue;
 
-            AbilityData abilityData = new AbilityData()
-            {
-                abilityType = (Define.AbilityType)int.Parse(row[0]),
-                value = int.Parse(row[1]),
-            };
+            Define.AbilityType abilityType = (Define.AbilityType)int.Parse(row[0]);
 
-            dict.Add(abilityData.abilityType, abilityData);
+            AbilityData abilityData;
+            if (dict.TryGetValue(abilityType, out abilityData) == false)
+            {
+                abilityData = new AbilityData() { abilityType = abilityType, values = new List<int>() };
+                dict.Add(abilityType, abilityData);
+            }
+
+            abilityData.values.Add(int.Parse(row[1]));
         }
 
         AbilityStringData(dict);
@@ -407,12 +410,11 @@ public class DataManager : MonoBehaviour
 
             Define.AbilityType abilityType = (Define.AbilityType)int.Parse(row[0]);
 
-            AbilityData abilityData = dict[abilityType];
+            if (dict.TryGetValue(abilityType, out AbilityData abilityData) == false)
+                Debug.Log(abilityType.ToString() + " Data Failed!!");
 
             abilityData.name = row[1];
-            abilityData.descripition = row[2].Replace("{value}", abilityData.value.ToString());
-
-            dict[abilityType] = abilityData;
+            abilityData.descripition = row[2];
         }
     }
 
