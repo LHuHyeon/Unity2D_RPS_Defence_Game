@@ -93,20 +93,11 @@ public class UI_DrawAbilityPopup : UI_Popup
         Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); 
     }
 
-    private void CheckButtonActive(GameObject go)
-    {
-        _currentAbilityCard = go.GetComponent<UI_AbilityCard>();
-
-        if (_isCheck == true)
-            return;
-
-        _isCheck = true;
-        GetButton((int)Buttons.CheckButton).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Green");
-    }
-
     private float maxAlpha = 180f/255f;  // 투명도 최대치
     private IEnumerator CallPopup()
     {
+        GetObject((int)GameObjects.Objects).SetActive(false);
+
         Image icon = GetObject((int)GameObjects.Background).GetComponent<Image>();
 
         float currentAlpha = 0f;
@@ -117,6 +108,19 @@ public class UI_DrawAbilityPopup : UI_Popup
             currentAlpha += 0.02f;
             SetColor(icon, currentAlpha);
         }
+        
+        GetObject((int)GameObjects.Objects).SetActive(true);
+    }
+
+    private void CheckButtonActive(GameObject go)
+    {
+        _currentAbilityCard = go.GetComponent<UI_AbilityCard>();
+
+        if (_isCheck == true)
+            return;
+
+        _isCheck = true;
+        GetButton((int)Buttons.CheckButton).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_Green");
     }
     
     private void SetColor(Image icon, float alpha)

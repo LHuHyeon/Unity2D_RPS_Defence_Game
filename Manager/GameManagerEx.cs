@@ -158,8 +158,10 @@ public class GameManagerEx
 	{
 		GameGold += CurrentWave.waveGold;
 
+		Managers.UI.CloseAllPopupUI();
+
         // 특정 웨이브마다 능력 뽑기 진행
-		if (Managers.Game.CurrentWave.waveLevel % 1 == 0)
+		if (Managers.Game.CurrentWave.waveLevel % 7 == 0)
 		{
 			Managers.UI.ShowPopupUI<UI_DrawAbilityPopup>().RefreshUI();
 			return;
@@ -213,6 +215,8 @@ public class GameManagerEx
 					break;
 			}
 		}
+
+		RefreshMercenary();
 	}
 
 	// 디버프 추가

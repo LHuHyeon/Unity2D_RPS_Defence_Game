@@ -178,7 +178,7 @@ public class MercenaryStat
             Icon                = this.Icon,
             Projectile          = this.Projectile,
             ProjectileIcon      = this.ProjectileIcon,
-            Damage              = this.Damage - this.AddDamage,
+            Damage              = this.Damage - this.AddDamage - this.AddRaceDamage - this.AddAbilityDamage,
             AttackSpeed         = this.AttackSpeed,
             AttackRange         = this.AttackRange,
             CurrentEvolution    = this.CurrentEvolution,
