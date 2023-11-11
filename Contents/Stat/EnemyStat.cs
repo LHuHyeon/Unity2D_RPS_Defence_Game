@@ -39,6 +39,7 @@ public class EnemyStat : MonoBehaviour
 
     private bool            _isDebuffActive = false;
     private UI_HpBar        _hpBar;
+    private GameManagerEx   _game;
 
     private Dictionary<Define.DeBuffType, DeBuff> Debuffs = new Dictionary<Define.DeBuffType, DeBuff>();
 
@@ -52,6 +53,7 @@ public class EnemyStat : MonoBehaviour
     void Start()
     {
         _hpBar = GetComponent<EnemyController>()._hpBar = Managers.UI.MakeWorldSpaceUI<UI_HpBar>(transform);
+        _game = Managers.Game;
     }
 
     // Wave에 맞게 스탯 수정
@@ -66,18 +68,18 @@ public class EnemyStat : MonoBehaviour
         MaxMoveSpeed    = waveData.moveSpeed;
 
         // 고정 디버프 적용
-        MaxDefence      = MaxDefence    - Mathf.RoundToInt(MaxDefence * Managers.Game.GetDebuff(Define.DeBuffType.DefenceDecrease));
-        MaxShield       = MaxShield     - Mathf.RoundToInt(MaxShield * Managers.Game.GetDebuff(Define.DeBuffType.ShieldDecrease));
-        MaxMoveSpeed    = MaxMoveSpeed  - (MaxMoveSpeed * Managers.Game.GetDebuff(Define.DeBuffType.Slow));
+        MaxDefence      = MaxDefence    - Mathf.RoundToInt(MaxDefence * _game.GetDebuff(Define.DeBuffType.DefenceDecrease));
+        MaxShield       = MaxShield     - Mathf.RoundToInt(MaxShield * _game.GetDebuff(Define.DeBuffType.ShieldDecrease));
+        MaxMoveSpeed    = MaxMoveSpeed  - (MaxMoveSpeed * _game.GetDebuff(Define.DeBuffType.Slow));
 
         if (_hpBar.IsNull() == false)
             _hpBar.RefreshUI();
     }
 
     // 공격 당하면
-    public void OnAttacked(int damage, InstantBuffData deBuff = null)
+    public void OnAttacked(MercenaryStat stat, InstantBuffData deBuff = null)
     {
-        if (damage <= 0)
+        if (stat.IsNull() == true)
             return;
 
         // 디버프 부여
@@ -91,14 +93,20 @@ public class EnemyStat : MonoBehaviour
             return;
         }
 
-        // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
-        int hitDamage = damage - Mathf.RoundToInt(damage * (Defence * 0.01f));
+        int hitDamage = stat.Damage;
 
-        // TODO : 100 랜덤 수 중 10 이하면 크리티컬! (나중에 크리티컬 확률 완성 시 수정)
-        bool isCritical = Random.Range(0, 101) < 10;
+        // 추가 피해량 적용
+        hitDamage = hitDamage + Mathf.RoundToInt(hitDamage * (_game.AddHitDamage * 0.01f));
+
+        // 크리티컬 적용
+        bool isCritical = Random.Range(1, 101) <= _game.CriticalParcent;
         if (isCritical == true)
-            hitDamage = damage + (int)(damage / 1.5);
+            hitDamage = hitDamage + (int)(hitDamage / (_game.CriticalDamage * 0.01f));
 
+        // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
+        hitDamage = hitDamage - Mathf.RoundToInt(hitDamage * (Defence * 0.01f));
+
+        // 데미지 적용
         Hp -= hitDamage;
 
         DamageTextEffect(isCritical ? DamageType.Critical : DamageType.Default, hitDamage);

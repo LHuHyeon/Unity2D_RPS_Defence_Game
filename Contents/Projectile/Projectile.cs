@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
         if ((_attackTarget.position - transform.position).magnitude < 0.3f)
         {
             TouchAbility();
-            _attackTarget.GetComponent<EnemyStat>().OnAttacked(_stat.Damage, _stat.DebuffAbility);
+            _attackTarget.GetComponent<EnemyStat>().OnAttacked(_stat, _stat.DebuffAbility);
             Managers.Resource.Destroy(this.gameObject);
         }
     }
@@ -95,7 +95,7 @@ public class Projectile : MonoBehaviour
             if (collider.gameObject != this)
             {
                 Debug.Log(collider.name);
-                collider.GetComponent<EnemyStat>().OnAttacked(_stat.Damage, _stat.DebuffAbility);
+                collider.GetComponent<EnemyStat>().OnAttacked(_stat, _stat.DebuffAbility);
             }
         }
     }

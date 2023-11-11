@@ -159,14 +159,14 @@ public class UI_GameScene : UI_Scene
         if (count > 0)
             return;
 
-        _game.remainEnemys += count;
+        _game.RemainEnemyCount += count;
 
-        if (float.IsNaN(_game.remainEnemys) == true)
+        if (float.IsNaN(_game.RemainEnemyCount) == true)
             GetSlider((int)Sliders.EnemySlider).value = 0;
         else
-            GetSlider((int)Sliders.EnemySlider).value = _game.remainEnemys;
+            GetSlider((int)Sliders.EnemySlider).value = _game.RemainEnemyCount;
 
-        GetText((int)Texts.EnemyCountText).text = $"{_game.remainEnemys} / {_wave.maxEnemyCount}";
+        GetText((int)Texts.EnemyCountText).text = $"{_game.RemainEnemyCount} / {_wave.maxEnemyCount}";
     }
 
     // 웨이브 정보

@@ -102,7 +102,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
     protected override void OnClickEvent(PointerEventData eventData)
     {
-        if (Managers.Game.isDrag == true)
+        if (Managers.Game.IsDrag == true)
             return;
 
         Debug.Log("OnClickEvent");
@@ -114,10 +114,10 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
     protected override void OnBeginDragEvent(PointerEventData eventData)
     {
-        if (_mercenary.IsNull() == true || Managers.Game.isDrag == true)
+        if (_mercenary.IsNull() == true || Managers.Game.IsDrag == true)
             return;
 
-        Managers.Game.isDrag = true;
+        Managers.Game.IsDrag = true;
 
         // 마우스 드래그 방향 확인
         Vector2 dir = eventData.delta.normalized;

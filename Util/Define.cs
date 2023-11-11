@@ -55,21 +55,27 @@ public class Define
 	// 능력 카드
 	public enum AbilityType
 	{
-		Unknown					= 0,
+		Unknown				= 0,
 
-		WarriorDamageParcent	= 1,	// 직업 공격력 	% 상승
-		ArcherDamageParcent		= 2,
-		WizardDamageParcent		= 3,
+		WarriorDamage		= 1,	// 직업 공격력 	% 상승
+		ArcherDamage		= 2,
+		WizardDamage		= 3,
 
-		HumanDamageParcent		= 4,	// 종족 공격력 	% 상승
-		ElfDamageParcent		= 5,
-		WereWolfDamageParcent	= 6,
+		HumanDamage			= 4,	// 종족 공격력 	% 상승
+		ElfDamage			= 5,
+		WereWolfDamage		= 6,
 
-		DefenceDecrease 		= 7,	// 적 방어력 	% 감소
-		ShieldDecrease 			= 8,	// 적 쉴드 		% 감소
-		SpeedDecerase			= 9,	// 적 이동속도	% 감소
-		GoldParcent 			= 10,	// % 확률로 +1 Gold 획득
-		Max 					= 11,
+		DefenceDecrease 	= 7,	// 적 방어력 	% 감소
+		ShieldDecrease 		= 8,	// 적 쉴드 		% 감소
+		SpeedDecerase		= 9,	// 적 이동속도	% 감소
+
+		GoldParcent 		= 10,	// % 확률로 +1 Gold 획득
+		HitDamage			= 11,	// 피해량 % 증가
+		CriticalParcent		= 12,	// 크리티컬 확률% 증가
+		CriticalDamage		= 13,	// 크리티컬 데미지 % 증가
+		AttackRange			= 14,	// 공격 범위% 증가
+
+		Max 				= 15,
 	}
 
 	// 버프 타입
@@ -142,6 +148,7 @@ public class Define
 		Devil			= 6,	// 악마
 	}
 
+	public const string StartDataNumber			= "883832159";
 	public const string WaveDataNumber 			= "1279670946";
 	public const string MercenaryDataNumber 	= "1983187163";
 	public const string UpgradeDataNumber 		= "2068092916";

@@ -10,6 +10,7 @@ public class DataManager : MonoBehaviour
     // 구글 스프레드 주소
     private const string URL = "https://docs.google.com/spreadsheets/d/1Td16WXEJ34lC1glVt7EnxKmdXnRYLFrD4DBTUrKZrVs/export?format=csv&gid=";
 
+    public Dictionary<int, StartData>       Start       { get; private set; }
     public Dictionary<int, WaveData>        Waves       { get; private set; }
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
     public Dictionary<int, BuffData>        Buff        { get; private set; }
@@ -24,6 +25,7 @@ public class DataManager : MonoBehaviour
     {
         Buff = new Dictionary<int, BuffData>();
 
+        StartCoroutine(DataRequest(StartRequest, Define.StartDataNumber));
         StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
         StartCoroutine(DataRequest(MercenaryRequest, Define.MercenaryDataNumber));
         StartCoroutine(DataRequest(OriginalBuffRequest, Define.OriginalBuffDataNumber));
@@ -70,6 +72,34 @@ public class DataManager : MonoBehaviour
 
 
 #region 데이터 파싱
+
+    #region Start Data
+
+    private void StartRequest(string data)
+    {
+        Dictionary<int, StartData> dict = new Dictionary<int, StartData>();
+
+        string[] lines = data.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            StartData startData = new StartData()
+            {
+                stageLevel = int.Parse(row[0]),
+                waveTime = int.Parse(row[1]),
+                drawAbilityWave = int.Parse(row[2]),
+            };
+
+            dict.Add(startData.stageLevel, startData);
+        }
+    }
+
+    #endregion
 
     #region Wave Data
 

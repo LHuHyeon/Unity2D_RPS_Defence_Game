@@ -73,6 +73,6 @@ public class UI_DragSlot : MonoBehaviour
         mercenaryTile = null;
         itemSlot = null;
 
-        Managers.Game.isDrag = false;
+        Managers.Game.IsDrag = false;
     }
 }

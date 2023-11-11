@@ -18,7 +18,7 @@ public class SpawningPool : MonoBehaviour
     public void StartWave(WaveData waveData)
     {
         _wave = waveData;
-        Managers.Game.remainEnemys = _wave.maxEnemyCount;
+        Managers.Game.RemainEnemyCount = _wave.maxEnemyCount;
 
         StartCoroutine(SpawnMonster());
     }
@@ -30,7 +30,7 @@ public class SpawningPool : MonoBehaviour
         StartCoroutine(WaveTimeCoroutine(false, 3));
         yield return new WaitForSeconds(3f);
 
-        Managers.Game.GameScene.RefreshWaveTime(true, 20);
+        Managers.Game.GameScene.RefreshWaveTime(true, Managers.Game.WaveTime);
 
         // 적 생성 최대치 만큼 생성
         while (spawnEnemyCount < _wave.maxEnemyCount)
@@ -60,7 +60,7 @@ public class SpawningPool : MonoBehaviour
 
         while (_currentWaveTime >= 0f)
         {
-            if (Managers.Game.remainEnemys == 0)
+            if (Managers.Game.RemainEnemyCount == 0)
             {
                 Managers.Game.WaveReward();
                 Managers.Game.GameScene.RefreshWaveTime(false, 0);

@@ -85,17 +85,15 @@ public class MercenaryStat
 
     public virtual void RefreshAddData()
     {
-        AddDamage = 0;
-        AddRaceDamage = 0;
-        AddAbilityDamage = 0;
-        AddAttackRate = 0;
-        AddAttackRange = 0;
+        StatClear();
 
         // 종족 강화 데미지
         AddRaceDamage += Managers.Game.GetRaceAddDamage(_race);
 
         // 진화 능력 적용
         OnAbility();
+
+        AddAttackRange += Managers.Game.AddAttackRange * 0.01f;
 
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetRaceAddDamageParcent(_race) * 0.01f));
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetJobAddDamageParcent(_job) * 0.01f));
@@ -185,5 +183,14 @@ public class MercenaryStat
             Buffs               = this.Buffs,
             DebuffAbility       = this.DebuffAbility,
         };
+    }
+
+    private void StatClear()
+    {
+        AddDamage = 0;
+        AddRaceDamage = 0;
+        AddAbilityDamage = 0;
+        AddAttackRate = 0;
+        AddAttackRange = 0;
     }
 }

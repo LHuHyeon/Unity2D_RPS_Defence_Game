@@ -11,7 +11,6 @@ using static Define;
 [Serializable]
 public class GameData
 {
-	public int Money;
 	public int GameGold;
 
 	public float PlayTime;
@@ -42,18 +41,10 @@ public class GameManagerEx
 	public UI_GameScene GameScene  	{ get; set; }
 	public WaveSystem	WaveSystem	{ get; set; }
 
-	public bool isDrag = false;
-	public int 	remainEnemys = 0;
-
 	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
 
-	#region 재화
-	public int Money
-	{
-		get { return _gameData.Money; }
-		set { _gameData.Money = value; }
-	}
+	#region <---------------- 재화 ---------------->
 	
 	public int GameGold
 	{
@@ -69,7 +60,7 @@ public class GameManagerEx
 
 	#endregion
 
-	#region 시간
+	#region <---------------- 시간 ---------------->
 
 	public float PlayTime
 	{
@@ -81,7 +72,7 @@ public class GameManagerEx
 
 	#endregion
 
-	#region 스탯
+	#region <---------------- 추가 스탯 ---------------->
 
 	public int[] CurrentRaceLevel
 	{
@@ -107,15 +98,6 @@ public class GameManagerEx
 		set { _gameData.JobAddDamageParcent = value; }
 	}
 
-	public List<AbilityData> Abilities
-	{
-		get { return _gameData.Abilities; }
-		set { _gameData.Abilities = value; }
-	}
-
-	// 디버프별 값
-	public Dictionary<Define.DeBuffType, int> DeBuffs = new Dictionary<DeBuffType, int>();
-
 	// 현재 종족 강화 레벨
 	public int GetRaceCurrentLevel(Define.RaceType raceType) { return CurrentRaceLevel[((int)raceType)]; }
 
@@ -128,6 +110,27 @@ public class GameManagerEx
 	// 직업별 추가 데미지 %
 	public int GetJobAddDamageParcent(Define.JobType jobType) { return JobAddDamageParcent[((int)jobType)]; }
 
+	public int 		GoldParcent 	{ get; set; }	// 확률 적으로 추가 골드
+	public int 		AddGold 		{ get; set; }
+
+	public int 		AddHitDamage 	{ get; set; }	// 피해량 증가 %
+	public int		CriticalParcent { get; set; }	// 치명타 확률 증가 %
+	public int		CriticalDamage	{ get; set; }	// 치명타 피해량 증가 %
+	public int		AddAttackRange	{ get; set; }	// 공격 범위 증가 %
+
+	#endregion
+
+	#region <---------------- 능력 ---------------->
+
+	public List<AbilityData> Abilities
+	{
+		get { return _gameData.Abilities; }
+		set { _gameData.Abilities = value; }
+	}
+
+	// 디버프별 값
+	public Dictionary<Define.DeBuffType, int> DeBuffs = new Dictionary<DeBuffType, int>();
+
 	// 디버프 반환
 	public float GetDebuff(Define.DeBuffType deBuffType)
 	{
@@ -137,17 +140,25 @@ public class GameManagerEx
 		return 0; 
 	}
 
-	// 확률 적으로 추가 골드
-	public float 	GoldParcent { get; set; }
-	public int 		AddGold { get; set; }
-
 	#endregion
+
+	#region <---------------- 정보 ---------------->
 
 	public WaveData CurrentWave
 	{
 		get { return _gameData.CurrentWave; }
 		set { _gameData.CurrentWave = value; }
 	}
+
+	public int WaveTime			{ get; set; }	// 웨이브 시간
+	public int DrawAbilityWave 	{ get; set; }	// 능력 뽑는 특정 웨이브
+
+	public int RemainEnemyCount { get; set; }	// 남은 몬스터 수
+
+	// 현재 드래그 중인가?
+	public bool IsDrag 			{ get; set; } = false;
+
+	#endregion
 
 	public void Init()
 	{
@@ -180,11 +191,7 @@ public class GameManagerEx
 	// 능력 새로고침
 	public void RefreshAbility()
 	{
-		RaceAddDamageParcent = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
-		JobAddDamageParcent = new int[((int)Define.JobType.Max)] {0, 0, 0, 0};
-		GoldParcent = 0;
-		AddGold = 0;
-		DeBuffs.Clear();
+		StatClear();
 
 		for(int i=0; i<Abilities.Count; i++)
 		{
@@ -193,15 +200,15 @@ public class GameManagerEx
 			switch (abilityData.abilityType)
 			{
 				// 직업별 공격력 강화 %
-				case Define.AbilityType.WarriorDamageParcent:
-				case Define.AbilityType.ArcherDamageParcent:
-				case Define.AbilityType.WizardDamageParcent:
+				case Define.AbilityType.WarriorDamage:
+				case Define.AbilityType.ArcherDamage:
+				case Define.AbilityType.WizardDamage:
 					JobAddDamageParcent[(int)abilityData.abilityType] += abilityData.currentValue;
 					break;
 				// 종족별 공격력 강화 %
-				case Define.AbilityType.HumanDamageParcent:
-				case Define.AbilityType.ElfDamageParcent:
-				case Define.AbilityType.WereWolfDamageParcent:
+				case Define.AbilityType.HumanDamage:
+				case Define.AbilityType.ElfDamage:
+				case Define.AbilityType.WereWolfDamage:
 					RaceAddDamageParcent[(int)abilityData.abilityType-3] += abilityData.currentValue;
 					break;
 				// 디버프 적용
@@ -213,19 +220,14 @@ public class GameManagerEx
 					GoldParcent += abilityData.currentValue;
 					AddGold++;
 					break;
+				case Define.AbilityType.HitDamage: 			AddHitDamage 	+= abilityData.currentValue; break;
+				case Define.AbilityType.CriticalParcent: 	CriticalParcent += abilityData.currentValue; break;
+				case Define.AbilityType.CriticalDamage: 	CriticalDamage 	+= abilityData.currentValue; break;
+				case Define.AbilityType.AttackRange: 		AddAttackRange 	+= abilityData.currentValue; break;
 			}
 		}
 
 		RefreshMercenary();
-	}
-
-	// 디버프 추가
-	private void SetDebuff(Define.DeBuffType deBuffType, int value)
-	{
-		if (DeBuffs.ContainsKey(deBuffType) == false)
-			DeBuffs.Add(deBuffType, value);
-		else
-			DeBuffs[deBuffType] += value;
 	}
 
 	// 소환된 용병들 새로고침
@@ -380,4 +382,26 @@ public class GameManagerEx
 		return true;
 	}
 	#endregion
+
+	// 디버프 추가
+	private void SetDebuff(Define.DeBuffType deBuffType, int value)
+	{
+		if (DeBuffs.ContainsKey(deBuffType) == false)
+			DeBuffs.Add(deBuffType, value);
+		else
+			DeBuffs[deBuffType] += value;
+	}
+
+	private void StatClear()
+	{
+		RaceAddDamageParcent = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
+		JobAddDamageParcent = new int[((int)Define.JobType.Max)] {0, 0, 0, 0};
+		GoldParcent = 0;
+		AddGold = 0;
+		AddHitDamage = 0;
+		CriticalParcent = 0;
+		CriticalDamage = 0;
+		AddAttackRange = 0;
+		DeBuffs.Clear();
+	}
 }
