@@ -33,6 +33,7 @@ public class UI_GameScene : UI_Scene
         UpgradeButton,
         CompositionButton,
         StartButton,
+        AbilityListButton,
         TestRegistarButton,
     }
     
@@ -86,6 +87,7 @@ public class UI_GameScene : UI_Scene
 
         GetButton((int)Buttons.PauseButton).gameObject.BindEvent(OnClickPauseButton);
         GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
+        GetButton((int)Buttons.AbilityListButton).gameObject.BindEvent(OnClickAbilityListButton);
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(OnClickStartButton);
 
         GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
@@ -316,6 +318,13 @@ public class UI_GameScene : UI_Scene
 
         GetText((int)Texts.GameSpeedButtonText).text = $"{_currentGameSpeed}X";
         Time.timeScale = _currentGameSpeed;
+    }
+
+    private void OnClickAbilityListButton(PointerEventData eventData)
+    {
+        Debug.Log("OnClickAbilityListButton");
+
+        
     }
 
     private void OnClickStartButton(PointerEventData eventData)
