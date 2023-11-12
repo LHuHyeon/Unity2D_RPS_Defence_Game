@@ -9,4 +9,16 @@ public class AbilityData
     public int                  currentValue;   // 현재 값
     public string               name;           // 이름
     public string               descripition;   // 설명
+
+    public AbilityData AbilityClone()
+    {
+        return new AbilityData()
+        {
+            abilityType     = this.abilityType,
+            values          = this.values,
+            currentValue    = this.currentValue,
+            name            = this.name,
+            descripition    = this.descripition,
+        };
+    }
 }

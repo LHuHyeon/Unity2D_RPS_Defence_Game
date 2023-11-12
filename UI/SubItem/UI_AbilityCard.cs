@@ -50,8 +50,7 @@ public class UI_AbilityCard : UI_Base
         IsChoice(false);
 
         // 능력 랜덤 뽑기
-        // Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
-        Define.AbilityType abilityType = Define.AbilityType.AttackRange;
+        Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
         _ability = Managers.Data.Abilities[abilityType];
 
         // 능력 값 랜덤 뽑기

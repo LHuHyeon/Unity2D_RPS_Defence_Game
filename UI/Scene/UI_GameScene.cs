@@ -324,7 +324,7 @@ public class UI_GameScene : UI_Scene
     {
         Debug.Log("OnClickAbilityListButton");
 
-        
+        Managers.UI.ShowPopupUI<UI_AbilityListPopup>().RefreshUI();
     }
 
     private void OnClickStartButton(PointerEventData eventData)

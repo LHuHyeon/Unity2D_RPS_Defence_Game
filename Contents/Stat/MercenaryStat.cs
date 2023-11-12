@@ -95,8 +95,6 @@ public class MercenaryStat
 
         AddAttackRange += Managers.Game.AddAttackRange;
 
-        Debug.Log("Attack Range : " + AddAttackRange);
-
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetRaceAddDamageParcent(_race) * 0.01f));
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetJobAddDamageParcent(_job) * 0.01f));
 

@@ -140,6 +140,7 @@ public class UI_MercenarySlot : UI_ItemDragSlot
             UI_DragSlot.instance.icon.transform.position = eventData.position;
 
             Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
+            Managers.UI.FindPopup<UI_AbilityListPopup>()?.Clear();
         }
     }
 
