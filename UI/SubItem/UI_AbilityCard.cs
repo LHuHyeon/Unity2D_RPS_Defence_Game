@@ -20,9 +20,8 @@ public class UI_AbilityCard : UI_Base
 
     public AbilityData      _ability;
 
+    public int  _currentValue = 0;
     public bool _isChoice = false;
-
-
 
     public override bool Init()
     {
@@ -51,12 +50,13 @@ public class UI_AbilityCard : UI_Base
         IsChoice(false);
 
         // 능력 랜덤 뽑기
-        Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
+        // Define.AbilityType abilityType = (Define.AbilityType)Random.Range(1, ((int)Define.AbilityType.Max));
+        Define.AbilityType abilityType = Define.AbilityType.AttackRange;
         _ability = Managers.Data.Abilities[abilityType];
 
         // 능력 값 랜덤 뽑기
         int value = _ability.values[Random.Range(0, _ability.values.Count)];
-        _ability.currentValue = value;
+        _currentValue = value;
 
         string descripition = _ability.descripition.Replace("{value}", value.ToString());
 

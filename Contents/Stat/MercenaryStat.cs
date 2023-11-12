@@ -93,7 +93,9 @@ public class MercenaryStat
         // 진화 능력 적용
         OnAbility();
 
-        AddAttackRange += Managers.Game.AddAttackRange * 0.01f;
+        AddAttackRange += Managers.Game.AddAttackRange;
+
+        Debug.Log("Attack Range : " + AddAttackRange);
 
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetRaceAddDamageParcent(_race) * 0.01f));
         AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetJobAddDamageParcent(_job) * 0.01f));
@@ -177,8 +179,8 @@ public class MercenaryStat
             Projectile          = this.Projectile,
             ProjectileIcon      = this.ProjectileIcon,
             Damage              = this.Damage - this.AddDamage - this.AddRaceDamage - this.AddAbilityDamage,
-            AttackSpeed         = this.AttackSpeed,
-            AttackRange         = this.AttackRange,
+            AttackSpeed         = this.AttackSpeed - this.AddAttackRate,
+            AttackRange         = this.AttackRange - this.AddAttackRange,
             CurrentEvolution    = this.CurrentEvolution,
             Buffs               = this.Buffs,
             DebuffAbility       = this.DebuffAbility,

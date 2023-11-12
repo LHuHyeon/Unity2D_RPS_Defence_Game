@@ -5,9 +5,6 @@ using UnityEngine;
 public class SpawningPool : MonoBehaviour
 {
     [SerializeField]
-    private float       _waveTime = 20f;
-
-    [SerializeField]
     private float       _currentWaveTime = 0;
 
     [SerializeField]
@@ -50,7 +47,7 @@ public class SpawningPool : MonoBehaviour
             yield return new WaitForSeconds(_wave.spawnTime);
         }
 
-        StartCoroutine(WaveTimeCoroutine(true, _waveTime));
+        StartCoroutine(WaveTimeCoroutine(true, Managers.Game.WaveTime));
     }
 
     // Wave Time Check

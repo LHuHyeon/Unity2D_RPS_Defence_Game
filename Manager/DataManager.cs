@@ -36,10 +36,12 @@ public class DataManager : MonoBehaviour
 
     public bool IsData()
     {
-        if (Waves.IsNull()      == true  ||
-            Mercenarys.IsNull() == true  ||
-            Upgrades.IsNull()   == true  || 
-            Buff.IsNull()       == true)
+        if (Start.IsNull()      == true ||
+            Waves.IsNull()      == true ||
+            Mercenarys.IsNull() == true ||
+            Upgrades.IsNull()   == true || 
+            Buff.IsNull()       == true ||
+            Abilities.IsNull()  == true)
             return false;
 
         return true;
@@ -97,6 +99,8 @@ public class DataManager : MonoBehaviour
 
             dict.Add(startData.stageLevel, startData);
         }
+
+        Start = dict;
     }
 
     #endregion

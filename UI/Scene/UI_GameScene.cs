@@ -40,6 +40,7 @@ public class UI_GameScene : UI_Scene
     {
         WaveTimeText,
         EnemyHpText,
+        EnemyShieldText,
         EnemyDefenceText,
         WaveLevelText,
         GoldText,
@@ -92,7 +93,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(35, 43)].MercenaryClone<MercenaryStat>(), 10);
+            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(21, 30)].MercenaryClone<MercenaryStat>(), 10);
         });
 
         Managers.Game.GameScene.ActiveStartButton(false);
@@ -173,6 +174,7 @@ public class UI_GameScene : UI_Scene
     public void RefreshWaveInfo()
     {
         GetText((int)Texts.EnemyHpText).text = _wave.hp.ToString();
+        GetText((int)Texts.EnemyShieldText).text = _wave.shield.ToString();
         GetText((int)Texts.EnemyDefenceText).text = _wave.defence.ToString();
         GetText((int)Texts.WaveLevelText).text = $"{_wave.waveLevel} / 100";
     }

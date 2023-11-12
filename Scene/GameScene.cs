@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GameScene : BaseScene
 {
+	// TODO : 게임을 로비에서 시작한다면 그 곳에서 결정하기
+	private int currentStage = 1;
+
     protected override bool Init()
     {
 		if (base.Init() == false)
@@ -23,8 +26,14 @@ public class GameScene : BaseScene
 		while(Managers.Data.IsData() == false)
 			yield return null;
 
-		// Managers.UI.ShowPopupUI<UI_DrawAbilityPopup>().RefreshUI();
+		// 시작 기본 데이터 적용
+		StartData startData = Managers.Data.Start[currentStage];
+
+		Managers.Game.WaveTime = startData.waveTime;
+		Managers.Game.DrawAbilityWave = startData.drawAbilityWave;
+
+		// 게임을 진행할 Prefab 생성
 		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
-		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage01").GetComponent<WaveSystem>();
+		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage" + startData.stageLevel).GetComponent<WaveSystem>();
 	}
 }

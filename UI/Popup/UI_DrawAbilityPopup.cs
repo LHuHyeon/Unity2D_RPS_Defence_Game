@@ -83,8 +83,15 @@ public class UI_DrawAbilityPopup : UI_Popup
         if (_isCheck == false)
             return;
 
+        // 깊은 복사 (메모리 중복 방지)
+        AbilityData abilityData = new AbilityData()
+        {
+            abilityType = _currentAbilityCard._ability.abilityType,
+            currentValue = _currentAbilityCard._currentValue,
+        };
+
         // 뽑은 능력 적용
-        Managers.Game.Abilities.Add(_currentAbilityCard._ability);
+        Managers.Game.Abilities.Add(abilityData);
         Managers.Game.RefreshAbility();
 
         Clear();

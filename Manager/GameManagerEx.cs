@@ -110,13 +110,13 @@ public class GameManagerEx
 	// 직업별 추가 데미지 %
 	public int GetJobAddDamageParcent(Define.JobType jobType) { return JobAddDamageParcent[((int)jobType)]; }
 
-	public int 		GoldParcent 	{ get; set; }	// 확률 적으로 추가 골드
-	public int 		AddGold 		{ get; set; }
+	public int 		GoldParcent 	{ get; set; } = 0;	// 확률 적으로 추가 골드
+	public int 		AddGold 		{ get; set; } = 0;
 
-	public int 		AddHitDamage 	{ get; set; }	// 피해량 증가 %
-	public int		CriticalParcent { get; set; }	// 치명타 확률 증가 %
-	public int		CriticalDamage	{ get; set; }	// 치명타 피해량 증가 %
-	public int		AddAttackRange	{ get; set; }	// 공격 범위 증가 %
+	public int 		AddHitDamage 	{ get; set; } = 0;	// 피해량 증가 %
+	public int		CriticalParcent { get; set; } = 0;	// 치명타 확률 증가 %
+	public int		CriticalDamage	{ get; set; } = 0;	// 치명타 피해량 증가 %
+	public float	AddAttackRange	{ get; set; } = 0;	// 공격 범위 증가 %
 
 	#endregion
 
@@ -172,7 +172,7 @@ public class GameManagerEx
 		Managers.UI.CloseAllPopupUI();
 
         // 특정 웨이브마다 능력 뽑기 진행
-		if (Managers.Game.CurrentWave.waveLevel % 7 == 0)
+		if (CurrentWave.waveLevel % DrawAbilityWave == 0)
 		{
 			Managers.UI.ShowPopupUI<UI_DrawAbilityPopup>().RefreshUI();
 			return;
@@ -184,8 +184,8 @@ public class GameManagerEx
 	// 종족별 데미지 강화
 	public int RaceUpgradeDamage(Define.RaceType raceType, int upgradeDamage)
 	{
-		Managers.Game.RaceAddDamage[((int)raceType)] = upgradeDamage;
-		return ++Managers.Game.CurrentRaceLevel[((int)raceType)];
+		RaceAddDamage[((int)raceType)] = upgradeDamage;
+		return ++CurrentRaceLevel[((int)raceType)];
 	}
 
 	// 능력 새로고침
@@ -223,7 +223,10 @@ public class GameManagerEx
 				case Define.AbilityType.HitDamage: 			AddHitDamage 	+= abilityData.currentValue; break;
 				case Define.AbilityType.CriticalParcent: 	CriticalParcent += abilityData.currentValue; break;
 				case Define.AbilityType.CriticalDamage: 	CriticalDamage 	+= abilityData.currentValue; break;
-				case Define.AbilityType.AttackRange: 		AddAttackRange 	+= abilityData.currentValue; break;
+				case Define.AbilityType.AttackRange: 		
+					AddAttackRange 	+= (float)Math.Round(abilityData.currentValue * 0.01f, 1);
+					Debug.Log("Parcent : " + abilityData.currentValue + "\n" + "Range Value : " + AddAttackRange);
+					break;
 			}
 		}
 

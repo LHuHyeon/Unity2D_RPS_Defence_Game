@@ -23,7 +23,6 @@ public class EnemyStat : MonoBehaviour
     [SerializeField] protected int              _maxDefence;    // 최대 방어력
     [SerializeField] protected float            _maxMovespeed;  // 최대 이동 속도
 
-
     public int              Id              { get { return _id; }           set { _id = value; } }
     public string           Name            { get { return _name; }         set { _name = value; } }
     public Define.RaceType  Race            { get { return _race; }         set { _race = value; } }
@@ -39,7 +38,6 @@ public class EnemyStat : MonoBehaviour
 
     private bool            _isDebuffActive = false;
     private UI_HpBar        _hpBar;
-    private GameManagerEx   _game;
 
     private Dictionary<Define.DeBuffType, DeBuff> Debuffs = new Dictionary<Define.DeBuffType, DeBuff>();
 
@@ -53,7 +51,6 @@ public class EnemyStat : MonoBehaviour
     void Start()
     {
         _hpBar = GetComponent<EnemyController>()._hpBar = Managers.UI.MakeWorldSpaceUI<UI_HpBar>(transform);
-        _game = Managers.Game;
     }
 
     // Wave에 맞게 스탯 수정
@@ -68,9 +65,9 @@ public class EnemyStat : MonoBehaviour
         MaxMoveSpeed    = waveData.moveSpeed;
 
         // 고정 디버프 적용
-        MaxDefence      = MaxDefence    - Mathf.RoundToInt(MaxDefence * _game.GetDebuff(Define.DeBuffType.DefenceDecrease));
-        MaxShield       = MaxShield     - Mathf.RoundToInt(MaxShield * _game.GetDebuff(Define.DeBuffType.ShieldDecrease));
-        MaxMoveSpeed    = MaxMoveSpeed  - (MaxMoveSpeed * _game.GetDebuff(Define.DeBuffType.Slow));
+        MaxDefence      = MaxDefence    - Mathf.RoundToInt(MaxDefence * Managers.Game.GetDebuff(Define.DeBuffType.DefenceDecrease));
+        MaxShield       = MaxShield     - Mathf.RoundToInt(MaxShield * Managers.Game.GetDebuff(Define.DeBuffType.ShieldDecrease));
+        MaxMoveSpeed    = MaxMoveSpeed  - (MaxMoveSpeed * Managers.Game.GetDebuff(Define.DeBuffType.Slow));
 
         if (_hpBar.IsNull() == false)
             _hpBar.RefreshUI();
@@ -96,12 +93,12 @@ public class EnemyStat : MonoBehaviour
         int hitDamage = stat.Damage;
 
         // 추가 피해량 적용
-        hitDamage = hitDamage + Mathf.RoundToInt(hitDamage * (_game.AddHitDamage * 0.01f));
+        hitDamage = hitDamage + Mathf.RoundToInt(hitDamage * (Managers.Game.AddHitDamage * 0.01f));
 
         // 크리티컬 적용
-        bool isCritical = Random.Range(1, 101) <= _game.CriticalParcent;
+        bool isCritical = Random.Range(1, 101) <= Managers.Game.CriticalParcent;
         if (isCritical == true)
-            hitDamage = hitDamage + (int)(hitDamage / (_game.CriticalDamage * 0.01f));
+            hitDamage = hitDamage + (int)(hitDamage * (Managers.Game.CriticalDamage * 0.01f));
 
         // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
         hitDamage = hitDamage - Mathf.RoundToInt(hitDamage * (Defence * 0.01f));
