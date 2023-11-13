@@ -93,12 +93,12 @@ public class EnemyStat : MonoBehaviour
         int hitDamage = stat.Damage;
 
         // 추가 피해량 적용
-        hitDamage = hitDamage + Mathf.RoundToInt(hitDamage * (Managers.Game.AddHitDamage * 0.01f));
+        hitDamage = hitDamage + Mathf.RoundToInt(hitDamage * Managers.Game.HitDamageParcent);
 
         // 크리티컬 적용
         bool isCritical = Random.Range(1, 101) <= Managers.Game.CriticalParcent;
         if (isCritical == true)
-            hitDamage = hitDamage + (int)(hitDamage * (Managers.Game.CriticalDamage * 0.01f));
+            hitDamage = hitDamage + (int)(hitDamage * Managers.Game.CriticalDamageParcent);
 
         // 방어력은 공격력을 %만큼 흡수 [Damage(1000) * Defence(20)% = 800]
         hitDamage = hitDamage - Mathf.RoundToInt(hitDamage * (Defence * 0.01f));

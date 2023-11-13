@@ -7,6 +7,8 @@ public class MercenaryTile : MonoBehaviour
 {
     public GameObject _mercenary;
 
+    private float mercenaryMinusPosY = -0.37f;  // 위치 조정 용도
+
     public MercenaryController GetMercenary()
     {
         return _mercenary.GetComponent<MercenaryController>(); 
@@ -17,6 +19,7 @@ public class MercenaryTile : MonoBehaviour
         SetEventHandler();
     }
 
+    // 타일의 용병 새로 설정
     public void SetMercenary(GameObject go)
     {
         _mercenary = go;
@@ -24,13 +27,7 @@ public class MercenaryTile : MonoBehaviour
         GetMercenary()._tile = this;
 
         _mercenary.transform.SetParent(transform);
-        _mercenary.transform.localPosition = Vector3.up * -0.37f;
-    }
-
-    public void Clear()
-    {
-        GetMercenary()._tile = null;
-        _mercenary = null;
+        _mercenary.transform.localPosition = Vector3.up * mercenaryMinusPosY;
     }
 
     // 타일 교체
@@ -46,7 +43,7 @@ public class MercenaryTile : MonoBehaviour
         if (tempObj.IsFakeNull() == false)
             tile.SetMercenary(tempObj);
         else
-            tile.Clear();
+            _mercenary = null;
     }
 
     // 타일과 슬롯 교체
@@ -130,5 +127,11 @@ public class MercenaryTile : MonoBehaviour
                 ChangeTileAndSlot(dragSlot.itemSlot as UI_MercenarySlot);
 
         }, Define.UIEvent.Drop);
+    }
+
+    public void Clear()
+    {
+        GetMercenary()._tile = null;
+        _mercenary = null;
     }
 }

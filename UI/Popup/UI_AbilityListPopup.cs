@@ -44,18 +44,18 @@ public class UI_AbilityListPopup : UI_Popup
 
     private void PopulateAbilitySlot()
     {
-        // TODO : 설명 Text와 Icon Sprite가 적용이 안됨 해결하기!
-
         List<AbilityData> abilities = Managers.Game.Abilities;
 
         // 현재 등록된 능력값들 비우기
         foreach(var slot in _abilitySlots)
-            slot.Value.SetInfo();
+            slot.Value.Clear();
 
         // 획득한 능력을 List로 생성 및 값 추가
         for(int i=0; i<abilities.Count; i++)
         {
             AbilityData ability = abilities[i];
+
+            Debug.Log("Abilty Value 전 : " + ability.currentValue);
 
             // 능력Type의 슬롯이 없으면 생성
             UI_AbilitySlot abilitySlot;
@@ -66,6 +66,8 @@ public class UI_AbilityListPopup : UI_Popup
 
                 _abilitySlots.Add(ability.abilityType, abilitySlot);
             }
+
+            Debug.Log("Abilty Value 후 : " + ability.currentValue);
 
             // 문자열 값 적용
             abilitySlot.RefreshDescripition(ability.currentValue);

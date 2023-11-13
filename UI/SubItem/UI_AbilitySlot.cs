@@ -28,24 +28,25 @@ public class UI_AbilitySlot : UI_Base
         BindImage(typeof(Images));
         BindText(typeof(Texts));
 
+        Clear();
+
         RefreshUI();
 
         return true;
     }
 
-    public void SetInfo(AbilityData abilityData = null)
+    public void SetInfo(AbilityData abilityData)
     {
-        if (abilityData.IsNull() == false)
-            _ability = abilityData;
-
-        _currentValue = 0;
-        _values = new List<int>();
+        _ability = abilityData;
 
         RefreshUI();
     }
 
     public void RefreshDescripition(int value)
     {
+        if (_init == false)
+            return;
+
         if (value <= 0)
             return;
             
@@ -61,7 +62,7 @@ public class UI_AbilitySlot : UI_Base
         string valuesStr = "";
         for(int i=0; i<_values.Count; i++)
         {
-            valuesStr += $" {_values}%";
+            valuesStr += $" {_values[i]}%";
             
             if (i < _values.Count-1)
                 valuesStr += " +";
@@ -75,8 +76,16 @@ public class UI_AbilitySlot : UI_Base
         if (_init == false)
             return;
 
-        GetImage((int)Images.AbilityIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Ability/"+_ability.ToString());
+        GetImage((int)Images.AbilityIcon).sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Ability/"+_ability.abilityType.ToString());
 
         GetText((int)Texts.AbilityNameText).text = _ability.name;
+
+        RefreshDescripition(_ability.currentValue);
+    }
+
+    public void Clear()
+    {
+        _currentValue = 0;
+        _values = new List<int>();
     }
 }

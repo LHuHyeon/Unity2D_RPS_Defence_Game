@@ -95,6 +95,7 @@ public class DataManager : MonoBehaviour
                 stageLevel = int.Parse(row[0]),
                 waveTime = int.Parse(row[1]),
                 drawAbilityWave = int.Parse(row[2]),
+                criticalDamage = int.Parse(row[3]),
             };
 
             dict.Add(startData.stageLevel, startData);

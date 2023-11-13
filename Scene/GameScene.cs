@@ -28,9 +28,7 @@ public class GameScene : BaseScene
 
 		// 시작 기본 데이터 적용
 		StartData startData = Managers.Data.Start[currentStage];
-
-		Managers.Game.WaveTime = startData.waveTime;
-		Managers.Game.DrawAbilityWave = startData.drawAbilityWave;
+		startData.SetGameData();
 
 		// 게임을 진행할 Prefab 생성
 		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();

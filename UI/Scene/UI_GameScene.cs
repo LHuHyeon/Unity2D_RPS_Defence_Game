@@ -95,7 +95,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(21, 30)].MercenaryClone<MercenaryStat>(), 10);
+            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(21, 30)].MercenaryClone<MercenaryStat>(), 2);
         });
 
         Managers.Game.GameScene.ActiveStartButton(false);
@@ -245,10 +245,10 @@ public class UI_GameScene : UI_Scene
         }
 
         // 중복된 용병 슬롯이 없으면 생성하여 저장
-        UI_MercenarySlot item = Managers.UI.MakeSubItem<UI_MercenarySlot>(GetObject((int)GameObjects.MercenaryContent).transform);
-        item.SetInfo(mercenaryStat, count);
+        slot = Managers.UI.MakeSubItem<UI_MercenarySlot>(GetObject((int)GameObjects.MercenaryContent).transform);
+        slot.SetInfo(mercenaryStat, count);
 
-        _mercenarySlots.Add(item);
+        _mercenarySlots.Add(slot);
 
         SortMercenarySlot();
     }

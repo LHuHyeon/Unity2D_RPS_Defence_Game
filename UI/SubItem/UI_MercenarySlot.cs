@@ -54,6 +54,8 @@ public class UI_MercenarySlot : UI_ItemDragSlot
     {
         _mercenary = mercenary;
 
+        _mercenary.RefreshAddData();
+
         SetCount(count);
 
         RefreshUI();

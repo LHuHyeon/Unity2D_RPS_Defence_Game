@@ -15,6 +15,8 @@ public class GameData
 
 	public float PlayTime;
 
+	public float CriticalDamageParcent;
+
 	// 현재 종족 레벨
 	public int[] CurrentRaceLevel = new int[((int)Define.RaceType.MaxMercenary)] {0, 0, 0, 0};
 
@@ -72,6 +74,16 @@ public class GameManagerEx
 
 	#endregion
 
+	#region <---------------- 기본 스탯 ---------------->
+
+	public float CriticalDamageParcent
+	{
+		get { return (_gameData.CriticalDamageParcent + AddCriticalDamage) * 0.01f; }
+		set { _gameData.CriticalDamageParcent = value; }
+	}
+
+	#endregion
+
 	#region <---------------- 추가 스탯 ---------------->
 
 	public int[] CurrentRaceLevel
@@ -105,18 +117,18 @@ public class GameManagerEx
 	public int GetRaceAddDamage(Define.RaceType raceType) { return RaceAddDamage[((int)raceType)]; }
 
 	// 종족별 추가 데미지 %
-	public int GetRaceAddDamageParcent(Define.RaceType raceType) { return RaceAddDamageParcent[((int)raceType)]; }
+	public float GetRaceAddDamageParcent(Define.RaceType raceType) { return RaceAddDamageParcent[((int)raceType)] * 0.01f; }
 
 	// 직업별 추가 데미지 %
-	public int GetJobAddDamageParcent(Define.JobType jobType) { return JobAddDamageParcent[((int)jobType)]; }
+	public float GetJobAddDamageParcent(Define.JobType jobType) { return JobAddDamageParcent[((int)jobType)] * 0.01f; }
 
 	public int 		GoldParcent 	{ get; set; } = 0;	// 확률 적으로 추가 골드
 	public int 		AddGold 		{ get; set; } = 0;
 
-	public int 		AddHitDamage 	{ get; set; } = 0;	// 피해량 증가 %
-	public int		CriticalParcent { get; set; } = 0;	// 치명타 확률 증가 %
-	public int		CriticalDamage	{ get; set; } = 0;	// 치명타 피해량 증가 %
-	public float	AddAttackRange	{ get; set; } = 0;	// 공격 범위 증가 %
+	public float	HitDamageParcent	{ get; set; } = 0;	// 피해량 증가 %
+	public int		CriticalParcent 	{ get; set; } = 0;	// 치명타 확률 증가 %
+	public int		AddCriticalDamage	{ get; set; } = 0;	// 치명타 피해량 증가 %
+	public float	AddAttackRange		{ get; set; } = 0;	// 공격 범위 증가 %
 
 	#endregion
 
@@ -160,6 +172,8 @@ public class GameManagerEx
 
 	#endregion
 
+
+
 	public void Init()
 	{
 	}
@@ -197,6 +211,8 @@ public class GameManagerEx
 		{
 			AbilityData abilityData = Abilities[i];
 
+			Debug.Log("GameManager Abilit Value : " + abilityData.currentValue);
+
 			switch (abilityData.abilityType)
 			{
 				// 직업별 공격력 강화 %
@@ -220,12 +236,11 @@ public class GameManagerEx
 					GoldParcent += abilityData.currentValue;
 					AddGold++;
 					break;
-				case Define.AbilityType.HitDamage: 			AddHitDamage 	+= abilityData.currentValue; break;
-				case Define.AbilityType.CriticalParcent: 	CriticalParcent += abilityData.currentValue; break;
-				case Define.AbilityType.CriticalDamage: 	CriticalDamage 	+= abilityData.currentValue; break;
+				case Define.AbilityType.HitDamage: 			HitDamageParcent 		+= abilityData.currentValue * 0.01f; break;
+				case Define.AbilityType.CriticalParcent: 	CriticalParcent 	+= abilityData.currentValue; break;
+				case Define.AbilityType.CriticalDamage: 	AddCriticalDamage 	+= abilityData.currentValue; break;
 				case Define.AbilityType.AttackRange: 		
 					AddAttackRange 	+= (float)Math.Round(abilityData.currentValue * 0.01f, 1);
-					Debug.Log("Parcent : " + abilityData.currentValue + "\n" + "Range Value : " + AddAttackRange);
 					break;
 			}
 		}
@@ -401,9 +416,9 @@ public class GameManagerEx
 		JobAddDamageParcent = new int[((int)Define.JobType.Max)] {0, 0, 0, 0};
 		GoldParcent = 0;
 		AddGold = 0;
-		AddHitDamage = 0;
+		HitDamageParcent = 0;
 		CriticalParcent = 0;
-		CriticalDamage = 0;
+		AddCriticalDamage = 0;
 		AddAttackRange = 0;
 		DeBuffs.Clear();
 	}

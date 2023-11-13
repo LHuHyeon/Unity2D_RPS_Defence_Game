@@ -18,7 +18,7 @@ public class UI_AbilityCard : UI_Base
         DescripitionText,
     }
 
-    public AbilityData      _ability;
+    public AbilityData _ability;
 
     public int  _currentValue = 0;
     public bool _isChoice = false;

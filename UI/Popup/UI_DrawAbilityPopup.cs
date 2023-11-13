@@ -83,8 +83,12 @@ public class UI_DrawAbilityPopup : UI_Popup
         if (_isCheck == false)
             return;
 
+        // 선택한 능력 가져오기
+        AbilityData abilityData = _currentAbilityCard._ability.AbilityClone();
+        abilityData.currentValue = _currentAbilityCard._currentValue;
+
         // 뽑은 능력 적용
-        Managers.Game.Abilities.Add(_currentAbilityCard._ability.AbilityClone());
+        Managers.Game.Abilities.Add(abilityData);
         Managers.Game.RefreshAbility();
 
         Clear();

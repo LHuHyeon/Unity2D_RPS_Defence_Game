@@ -58,7 +58,7 @@ public class MercenaryStat
 
     public InstantBuffData          DebuffAbility       { get; set; }
 
-    public MercenaryController  _mercenary;
+    public MercenaryController      _mercenary;
 
     // 들어온 용병 정보와 내 정보가 같은지 확인
     public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
@@ -95,8 +95,9 @@ public class MercenaryStat
 
         AddAttackRange += Managers.Game.AddAttackRange;
 
-        AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetRaceAddDamageParcent(_race) * 0.01f));
-        AddAbilityDamage += Mathf.RoundToInt(Damage * (Managers.Game.GetJobAddDamageParcent(_job) * 0.01f));
+        // 능력 데미지 % 추가
+        AddAbilityDamage += Mathf.RoundToInt(Damage * Managers.Game.GetRaceAddDamageParcent(_race));    // 종족 추가 데미지%
+        AddAbilityDamage += Mathf.RoundToInt(Damage * Managers.Game.GetJobAddDamageParcent(_job));      // 직업 추가 데미지%
 
         // 객체 존재 시 스탯 새로고침
         if (_mercenary.IsNull() == false)
