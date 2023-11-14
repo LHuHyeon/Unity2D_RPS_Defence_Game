@@ -9,20 +9,31 @@ public class WaveSystem : MonoBehaviour
     [SerializeField]
     private SpawningPool    _enemySpawner;
 
+    private List<WaveData>  _waves;
+
+    public void SetWave(List<WaveData> waves)
+    {
+        _waves = waves;
+    }
+
     public void WaveStart()
     {
         // 다음 Wave 존재 확인
-        _currentWaveIndex++;
-        if (Managers.Data.Waves.TryGetValue(_currentWaveIndex, out WaveData waveData) == false)
+        if (_currentWaveIndex >= _waves.Count)
         {
             Debug.Log("No Next Wave");
             return;
         }
 
-        Managers.Game.CurrentWave = waveData;
+        // 다음 진행할 Wave 가져오기
+        WaveData wave = _waves[_currentWaveIndex];
+
+        Managers.Game.CurrentWave = wave;
 
         // 적 소환 시작
-        _enemySpawner.StartWave(waveData);
-        Managers.Game.GameScene.SetNextWave(waveData);
+        _enemySpawner.StartWave(wave);
+        Managers.Game.GameScene.SetNextWave(wave);
+        
+        _currentWaveIndex++;
     }
 }

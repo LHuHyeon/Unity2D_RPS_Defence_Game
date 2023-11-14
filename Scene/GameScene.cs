@@ -33,5 +33,7 @@ public class GameScene : BaseScene
 		// 게임을 진행할 Prefab 생성
 		Managers.Game.GameScene = Managers.UI.ShowSceneUI<UI_GameScene>();
 		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage" + startData.stageLevel).GetComponent<WaveSystem>();
+		
+		Managers.Game.WaveSystem.SetWave(Managers.Data.Stages[currentStage]);
 	}
 }

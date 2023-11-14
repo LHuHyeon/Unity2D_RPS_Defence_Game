@@ -43,7 +43,7 @@ public class MercenaryTile : MonoBehaviour
         if (tempObj.IsFakeNull() == false)
             tile.SetMercenary(tempObj);
         else
-            _mercenary = null;
+            tile._mercenary = null;
     }
 
     // 타일과 슬롯 교체

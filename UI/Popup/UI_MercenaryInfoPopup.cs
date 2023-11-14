@@ -14,6 +14,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         StarGrid,
         EvolutionTextGrid,
         StatBar,
+        AttackBar,
         UI_Evolution,
     }
 
@@ -35,6 +36,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         InfoText,
         StatText,
         SaleGoldText,
+        AttackText,
     }
 
     public MercenaryTile    _tile;
@@ -48,6 +50,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
     private bool            _isActive = false;          // 팝업 활성화 여부
     [SerializeField]
     private bool            _isFold = false;            // 정보를 접은 상태
+
+    private string          _attackText;
 
     private UI_Evolution    _evolution;
     
@@ -71,6 +75,8 @@ public class UI_MercenaryInfoPopup : UI_Popup
         // 진화 등급(별) Icon 가져오기
         foreach(Transform child in GetObject((int)GameObjects.StarGrid).transform)
             _starIcons.Add(child.GetComponent<Image>());
+
+        GetObject((int)GameObjects.AttackBar).SetActive(false);
 
         PopulateEvolution();    // 진화 정보 채우기
 
@@ -143,9 +149,12 @@ public class UI_MercenaryInfoPopup : UI_Popup
         string addAttackRateText    = _mercenary.AddAttackRate > 0 ? $@"<color=green>[+{_mercenary.AddAttackRate}]</color>" : "";
         string addAttackRangeText   = _mercenary.AddAttackRange > 0 ? $@"<color=green>[+{_mercenary.AddAttackRange}]</color>" : "";
 
+        _attackText = $@"공격력 {_mercenary.Damage}{addAbilityDamageText}{addRaceDamageText}{addDamageText}";
+        GetText((int)Texts.AttackText).text = _attackText;
+
         // 능력치 정보 문자열
         GetText((int)Texts.StatText).text = 
-        $@"공격력 {_mercenary.Damage}{addAbilityDamageText}{addRaceDamageText}{addDamageText}" + "\n" +
+        _attackText + "\n" +
         $@"공격속도 {_mercenary.AttackSpeed}{addAttackRateText}" + "\n" +
         $@"사거리 {_mercenary.AttackRange}{addAttackRangeText}";
 
@@ -243,7 +252,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
     {
         int     posY            = _isFold == true ? 800 : 300;          // Background Pos Y
         int     bgHeight        = _isFold == true ? 415 : 950;          // Background Height
-        int     bgExitHeight    = _isFold == true ? 430 : 1380;         // Exit Background Height
+        int     bgExitHeight    = _isFold == true ? 510 : 1380;         // Exit Background Height
         string  iconPathName    = _isFold == true ? "Down" : "Up";      // Icon Sprite Path Name
 
         // Background 크기, 높이 설정
@@ -263,6 +272,9 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
         // 정보Bar 활성화/비활성화 설정
         GetObject((int)GameObjects.StatBar).SetActive(!_isFold);
+
+        // 공격력 정보가 제일 궁금하기 때문에 따로 활성화
+        GetObject((int)GameObjects.AttackBar).SetActive(_isFold);
     }
 
     private void OnClickExitButton(PointerEventData eventData)

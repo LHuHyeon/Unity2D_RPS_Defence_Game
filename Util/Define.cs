@@ -149,13 +149,14 @@ public class Define
 	}
 
 	public const string StartDataNumber			= "883832159";
-	public const string WaveDataNumber 			= "1279670946";
 	public const string MercenaryDataNumber 	= "1983187163";
 	public const string UpgradeDataNumber 		= "2068092916";
 	public const string EvolutionDataNumber 	= "279655201";
 	public const string OriginalBuffDataNumber 	= "1888981556";
 	public const string InstantBuffDataNumber	= "1364019981";
 	public const string AbilityDataNumber		= "275010908";
+	
+	public const string Stage01DataNumber		= "1279670946";
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
 }

@@ -11,7 +11,7 @@ public class DataManager : MonoBehaviour
     private const string URL = "https://docs.google.com/spreadsheets/d/1Td16WXEJ34lC1glVt7EnxKmdXnRYLFrD4DBTUrKZrVs/export?format=csv&gid=";
 
     public Dictionary<int, StartData>       Start       { get; private set; }
-    public Dictionary<int, WaveData>        Waves       { get; private set; }
+    public Dictionary<int, List<WaveData>>  Stages      { get; private set; }
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
     public Dictionary<int, BuffData>        Buff        { get; private set; }
     public Dictionary<int, UpgradeData>     Upgrades    { get; private set; }
@@ -26,22 +26,22 @@ public class DataManager : MonoBehaviour
         Buff = new Dictionary<int, BuffData>();
 
         StartCoroutine(DataRequest(StartRequest, Define.StartDataNumber));
-        StartCoroutine(DataRequest(WaveRequest, Define.WaveDataNumber));
         StartCoroutine(DataRequest(MercenaryRequest, Define.MercenaryDataNumber));
         StartCoroutine(DataRequest(OriginalBuffRequest, Define.OriginalBuffDataNumber));
         StartCoroutine(DataRequest(InstantBuffRequest, Define.InstantBuffDataNumber));
         StartCoroutine(DataRequest(UpgradeRequest, Define.UpgradeDataNumber));
         StartCoroutine(DataRequest(AbilityRequest, Define.AbilityDataNumber));
+        StartCoroutine(StageWaveRequest());
     }
 
     public bool IsData()
     {
         if (Start.IsNull()      == true ||
-            Waves.IsNull()      == true ||
             Mercenarys.IsNull() == true ||
             Upgrades.IsNull()   == true || 
             Buff.IsNull()       == true ||
-            Abilities.IsNull()  == true)
+            Abilities.IsNull()  == true ||
+            isStageData         == false)
             return false;
 
         return true;
@@ -108,10 +108,37 @@ public class DataManager : MonoBehaviour
 
     #region Wave Data
 
+    private int     currentStageIndex = 1;
+    private bool    isStageData = false;
+    private IEnumerator StageWaveRequest()
+    {
+        // stage 구글 시트 주소들
+        string[] stageNumbers = new string[] {Define.Stage01DataNumber};
+
+        Stages = new Dictionary<int, List<WaveData>>();
+
+        for (int i=0; i<stageNumbers.Length; i++)
+        {
+            // 데이터 가져오기
+            StartCoroutine(DataRequest(WaveRequest, stageNumbers[i]));
+            
+            while (currentStageIndex <= stageNumbers.Length)
+            {
+                // 해당 Stage의 Value가 들어올 때까지 기다리기
+                if (Stages.ContainsKey(currentStageIndex) == true)
+                    currentStageIndex++;
+
+                yield return null;
+            }
+        }
+
+        isStageData = true;
+    }
+
     // 웨이브 마다 몬스터 스탯 저장 
     private void WaveRequest(string data)
     {
-        Dictionary<int, WaveData> dict = new Dictionary<int, WaveData>();
+        List<WaveData> waves = new List<WaveData>();
 
         string[] lines = data.Split("\n");
 
@@ -136,19 +163,20 @@ public class DataManager : MonoBehaviour
                 spawnTime = float.Parse(row[9]),
             };
 
-            dict.Add(waveData.waveLevel, waveData);
+            waves.Add(waveData);
         }
 
         // string Data 가져오기
-        WaveStringData(dict);
+        WaveStringData(waves);
 
-        Waves = dict;
+        Stages.Add(currentStageIndex, waves);
     }
 
-    private void WaveStringData(Dictionary<int, WaveData> dict)
+    private void WaveStringData(List<WaveData> waves)
     {
-        string[] lines = Resources.Load<TextAsset>($"Data/WaveData").text.Split("\n");
+        string[] lines = Resources.Load<TextAsset>($"Data/Stage" + currentStageIndex).text.Split("\n");
 
+        int currentIndex = 0;
         for(int y = 1; y < lines.Length; y++)
         {
             string[] row = Row(lines[y]);
@@ -156,9 +184,12 @@ public class DataManager : MonoBehaviour
             if (row.IsNull() == true)
                 continue;
 
-            int waveLevel = int.Parse(row[0]);
+            WaveData wave = waves[currentIndex];
 
-            dict[waveLevel].spriteLibrary = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Enemy/"+row[1]);
+            string  spriteLibPath   = $"UI/SpriteLibrary/Enemy/{wave.race.ToString()}/{row[1]}";
+            wave.spriteLibrary      = Managers.Resource.Load<SpriteLibraryAsset>(spriteLibPath);
+
+            currentIndex++;
         }
     }
 
