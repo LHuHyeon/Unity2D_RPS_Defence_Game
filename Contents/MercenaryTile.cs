@@ -38,6 +38,9 @@ public class MercenaryTile : MonoBehaviour
 
         // 여기에 용병 저장
         SetMercenary(tile._mercenary);
+        
+        // 정보창이 활성화되어 있다면 현재 타일의 정보 등록
+        Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.SetInfoTile(this);
 
         // 내 용병을 상대 타일에 전달
         if (tempObj.IsFakeNull() == false)
@@ -57,6 +60,9 @@ public class MercenaryTile : MonoBehaviour
 
         GetMercenary().SetStat(slot._mercenary);    // 스탯 설정
         slot.SetCount(-1);                          // 슬롯 -1 차감
+
+        // 정보창이 활성화되어 있다면 현재 타일의 정보 등록
+        Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.SetInfoTile(this);
 
         // 슬롯이 삭제되면 드래그 슬롯을 초기화 못함으로 여기서 해주기
         UI_DragSlot.instance.ClearSlot();
@@ -91,6 +97,9 @@ public class MercenaryTile : MonoBehaviour
 
             UI_DragSlot.instance.DragSetIcon(GetMercenary().GetStat().Icon);
             UI_DragSlot.instance.icon.transform.position = eventData.position;
+
+            // 정보창이 활성화 중이라면 들고 있는 용병으로 등록
+            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.SetInfoTile(this);
 
         }, Define.UIEvent.BeginDrag);
 

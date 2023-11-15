@@ -25,19 +25,24 @@ public class EnemyController : BaseController
     private float           _moveSpeed;             // 속도
     private Vector3         _direction;             // 방향
 
-    private int             currentWayPointIndex;   // 현재 이동 위치 번호
+    private int             _currentWayPointIndex;  // 현재 이동 위치 번호
 
     private Transform[]     _wayPoints;             // 이동할 위치들
 
     private EnemyStat       _stat;                  // 스탯
 
     public  UI_HpBar        _hpBar;
+    public  bool            _isBoss = false;        // 보스인가?
 
     // Wave에 맞게 몬스터 정보 수정
     public void SetWave(WaveData waveData)
     {
         _stat.SetWaveStat(waveData);
         _spriteLibrary.spriteLibraryAsset = waveData.spriteLibrary;
+
+        // 만약 보스라면 크기 2배로 키우기
+        if (_isBoss == true && _hpBar.IsNull() == false)
+            transform.localScale *= 2;
     }
 
     // 생성 위치 설정
@@ -48,8 +53,8 @@ public class EnemyController : BaseController
         _wayPoints = wayPoints;
 
         // 첫번째 위치로 이동
-        currentWayPointIndex = 0;
-        transform.position = _wayPoints[currentWayPointIndex].position;
+        _currentWayPointIndex = 0;
+        transform.position = _wayPoints[_currentWayPointIndex].position;
     }
 
     protected override void Init()
@@ -71,10 +76,10 @@ public class EnemyController : BaseController
         transform.position += _direction * _stat.MoveSpeed * Time.deltaTime;
 
         // 도착할 위치에 0.1f 만큼 가까워지면 다음 위치 설정
-        if ((_wayPoints[currentWayPointIndex].position - transform.position).magnitude < 0.05f)
+        if ((_wayPoints[_currentWayPointIndex].position - transform.position).magnitude < 0.05f)
         {
             // 몬스터 위치를 정확하게 목표 위치로 설정
-            transform.position = _wayPoints[currentWayPointIndex].position;
+            transform.position = _wayPoints[_currentWayPointIndex].position;
 
             NextMoveTo();
         }
@@ -107,14 +112,14 @@ public class EnemyController : BaseController
     private void NextMoveTo()
     {
         // 다음 위치 Index + 1
-        currentWayPointIndex++;
+        _currentWayPointIndex++;
 
         // 마지막 위치라면 2번째 위치로 이동 (1번째 위치는 생성 위치이기 때문)
-        if (currentWayPointIndex >= _wayPoints.Length)
-            currentWayPointIndex = 1;
+        if (_currentWayPointIndex >= _wayPoints.Length)
+            _currentWayPointIndex = 1;
 
         // 이동 방향 설정
-        _direction = (_wayPoints[currentWayPointIndex].position - transform.position).normalized;
+        _direction = (_wayPoints[_currentWayPointIndex].position - transform.position).normalized;
 
         // 이동 방향 바라보기
         if (_direction == Vector3.left || _direction == Vector3.up)
@@ -131,9 +136,14 @@ public class EnemyController : BaseController
 
     private void Clear()
     {
-        _stat.Hp = _stat.MaxHp;
+        if (_isBoss == true)
+        {
+            _isBoss = false;
+            transform.localScale /= 2;
+        }
 
-        _direction = Vector3.zero;
+        _stat.Hp    = _stat.MaxHp;
+        _direction  = Vector3.zero;
         
         State = Define.State.Idle;
     }

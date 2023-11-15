@@ -141,8 +141,11 @@ public class UI_MercenarySlot : UI_ItemDragSlot
             UI_DragSlot.instance.DragSetIcon(_icon.sprite);
             UI_DragSlot.instance.icon.transform.position = eventData.position;
 
-            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
             Managers.UI.FindPopup<UI_AbilityListPopup>()?.Clear();
+
+            // 정보 Popup이 활성화 되어 있다면 정보창 접기
+            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.SetInfoSlot(this);
+            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.OnFold(true);
         }
     }
 
@@ -188,6 +191,9 @@ public class UI_MercenarySlot : UI_ItemDragSlot
         // 타일 초기화
         Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
         dragSlot.mercenaryTile.Clear();
+
+        // 정보창 닫기
+        Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
     }
 
 #endregion

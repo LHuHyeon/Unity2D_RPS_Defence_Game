@@ -145,11 +145,11 @@ public class UI_GameScene : UI_Scene
     }
 
     // 웨이브 시간
-    private float noTime = 10f;
+    private float shortTime = 10f;
     public void RefreshWaveTime(bool isFormat, float time)
     {
-        // 색 설정 (noTime 부터 빨간색)
-        GetText((int)Texts.WaveTimeText).color = time <= noTime && isFormat ? Color.red : Color.white;
+        // 색 설정 (shortTime 부터 빨간색)
+        GetText((int)Texts.WaveTimeText).color = time <= shortTime && isFormat ? Color.red : Color.white;
 
         // 시간 설정
         GetText((int)Texts.WaveTimeText).text = isFormat ? string.Format("{0:N2}", time) : (Mathf.CeilToInt(time)).ToString();
@@ -360,6 +360,9 @@ public class UI_GameScene : UI_Scene
             {
                 Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
                 dragSlot.mercenaryTile.Clear();
+
+                // 정보창 닫기
+                Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
             }
 
         }, Define.UIEvent.Drop);
@@ -374,6 +377,8 @@ public class UI_GameScene : UI_Scene
         // 용병의 정보를 토대로 슬롯 찾기
         foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
+            // TODO [!] : 슬롯을 삭제 못시켜준 코드가 있음! 카드 뽑다 에러가 남 
+            // TODO [!] : 예상되는 상황은 타일에서 슬롯을 재료로 진화했을 때 슬롯이 삭제가 되면서 List를 정리 못해줌
             if (slot._mercenary.IsSameMercenary(mercenary, isEvolution) == true)
                 return slot;
         }

@@ -44,13 +44,10 @@ public class UI_MercenaryInfoPopup : UI_Popup
 
     public MercenaryStat    _mercenary;
 
-    private int             _mercenarySalePrice = 0;    // 용병 판매 금액
-
-    [SerializeField]
+    public  bool            _isFold = false;            // 정보를 접은 상태
     private bool            _isActive = false;          // 팝업 활성화 여부
-    [SerializeField]
-    private bool            _isFold = false;            // 정보를 접은 상태
 
+    private int             _mercenarySalePrice = 0;    // 용병 판매 금액
     private string          _attackText;
 
     private UI_Evolution    _evolution;
@@ -169,7 +166,7 @@ public class UI_MercenaryInfoPopup : UI_Popup
         {
             // 타일에서 정보가 왔으면 True
             _isFold = _tile.IsNull() == false;
-            OnFold();
+            OnFoldSetting();
         }
         
         // 진화 능력 Text 적용
@@ -183,6 +180,13 @@ public class UI_MercenaryInfoPopup : UI_Popup
         // 나머지 별 비활성화
         for(int i=((int)_mercenary.CurrentEvolution); i<_starIcons.Count; i++)
             _starIcons[i].sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Icon_Evolution_DeStar");
+    }
+
+    // 정보 Popup 접기
+    public void OnFold(bool isFold)
+    {
+        _isFold = isFold;
+        OnFoldSetting();
     }
 
     private int _maxStarCount = 3;  // 진화 별 최대 개수
@@ -244,13 +248,12 @@ public class UI_MercenaryInfoPopup : UI_Popup
     {
         Debug.Log("OnClickFoldButton");
 
-        _isFold = !_isFold;
-        OnFold();
+        OnFold(!_isFold);
     }
 
-    private void OnFold()
+    private void OnFoldSetting()
     {
-        int     posY            = _isFold == true ? 800 : 300;          // Background Pos Y
+        int     posY            = _isFold == true ? 840 : 300;          // Background Pos Y
         int     bgHeight        = _isFold == true ? 415 : 950;          // Background Height
         int     bgExitHeight    = _isFold == true ? 510 : 1380;         // Exit Background Height
         string  iconPathName    = _isFold == true ? "Down" : "Up";      // Icon Sprite Path Name

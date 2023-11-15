@@ -11,10 +11,7 @@ public class WaveSystem : MonoBehaviour
 
     private List<WaveData>  _waves;
 
-    public void SetWave(List<WaveData> waves)
-    {
-        _waves = waves;
-    }
+    public void SetWave(List<WaveData> waves) { _waves = waves; }
 
     public void WaveStart()
     {

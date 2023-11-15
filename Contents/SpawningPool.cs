@@ -36,6 +36,10 @@ public class SpawningPool : MonoBehaviour
             GameObject          clone   = Managers.Game.Spawn(Define.WorldObject.Enemy, "Enemy/Enemy");
             EnemyController     monster = clone.GetComponent<EnemyController>();
 
+            // 만약 몬스터 최대 수가 1이라면 보스로 인식하고 크기 키워주기
+            if (_wave.maxEnemyCount == 1)
+                monster._isBoss = true;
+
             // 몬스터의 이동 경로 세팅
             monster.SetWayPoint(_wayPoints);
 

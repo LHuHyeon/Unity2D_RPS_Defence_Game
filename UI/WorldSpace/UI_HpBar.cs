@@ -34,6 +34,10 @@ public class UI_HpBar : UI_Base
 
         RefreshUI();
 
+        // 몬스터가 보스인지 확인
+        if (_parent.GetComponent<EnemyController>()._isBoss == true)
+            _parent.localScale *= 2;
+
         return true;
     }
 

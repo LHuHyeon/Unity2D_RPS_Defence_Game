@@ -16,6 +16,7 @@ public class UI_DrawAbilityPopup : UI_Popup
     enum Buttons
     {
         CheckButton,
+        ADButton,
     }
 
     enum Texts
@@ -43,6 +44,7 @@ public class UI_DrawAbilityPopup : UI_Popup
         BindText(typeof(Texts));
 
         GetButton((int)Buttons.CheckButton).onClick.AddListener(OnClickCheckButton);
+        GetButton((int)Buttons.ADButton).onClick.AddListener(OnClickADButton);
 
         _onClickAbilityCard -= CheckButtonActive;
         _onClickAbilityCard += CheckButtonActive;
@@ -59,10 +61,12 @@ public class UI_DrawAbilityPopup : UI_Popup
         if (_init == false)
             return;
 
+        // 능력 카드 새로고침
         foreach(UI_AbilityCard abilityCard in _abilityCards)
             abilityCard.RefreshUI();
 
         GetButton((int)Buttons.CheckButton).GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_DarkGray");
+        GetButton((int)Buttons.ADButton).gameObject.SetActive(true);
 
         StartCoroutine(CallPopup());
     }
@@ -95,6 +99,19 @@ public class UI_DrawAbilityPopup : UI_Popup
 
         // 카드 뽑기
         Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); 
+    }
+
+    private void OnClickADButton()
+    {
+        // TODO : 광고 기능 추가하기
+
+        Debug.Log("OnClickADButton");
+
+        // 능력 카드 새로고침
+        foreach(UI_AbilityCard abilityCard in _abilityCards)
+            abilityCard.RefreshUI();
+
+        GetButton((int)Buttons.ADButton).gameObject.SetActive(false);
     }
 
     private float maxAlpha = 180f/255f;  // 투명도 최대치
