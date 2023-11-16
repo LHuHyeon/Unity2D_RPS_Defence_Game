@@ -234,14 +234,14 @@ public class UI_GameScene : UI_Scene
     }
 
     // 용병 슬롯 등록
-    public void MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
+    public UI_MercenarySlot MercenaryRegister(MercenaryStat mercenaryStat, int count = 1)
     {
         // 용병 정보에 맞는 슬롯 탐지
-        UI_MercenarySlot slot = GetMercenarySlot(mercenaryStat, true);
+        UI_MercenarySlot slot = GetMercenarySlot(mercenaryStat);
         if (slot.IsFakeNull() == false)
         {
             slot.SetCount(count);
-            return;
+            return slot;
         }
 
         // 중복된 용병 슬롯이 없으면 생성하여 저장
@@ -251,6 +251,8 @@ public class UI_GameScene : UI_Scene
         _mercenarySlots.Add(slot);
 
         SortMercenarySlot();
+
+        return slot;
     }
 
     // 용병 슬롯 삭제
@@ -372,14 +374,17 @@ public class UI_GameScene : UI_Scene
     public void ActiveStartButton(bool isActive) { GetButton((int)Buttons.StartButton).gameObject.SetActive(isActive); }
 
     // 용병으로 슬롯 찾기
-    public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary, bool isEvolution = true)
+    public UI_MercenarySlot GetMercenarySlot(MercenaryStat mercenary)
     {
         // 용병의 정보를 토대로 슬롯 찾기
         foreach(UI_MercenarySlot slot in _mercenarySlots)
         {
-            // TODO [!] : 슬롯을 삭제 못시켜준 코드가 있음! 카드 뽑다 에러가 남 
-            // TODO [!] : 예상되는 상황은 타일에서 슬롯을 재료로 진화했을 때 슬롯이 삭제가 되면서 List를 정리 못해줌
-            if (slot._mercenary.IsSameMercenary(mercenary, isEvolution) == true)
+            // 슬롯 존재 여부 확인
+            if (slot.IsFakeNull() == true)
+                continue;
+
+            // 용병 비교
+            if (slot._mercenary.IsSameMercenary(mercenary) == true)
                 return slot;
         }
 

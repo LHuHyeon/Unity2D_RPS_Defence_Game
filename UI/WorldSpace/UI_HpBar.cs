@@ -32,6 +32,9 @@ public class UI_HpBar : UI_Base
 
         _posY   = (_parent.GetComponent<Collider>().bounds.size.y + _parent.GetComponent<Collider>().bounds.size.y / 5);
 
+        // 체력바 위치 설정
+        transform.position = _parent.position + Vector3.up * _posY;
+        
         RefreshUI();
 
         // 몬스터가 보스인지 확인
@@ -61,8 +64,5 @@ public class UI_HpBar : UI_Base
         }
         
         _hpSlider.value = ratio;
-        
-        // 체력바 위치 설정
-        transform.position = _parent.position + Vector3.up * _posY;
     }
 }

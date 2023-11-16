@@ -256,16 +256,16 @@ public class GameManagerEx
 			mercenary.GetComponent<MercenaryController>().GetStat().RefreshAddData();
 	}
 
-	// stat과 같은 필드 용별들 객체 가져오기
+	// stat과 같은 필드 용별들 객체들 가져오기
 	public List<GameObject> GetMercenarys(MercenaryStat stat)
 	{
 		List<GameObject> mercenarys = new List<GameObject>();
 
-		// id 검사
+		// 용병 정보 검사
 		foreach(var mercenary in _mercenarys)
 		{
 			MercenaryStat mercenaryStat = mercenary.GetComponent<MercenaryController>().GetStat();
-			if (mercenaryStat.IsSameMercenary(stat, false) == true)
+			if (mercenaryStat.IsSameMercenary(stat) == true)
 				mercenarys.Add(mercenary);
 		}
 
@@ -277,15 +277,16 @@ public class GameManagerEx
 	{
 		int count = 0;
 
-		// id 검사
+		// 용병 정보 검사
 		foreach(var mercenary in _mercenarys)
 		{
 			MercenaryStat mercenaryStat = mercenary.GetComponent<MercenaryController>().GetStat();
-			if (mercenaryStat.IsSameMercenary(stat, false) == true)
-			{
-				if (stat != mercenaryStat)
-					count++;
-			}
+
+			if (stat == mercenaryStat)
+				continue;
+
+			if (mercenaryStat.IsSameMercenary(stat) == true)
+				count++;
 		}
 
 		return count;

@@ -29,8 +29,8 @@ public class UI_Evolution : UI_Base
     private UI_MercenarySlot        _slot;
     private MercenaryStat           _mercenary;
 
-    private int     _evolutionPlanCount = 0;        // 진화 목표수
-    private bool    _isEvolution        = false;    // 진화 가능 여부
+    private int     _requiredCount  = 1;        // 진화 필요 수
+    private bool    _isEvolution    = false;    // 진화 가능 여부
 
     public override bool Init()
     {
@@ -42,6 +42,10 @@ public class UI_Evolution : UI_Base
         BindText(typeof(Texts));
 
         GetButton((int)Buttons.EvolutionButton).gameObject.BindEvent(OnClickEvolutionButton);
+
+        Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
+        evolutionSlider.minValue = 0;
+        evolutionSlider.maxValue = _requiredCount;
 
         RefreshEvolution();
 
@@ -63,54 +67,29 @@ public class UI_Evolution : UI_Base
             return;
 
         Slider  evolutionSlider = GetObject((int)GameObjects.EvolutionGauge).GetComponent<Slider>();
-        int     mercenaryCount  = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false)?._itemCount ?? 0;
-        
-        _evolutionPlanCount     = ((int)_mercenary.CurrentEvolution + 1);
+        int     mercenaryCount  = Managers.Game.GetMercenaryCount(_mercenary);
 
-        evolutionSlider.minValue = 0;
-        evolutionSlider.maxValue = _evolutionPlanCount;
-
-        // [슬롯에서 왔을 때] : 현재 용병이 진화가 안되어 있다면 -1 차감
+        // [슬롯에서 왔을 때] : 슬롯은 본인 포함이기 때문에 재료 개수 -1 차감
         if (_slot.IsFakeNull() == false)
-        {
-            if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
-                mercenaryCount--;
-        }
+            mercenaryCount += _slot._itemCount - 1;
 
-        // [타일에서 왔을 때] : 현재 용병과 같은 필드의 용병 개수 가져오기
+        // [타일에서 왔을 때] : 용병 정보와 같은 슬롯 가져오기
         if (_tile.IsFakeNull() == false)
-            mercenaryCount += Managers.Game.GetMercenaryCount(_mercenary);
+            mercenaryCount += Managers.Game.GameScene.GetMercenarySlot(_mercenary)?._itemCount ?? 0;
 
         // 현재 용병 수 / 필요 수
-        GetText((int)Texts.EvolutionGaugeText).text = $"{mercenaryCount} / {_evolutionPlanCount}";
+        GetText((int)Texts.EvolutionGaugeText).text = $"{mercenaryCount} / {_requiredCount}";
+
+        _isEvolution = mercenaryCount >= _requiredCount;
+        evolutionSlider.value = mercenaryCount;
 
         // 진화 버튼 활성화/비활성화 투명도 설정
-        if (mercenaryCount >= _evolutionPlanCount)
-        {
-            _isEvolution = true;
-            SetColor(GetButton((int)Buttons.EvolutionButton).image, 1);
-            SetColor(GetText((int)Texts.EvolutionButtonText), 1);
-        }
-        else
-        {
-            _isEvolution = false;
-            SetColor(GetButton((int)Buttons.EvolutionButton).image, 0.5f);
-            SetColor(GetText((int)Texts.EvolutionButtonText), 0.5f);
-        }
+        float alpha = _isEvolution == true ? 1f : 0.5f;
+        SetColor(GetButton((int)Buttons.EvolutionButton).image, alpha);
+        SetColor(GetText((int)Texts.EvolutionButtonText), alpha);
 
-        // 슬라이더 값 적용
-        if (_mercenary.CurrentEvolution >= Define.EvolutionType.Star3)
-        {
-            evolutionSlider.value = evolutionSlider.maxValue;
-            GetText((int)Texts.EvolutionButtonText).text = "Max";
-            GetText((int)Texts.EvolutionGaugeText).text = "Max";
-            _isEvolution = false;
-        }
-        else
-        {
-            evolutionSlider.value = mercenaryCount;
-            GetText((int)Texts.EvolutionButtonText).text = "진화";
-        }
+        // 진화 최대치라면 Max 표시
+        GetText((int)Texts.EvolutionButtonText).text = _mercenary.CurrentEvolution >= Define.EvolutionType.Star3 ? "Max" : "진화";
     }
 
     private void OnClickEvolutionButton(PointerEventData eventData)
@@ -120,81 +99,93 @@ public class UI_Evolution : UI_Base
         if (_isEvolution == false)
             return;
 
-        // 진화 재료로 사용될 slot 가져오기
-        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary, false);
+        // 진화 최대치 확인
+        if (_mercenary.CurrentEvolution >= Define.EvolutionType.Star3)
+            return;
 
-        // 슬롯에서 진화 시
-        if (_slot.IsFakeNull() == false)
-        {
-            if (slot.IsFakeNull() == true)
-                return;
+        // 재료 차감 진행 (슬롯 -> 타일 순서로 차감)
+        if (SubSlotMercenary() == false)
+            SubTileMercenary();
 
-            EvolutionSlot(slot);
-            Managers.Game.GameScene.GetMercenarySlot(_mercenary, true)?.RefreshUI();
-        }
-        // 타일에서 진화 시
-        else if (_tile.IsFakeNull() == false)
-            EvolutionTile(slot);
-
-        _infoPopup.RefreshUI();
+        // 진화 진행
+        if (_slot.IsFakeNull() == false)        EvolutionSlot();
+        else if (_tile.IsFakeNull() == false)   EvolutionTile();
     }
 
     // 슬롯에서 진화
-    private void EvolutionSlot(UI_MercenarySlot slot)
+    private void EvolutionSlot()
     {
-        // 진화 목표수 만큼 차감
-        slot.SetCount(-_evolutionPlanCount);
+        // 진화를 시켜준 후 새 슬롯에 추가
+        Define.EvolutionType evolution = _mercenary.CurrentEvolution;
+        _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
+        _mercenary.CurrentEvolution = evolution;
+        _mercenary.CurrentEvolution++;
 
-        // 진화를 아직 안했다면 새 슬롯에서 진행
-        if (_mercenary.CurrentEvolution == Define.EvolutionType.Unknown)
-        {
-            slot.SetCount(-1);
-            _mercenary = Managers.Data.Mercenarys[_mercenary.Id].MercenaryClone<MercenaryStat>();
-            _mercenary.CurrentEvolution++;
-
-            Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
-
-            _infoPopup._mercenary = _mercenary;
-        }
-        else
-            _mercenary.CurrentEvolution++;
+        _slot.SetCount(-1);
+        _slot = Managers.Game.GameScene.MercenaryRegister(_mercenary, 1);
+        _infoPopup.SetInfoSlot(_slot);
     }
 
     // 타일에서 진화
-    private void EvolutionTile(UI_MercenarySlot slot)
+    private void EvolutionTile()
     {
-        // 슬롯 개수 먼저 차감 후 재료가 부족하면 필드 용병 차감
-        int currentCount = _evolutionPlanCount;
-
-        if (slot.IsFakeNull() == false)
-        {
-            currentCount -= slot._itemCount;
-            slot.SetCount(-_evolutionPlanCount);
-        }
-
-        // 슬롯을 차감해도 재료가 부족하면 필드 용병 차감
-        if (currentCount > 0)
-        {
-            List<GameObject> mercenarys = Managers.Game.GetMercenarys(_mercenary);
-            for(int i=0; i<currentCount; i++)
-            {
-                if (mercenarys[i].IsFakeNull() == true)
-                    return;
-                    
-                if (_tile._mercenary == mercenarys[i])
-                {
-                    currentCount++;
-                    continue;
-                }
-
-                mercenarys[i].GetComponent<MercenaryController>()._tile.Clear();
-                Managers.Game.Despawn(mercenarys[i]);
-            }
-        }
-
-        // 재료가 충족 됐으니 진화 진행
         _mercenary.CurrentEvolution++;
         _mercenary.RefreshAddData();
+        
+        _infoPopup.SetInfoTile(_tile);
+    }
+
+    // 슬롯 용병 차감
+    private bool SubSlotMercenary()
+    {
+        // 진화할 슬롯이 개수가 1개라면
+        if (_slot.IsFakeNull() == false)
+        {
+            if (_slot._itemCount == 1)
+                return false;
+        }
+        
+        // 진화 재료로 사용될 slot 가져오기
+        UI_MercenarySlot slot = Managers.Game.GameScene.GetMercenarySlot(_mercenary);
+        
+        // slot이 존재하면 재료 차감
+        if (slot.IsFakeNull() == false)
+        {
+            slot.SetCount(-_requiredCount);
+            return true;
+        }
+
+        return false;
+    }
+
+    // 필드 용병 차감
+    private void SubTileMercenary()
+    {
+        // 진화 재료로 사용될 필드 용병 가져오기
+        List<GameObject> mercenarys = Managers.Game.GetMercenarys(_mercenary);
+
+        bool isTile = _tile.IsFakeNull() == false;
+
+        for(int i=0; i<mercenarys.Count; i++)
+        {
+            if (mercenarys[i].IsFakeNull() == true)
+                continue;
+
+            if (isTile == true)        
+            {
+                // 타일의 같은 용병인지 확인
+                if (_mercenary._mercenary.gameObject == mercenarys[i])
+                    continue;
+            }
+
+            // 필드의 용병 삭제
+            mercenarys[i].GetComponent<MercenaryController>()._tile.Clear();
+            Managers.Game.Despawn(mercenarys[i]);
+
+            return;
+        }
+
+        return;
     }
 
     private void SetColor(TextMeshProUGUI text, float alpha)    { text.color = SetColor(text.color, alpha); }

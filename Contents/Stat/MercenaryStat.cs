@@ -61,24 +61,14 @@ public class MercenaryStat
     public MercenaryController      _mercenary;
 
     // 들어온 용병 정보와 내 정보가 같은지 확인
-    public bool IsSameMercenary(MercenaryStat mercenary, bool isEvolution = true)
+    public bool IsSameMercenary(MercenaryStat mercenary)
     {
         if (Id != mercenary.Id)
             return false;
-
-        // 진화 정보를 확인할 것인가?
-        if (isEvolution == true)
-        {
-            // 진화 정보가 같은지 확인
-            if (CurrentEvolution == mercenary.CurrentEvolution)
-                return true;
-        }
-        else
-        {
-            // 진화가 안된 상태인지 확인
-            if (CurrentEvolution == Define.EvolutionType.Unknown)
-                return true;
-        }
+            
+        // 진화 정보가 같은지 확인
+        if (CurrentEvolution == mercenary.CurrentEvolution)
+            return true;
 
         return false;
     }

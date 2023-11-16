@@ -236,8 +236,9 @@ public class UI_MercenaryInfoPopup : UI_Popup
             {
                 // 슬롯의 용병 정보라면 -1 차감
                 _slot.SetCount(-1);
+                RefreshUI();
 
-                if (_slot.IsFakeNull() == true)
+                if (_slot._itemCount <= 0)
                     Clear();
             }
 
