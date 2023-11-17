@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+* 용병을 담아주는 필드의 Tile이다.
+* 용병을 다른 Tile로 넘기거나 받는다.
+*/
+
 public class MercenaryTile : MonoBehaviour
 {
     public GameObject _mercenary;

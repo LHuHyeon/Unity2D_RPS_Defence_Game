@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* 적의 디버프를 등록/해제한다.
+* 쿨타임은 EnemyStat에서 확인하며 쿨타임이 다 되면 해제를 호출한다.
+*/
+
 public class DeBuff
 {
     public InstantBuffData  _deBuffData;        // 정보

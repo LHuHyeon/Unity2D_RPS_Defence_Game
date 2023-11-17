@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+* Wave가 시작되면 몬스터를 생성한다.
+* Wave 시간은 여기서 계산한다.
+*/
+
 public class SpawningPool : MonoBehaviour
 {
     [SerializeField]

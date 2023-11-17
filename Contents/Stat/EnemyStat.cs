@@ -108,6 +108,10 @@ public class EnemyStat : MonoBehaviour
 
         DamageTextEffect(isCritical ? DamageType.Critical : DamageType.Default, hitDamage);
 
+        // 보스라면
+        if (Managers.Game.IsBoss == true)
+            Managers.Game.GameScene.RefreshBossBar(this);
+
         if (Hp <= 0)
             GetComponent<EnemyController>().State = Define.State.Dead;
     }

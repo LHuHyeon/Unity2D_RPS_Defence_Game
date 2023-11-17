@@ -162,10 +162,11 @@ public class GameManagerEx
 		set { _gameData.CurrentWave = value; }
 	}
 
-	public int WaveTime			{ get; set; }	// 웨이브 시간
-	public int DrawAbilityWave 	{ get; set; }	// 능력 뽑는 특정 웨이브
+	public int 	WaveTime			{ get; set; }			// 웨이브 시간
+	public int 	DrawAbilityWave 	{ get; set; }			// 능력 뽑는 특정 웨이브
 
-	public int RemainEnemyCount { get; set; }	// 남은 몬스터 수
+	public int 	RemainEnemyCount 	{ get; set; }			// 남은 몬스터 수
+	public bool	IsBoss				{ get; set; } = false;	// 보스 여부
 
 	// 현재 드래그 중인가?
 	public bool IsDrag 			{ get; set; } = false;

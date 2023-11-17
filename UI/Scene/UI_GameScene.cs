@@ -23,6 +23,7 @@ public class UI_GameScene : UI_Scene
     enum Sliders
     {
         EnemySlider,
+        BossSlider,
     }
 
     enum Buttons
@@ -47,6 +48,7 @@ public class UI_GameScene : UI_Scene
         WaveLevelText,
         GoldText,
         EnemyCountText,
+        BossHpText,
         GameSpeedButtonText,
         MercenaryText,
         UpgradeText,
@@ -86,6 +88,8 @@ public class UI_GameScene : UI_Scene
 
         _mercenaryTabScroll = GetObject((int)GameObjects.MercenaryTab).GetComponent<ScrollRect>();
 
+        GetSlider((int)Sliders.BossSlider).gameObject.SetActive(false);
+
         GetButton((int)Buttons.PauseButton).gameObject.BindEvent(OnClickPauseButton);
         GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
         GetButton((int)Buttons.AbilityListButton).gameObject.BindEvent(OnClickAbilityListButton);
@@ -109,10 +113,10 @@ public class UI_GameScene : UI_Scene
         foreach(Transform child in GetObject((int)GameObjects.MercenaryContent).transform)
             Managers.Resource.Destroy(child.gameObject);
 
+		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
+        
         // 강화 버튼 채우기
         PopulateUpgradeButton();
-
-		Managers.Resource.Instantiate("UI/SubItem/UI_DragSlot", transform);
 
         SetEventHandler();
 
@@ -123,7 +127,11 @@ public class UI_GameScene : UI_Scene
         return true;
     }
 
-    public  void OnRPSPopup()       { Invoke("OnDelayRPSPopup", 1f); }
+    public  void OnRPSPopup()
+    {
+        _game.WaveSystem.NextWaveCheck();
+        Invoke("OnDelayRPSPopup", 1f);
+    }
     private void OnDelayRPSPopup()  { Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); }
 
     public void SetNextWave(WaveData waveData)
@@ -136,6 +144,15 @@ public class UI_GameScene : UI_Scene
 
         GetText((int)Texts.EnemyCountText).text = $"{_wave.maxEnemyCount} / {_wave.maxEnemyCount}";
         GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", 20f);
+
+        GetSlider((int)Sliders.EnemySlider).gameObject.SetActive(!Managers.Game.IsBoss);
+        GetSlider((int)Sliders.BossSlider).gameObject.SetActive(Managers.Game.IsBoss);
+
+        if (Managers.Game.IsBoss == true)
+        {
+            GetSlider((int)Sliders.BossSlider).value = 1;
+            GetText((int)Texts.BossHpText).text = waveData.hp.ToString();
+        }
 
         RefreshWaveInfo();
     }
@@ -172,6 +189,31 @@ public class UI_GameScene : UI_Scene
             GetSlider((int)Sliders.EnemySlider).value = _game.RemainEnemyCount;
 
         GetText((int)Texts.EnemyCountText).text = $"{_game.RemainEnemyCount} / {_wave.maxEnemyCount}";
+    }
+
+    public void RefreshBossBar(EnemyStat stat)
+    {
+        Slider  hpSlider = GetSlider((int)Sliders.BossSlider);
+        float   ratio = 0;
+
+        // 방어력 or 체력에 따른 색 변경
+        if (stat.Shield > 0)
+        {
+            hpSlider.fillRect.GetComponent<Image>().color = Color.gray;
+            ratio = (float)stat.Shield / stat.MaxShield;
+            GetText((int)Texts.EnemyCountText).text = stat.Shield.ToString();
+        }
+        else
+        {
+            hpSlider.fillRect.GetComponent<Image>().color = Color.red;
+            ratio = (float)stat.Hp / stat.MaxHp;
+            GetText((int)Texts.BossHpText).text = stat.Hp.ToString();
+        }
+        
+        if (float.IsNaN(ratio) == true)
+            hpSlider.value = 0;
+        else
+            hpSlider.value = ratio;
     }
 
     // 웨이브 정보

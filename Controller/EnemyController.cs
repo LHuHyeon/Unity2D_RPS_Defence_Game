@@ -139,6 +139,7 @@ public class EnemyController : BaseController
         if (_isBoss == true)
         {
             _isBoss = false;
+            Managers.Game.IsBoss = false;
             transform.localScale /= 2;
         }
 

@@ -63,6 +63,9 @@ public class UI_HpBar : UI_Base
             ratio = (float)_stat.Hp / _stat.MaxHp;
         }
         
-        _hpSlider.value = ratio;
+        if (float.IsNaN(ratio) == true)
+            _hpSlider.value = 0;
+        else
+            _hpSlider.value = ratio;
     }
 }
