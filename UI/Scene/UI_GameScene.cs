@@ -33,6 +33,7 @@ public class UI_GameScene : UI_Scene
         UpgradeButton,
         CompositionButton,
         StartButton,
+        TakeButton,
         AbilityListButton,
         TestRegistarButton,
     }
@@ -89,6 +90,7 @@ public class UI_GameScene : UI_Scene
         GetButton((int)Buttons.GameSpeedButton).gameObject.BindEvent(OnClickGameSpeedButton);
         GetButton((int)Buttons.AbilityListButton).gameObject.BindEvent(OnClickAbilityListButton);
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(OnClickStartButton);
+        GetButton((int)Buttons.TakeButton).gameObject.BindEvent(OnClickTakeMercenaryButton);
 
         GetButton((int)Buttons.MercenaryButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Mercenary); });
         GetButton((int)Buttons.UpgradeButton).gameObject.BindEvent((PointerEventData eventData)=>{ ShowTab(PlayTab.Upgrade); });
@@ -98,7 +100,7 @@ public class UI_GameScene : UI_Scene
             MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(21, 30)].MercenaryClone<MercenaryStat>(), 2);
         });
 
-        Managers.Game.GameScene.ActiveStartButton(false);
+        _game.GameScene.ActiveStartButton(false);
 
         _game.OnEnemySpawnEvent -= RefreshEnemyBar;
         _game.OnEnemySpawnEvent += RefreshEnemyBar;
@@ -334,9 +336,17 @@ public class UI_GameScene : UI_Scene
         Debug.Log("OnClickStartButton");
 
         // 웨이브 시작
-        Managers.Game.WaveSystem.WaveStart();
+        _game.WaveSystem.WaveStart();
 
         ActiveStartButton(false);
+    }
+
+    private void OnClickTakeMercenaryButton(PointerEventData eventData)
+    {
+        Debug.Log("OnTakeMercenaryButton");
+
+        // 모든 용병 슬롯으로 데려오기
+        _game.TakeMercenarys();
     }
 
     private void SetEventHandler()
@@ -359,13 +369,7 @@ public class UI_GameScene : UI_Scene
 
             // 타일에서 왔으면 타일 초기화
             if (dragSlot.mercenaryTile.IsFakeNull() == false)
-            {
-                Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
-                dragSlot.mercenaryTile.Clear();
-
-                // 정보창 닫기
-                Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
-            }
+                _game.Despawn(dragSlot.mercenaryTile._mercenary);
 
         }, Define.UIEvent.Drop);
     }

@@ -229,7 +229,6 @@ public class UI_MercenaryInfoPopup : UI_Popup
             {
                 // 타일의 용병 정보라면 삭제
                 Managers.Game.Despawn(_tile._mercenary);
-                _tile.Clear();
                 Clear();
             }
             else if (_slot.IsFakeNull() == false)

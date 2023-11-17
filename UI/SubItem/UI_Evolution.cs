@@ -179,7 +179,6 @@ public class UI_Evolution : UI_Base
             }
 
             // 필드의 용병 삭제
-            mercenarys[i].GetComponent<MercenaryController>()._tile.Clear();
             Managers.Game.Despawn(mercenarys[i]);
 
             return;

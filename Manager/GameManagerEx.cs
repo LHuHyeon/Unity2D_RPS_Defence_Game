@@ -43,7 +43,7 @@ public class GameManagerEx
 	public UI_GameScene GameScene  	{ get; set; }
 	public WaveSystem	WaveSystem	{ get; set; }
 
-	private HashSet<GameObject> _mercenarys = new HashSet<GameObject>();
+	private List<GameObject>	_mercenarys = new List<GameObject>();
 	private HashSet<GameObject> _enemys = new HashSet<GameObject>();
 
 	#region <---------------- 재화 ---------------->
@@ -211,8 +211,6 @@ public class GameManagerEx
 		{
 			AbilityData abilityData = Abilities[i];
 
-			Debug.Log("GameManager Abilit Value : " + abilityData.currentValue);
-
 			switch (abilityData.abilityType)
 			{
 				// 직업별 공격력 강화 %
@@ -236,9 +234,9 @@ public class GameManagerEx
 					GoldParcent += abilityData.currentValue;
 					AddGold++;
 					break;
-				case Define.AbilityType.HitDamage: 			HitDamageParcent 		+= abilityData.currentValue * 0.01f; break;
-				case Define.AbilityType.CriticalParcent: 	CriticalParcent 	+= abilityData.currentValue; break;
-				case Define.AbilityType.CriticalDamage: 	AddCriticalDamage 	+= abilityData.currentValue; break;
+				case Define.AbilityType.HitDamage: 			HitDamageParcent 	+= abilityData.currentValue * 0.01f; 	break;
+				case Define.AbilityType.CriticalParcent: 	CriticalParcent 	+= abilityData.currentValue; 			break;
+				case Define.AbilityType.CriticalDamage: 	AddCriticalDamage 	+= abilityData.currentValue; 			break;
 				case Define.AbilityType.AttackRange: 		
 					AddAttackRange 	+= (float)Math.Round(abilityData.currentValue * 0.01f, 1);
 					break;
@@ -254,6 +252,25 @@ public class GameManagerEx
 		// 용병 정보 새로고침
 		foreach(var mercenary in _mercenarys)
 			mercenary.GetComponent<MercenaryController>().GetStat().RefreshAddData();
+	}
+
+	// 필드의 모든 용병 슬롯으로 데려오기
+	public void TakeMercenarys()
+	{
+		// 용병들 슬롯에 넣기
+		for(int i=0; i<_mercenarys.Count; i++)
+		{
+			MercenaryController mercenary = _mercenarys[i].GetComponent<MercenaryController>();
+
+			mercenary._tile.Clear();
+			GameScene.MercenaryRegister(mercenary.GetStat());
+			Managers.Resource.Destroy(_mercenarys[i]);
+		}
+
+		_mercenarys = new List<GameObject>();
+
+		// 정보창 닫기
+		Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
 	}
 
 	// stat과 같은 필드 용별들 객체들 가져오기
@@ -323,8 +340,6 @@ public class GameManagerEx
             case Define.WorldObject.Mercenary:
 				{
 					_mercenarys.Add(go);
-					if (OnMercenarySpawnEvent.IsNull() == false)
-						OnMercenarySpawnEvent.Invoke(1);
 				}
                 break;
             default:
@@ -363,11 +378,13 @@ public class GameManagerEx
             case Define.WorldObject.Mercenary:
                 {
                     if (_mercenarys.Contains(go))
-                    {
+					{
+						go.GetComponent<MercenaryController>()._tile.Clear();
                         _mercenarys.Remove(go);
-                        if (OnMercenarySpawnEvent.IsNull() == false)
-                            OnMercenarySpawnEvent.Invoke(-1);
-                    }
+
+						// 정보창 닫기
+                		Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
+					}
                 }
                 break;
         }
