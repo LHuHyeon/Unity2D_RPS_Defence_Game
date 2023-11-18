@@ -21,7 +21,7 @@ public class WaveSystem : MonoBehaviour
     public void WaveStart()
     {
         // 다음 Wave 존재 확인
-        if (_currentWaveIndex >= _waves.Count)
+        if (_currentWaveIndex > _waves.Count)
         {
             Debug.Log("No Next Wave");
             return;

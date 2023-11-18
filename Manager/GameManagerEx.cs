@@ -185,6 +185,8 @@ public class GameManagerEx
 		GameGold += CurrentWave.waveGold;
 
 		Managers.UI.CloseAllPopupUI();
+		
+        WaveSystem.NextWaveCheck();
 
         // 특정 웨이브마다 능력 뽑기 진행
 		if (CurrentWave.waveLevel % DrawAbilityWave == 0)
@@ -382,9 +384,6 @@ public class GameManagerEx
 					{
 						go.GetComponent<MercenaryController>()._tile.Clear();
                         _mercenarys.Remove(go);
-
-						// 정보창 닫기
-                		Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
 					}
                 }
                 break;

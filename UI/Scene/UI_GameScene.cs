@@ -122,16 +122,13 @@ public class UI_GameScene : UI_Scene
 
         ShowTab(PlayTab.Mercenary);
 
+        _game.WaveSystem.NextWaveCheck();
         OnRPSPopup();
 
         return true;
     }
 
-    public  void OnRPSPopup()
-    {
-        _game.WaveSystem.NextWaveCheck();
-        Invoke("OnDelayRPSPopup", 1f);
-    }
+    public  void OnRPSPopup()       { Invoke("OnDelayRPSPopup", 1f); }
     private void OnDelayRPSPopup()  { Managers.UI.ShowPopupUI<UI_RPSPopup>().RefreshUI(); }
 
     public void SetNextWave(WaveData waveData)
@@ -151,7 +148,9 @@ public class UI_GameScene : UI_Scene
         if (Managers.Game.IsBoss == true)
         {
             GetSlider((int)Sliders.BossSlider).value = 1;
-            GetText((int)Texts.BossHpText).text = waveData.hp.ToString();
+            
+            bool isShield = waveData.shield > 0;
+            BossBarUI(isShield ? waveData.shield : waveData.hp, isShield);
         }
 
         RefreshWaveInfo();
@@ -193,27 +192,12 @@ public class UI_GameScene : UI_Scene
 
     public void RefreshBossBar(EnemyStat stat)
     {
-        Slider  hpSlider = GetSlider((int)Sliders.BossSlider);
-        float   ratio = 0;
-
-        // 방어력 or 체력에 따른 색 변경
-        if (stat.Shield > 0)
-        {
-            hpSlider.fillRect.GetComponent<Image>().color = Color.gray;
-            ratio = (float)stat.Shield / stat.MaxShield;
-            GetText((int)Texts.EnemyCountText).text = stat.Shield.ToString();
-        }
-        else
-        {
-            hpSlider.fillRect.GetComponent<Image>().color = Color.red;
-            ratio = (float)stat.Hp / stat.MaxHp;
-            GetText((int)Texts.BossHpText).text = stat.Hp.ToString();
-        }
+        float ratio = SetBossBar(stat);
         
         if (float.IsNaN(ratio) == true)
-            hpSlider.value = 0;
+            GetSlider((int)Sliders.BossSlider).value = 0;
         else
-            hpSlider.value = ratio;
+            GetSlider((int)Sliders.BossSlider).value = ratio;
     }
 
     // 웨이브 정보
@@ -391,6 +375,29 @@ public class UI_GameScene : UI_Scene
         _game.TakeMercenarys();
     }
 
+    private float SetBossBar(EnemyStat stat)
+    {
+        // 방어력 or 체력에 따른 색 변경
+        if (stat.Shield > 0)
+        {
+            BossBarUI(stat.Shield, true);
+            return (float)stat.Shield / stat.MaxShield;
+        }
+        else
+        {
+            BossBarUI(stat.Hp, false);
+            return (float)stat.Hp / stat.MaxHp;
+        }
+    }
+
+    private void BossBarUI(int vlaue, bool isShield)
+    {
+        string path = "UI/Sprite/Slider_" + (isShield ? "Gray" : "Red");
+
+        GetSlider((int)Sliders.BossSlider).fillRect.GetComponent<Image>().sprite = Managers.Resource.Load<Sprite>(path);
+        GetText((int)Texts.BossHpText).text = vlaue.ToString();
+    }
+
     private void SetEventHandler()
     {
         // 용병 슬롯 탭 Drop 설정
@@ -412,6 +419,9 @@ public class UI_GameScene : UI_Scene
             // 타일에서 왔으면 타일 초기화
             if (dragSlot.mercenaryTile.IsFakeNull() == false)
                 _game.Despawn(dragSlot.mercenaryTile._mercenary);
+
+            // 정보창 닫기
+            Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
 
         }, Define.UIEvent.Drop);
     }

@@ -190,6 +190,9 @@ public class UI_MercenarySlot : UI_ItemDragSlot
 
         // 타일 초기화
         Managers.Game.Despawn(dragSlot.mercenaryTile._mercenary);
+        
+        // 정보창 닫기
+        Managers.UI.FindPopup<UI_MercenaryInfoPopup>()?.Clear();
     }
 
 #endregion
