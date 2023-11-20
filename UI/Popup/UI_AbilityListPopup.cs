@@ -55,8 +55,6 @@ public class UI_AbilityListPopup : UI_Popup
         {
             AbilityData ability = abilities[i];
 
-            Debug.Log("Abilty Value 전 : " + ability.currentValue);
-
             // 능력Type의 슬롯이 없으면 생성
             UI_AbilitySlot abilitySlot;
             if (_abilitySlots.TryGetValue(ability.abilityType, out abilitySlot) == false)
@@ -67,11 +65,13 @@ public class UI_AbilityListPopup : UI_Popup
                 _abilitySlots.Add(ability.abilityType, abilitySlot);
             }
 
-            Debug.Log("Abilty Value 후 : " + ability.currentValue);
-
             // 문자열 값 적용
             abilitySlot.RefreshDescripition(ability.currentValue);
         }
+
+        // UI 새로고침
+        foreach(var slot in _abilitySlots)
+            slot.Value.RefreshUI();
     }
 
     private void OnClickExitButton(PointerEventData eventData)

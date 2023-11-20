@@ -162,6 +162,7 @@ public class GameManagerEx
 		set { _gameData.CurrentWave = value; }
 	}
 
+	public int 	MaxWaveCount		{ get; set; }			// 최대 웨이브 수
 	public int 	WaveTime			{ get; set; }			// 웨이브 시간
 	public int 	DrawAbilityWave 	{ get; set; }			// 능력 뽑는 특정 웨이브
 

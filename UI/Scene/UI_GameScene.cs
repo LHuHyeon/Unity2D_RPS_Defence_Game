@@ -140,7 +140,7 @@ public class UI_GameScene : UI_Scene
         GetSlider((int)Sliders.EnemySlider).value = _wave.maxEnemyCount;
 
         GetText((int)Texts.EnemyCountText).text = $"{_wave.maxEnemyCount} / {_wave.maxEnemyCount}";
-        GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", 20f);
+        GetText((int)Texts.WaveTimeText).text = string.Format("{0:N2}", Managers.Game.WaveTime);
 
         GetSlider((int)Sliders.EnemySlider).gameObject.SetActive(!Managers.Game.IsBoss);
         GetSlider((int)Sliders.BossSlider).gameObject.SetActive(Managers.Game.IsBoss);
@@ -206,7 +206,7 @@ public class UI_GameScene : UI_Scene
         GetText((int)Texts.EnemyHpText).text = _wave.hp.ToString();
         GetText((int)Texts.EnemyShieldText).text = _wave.shield.ToString();
         GetText((int)Texts.EnemyDefenceText).text = _wave.defence.ToString();
-        GetText((int)Texts.WaveLevelText).text = $"{_wave.waveLevel} / 100";
+        GetText((int)Texts.WaveLevelText).text = $"{_wave.waveLevel} / {Managers.Game.MaxWaveCount}";
     }
 
     // 골드

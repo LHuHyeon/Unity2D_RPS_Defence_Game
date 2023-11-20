@@ -79,7 +79,7 @@ public class PoolManager
     }
 
     // 새로운 pool 생성 후 저장
-    public void CreatePool(GameObject original, int count = 5)
+    public void CreatePool(GameObject original, int count = 30)
     {
         Pool pool = new Pool();
         pool.Init(original, count);     // Pool 생성
