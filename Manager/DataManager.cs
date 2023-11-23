@@ -15,6 +15,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, MercenaryStat>   Mercenarys  { get; private set; }
     public Dictionary<int, BuffData>        Buff        { get; private set; }
     public Dictionary<int, UpgradeData>     Upgrades    { get; private set; }
+    public Dictionary<int, TextData>        Texts       { get; private set; }
 
     public Dictionary<Define.AbilityType, AbilityData>  Abilities { get; private set; }
 

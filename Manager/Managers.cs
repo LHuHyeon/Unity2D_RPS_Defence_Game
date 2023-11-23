@@ -26,13 +26,13 @@ public class Managers : MonoBehaviour
     public static SceneManagerEx Scene { get { Init(); return s_sceneManager; } }
     public static SoundManager Sound {  get { Init(); return s_soundManager; } }
 
-    // public static string GetText(int id)
-	// {
-    //     if (Managers.Data.Texts.TryGetValue(id, out TextData value) == false)
-    //         return "";
+    public static string GetText(int id)
+	{
+        if (Managers.Data.Texts.TryGetValue(id, out TextData value) == false)
+            return "";
 
-    //     return value.kor.Replace("{userName}", Managers.Game.Name);
-	// }
+        return value.kor;
+	}
 
     private void Start()
     {
