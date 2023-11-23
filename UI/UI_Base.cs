@@ -43,12 +43,12 @@ public abstract class UI_Base : MonoBehaviour
 		}
 	}
 
-
-	protected void BindObject(Type type) { Bind<GameObject>(type);  }
-	protected void BindSlider(Type type) { Bind<Slider>(type);  }
-	protected void BindImage(Type type) { Bind<Image>(type);  }
-	protected void BindButton(Type type) { Bind<Button>(type);  }
-	protected void BindText(Type type) { Bind<TextMeshProUGUI>(type);  }
+	protected void BindObject(Type type) 	{ Bind<GameObject>(type); }
+	protected void BindSlider(Type type) 	{ Bind<Slider>(type); }
+	protected void BindInput(Type type)		{ Bind<TMP_InputField>(type); }
+	protected void BindImage(Type type) 	{ Bind<Image>(type); }
+	protected void BindButton(Type type) 	{ Bind<Button>(type); }
+	protected void BindText(Type type) 		{ Bind<TextMeshProUGUI>(type); }
 
 	protected T Get<T>(int idx) where T : UnityEngine.Object
 	{
@@ -59,11 +59,12 @@ public abstract class UI_Base : MonoBehaviour
 		return objects[idx] as T;
 	}
 
-	protected GameObject GetObject(int idx) { return Get<GameObject>(idx); }
-	protected Slider GetSlider(int idx) { return Get<Slider>(idx); }
-	protected Image GetImage(int idx) { return Get<Image>(idx); }
-	protected Button GetButton(int idx) { return Get<Button>(idx); }
-	protected TextMeshProUGUI GetText(int idx) { return Get<TextMeshProUGUI>(idx); }
+	protected GameObject GetObject(int idx) 	{ return Get<GameObject>(idx); }
+	protected Slider GetSlider(int idx) 		{ return Get<Slider>(idx); }
+	protected TMP_InputField GetInput(int idx) 	{ return Get<TMP_InputField>(idx); }
+	protected Image GetImage(int idx) 			{ return Get<Image>(idx); }
+	protected Button GetButton(int idx) 		{ return Get<Button>(idx); }
+	protected TextMeshProUGUI GetText(int idx) 	{ return Get<TextMeshProUGUI>(idx); }
 
 	public static void BindEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {
