@@ -19,6 +19,8 @@ public class Define
 		Unknown,
 		Dev,
 		Game,
+		Login,
+		Loby,
 	}
 
 	public enum Sound

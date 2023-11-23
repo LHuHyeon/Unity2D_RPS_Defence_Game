@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Text.RegularExpressions;
+using PlayFab;
+using PlayFab.ClientModels;
 
 public class UI_LoginScene : UI_Scene
 {
     enum Inputs
     {
-        IDInput,
+        EmailInput,
         PWInput,
     }
 
@@ -18,6 +20,9 @@ public class UI_LoginScene : UI_Scene
         SignUpButton,
         GoogleButton,
     }
+
+    private TMP_InputField _emailInput;
+    private TMP_InputField _pwInput;
 
     public override bool Init()
     {
@@ -32,9 +37,12 @@ public class UI_LoginScene : UI_Scene
         GetButton((int)Buttons.SignUpButton).onClick.AddListener(OnClickSignUpButton);
         GetButton((int)Buttons.GoogleButton).onClick.AddListener(OnClickGoogleButton);
 
-        // Input Field
-        GetInput((int)Inputs.IDInput).onSubmit.AddListener(delegate{ GetInput((int)Inputs.PWInput).Select(); });
-        GetInput((int)Inputs.PWInput).onSubmit.AddListener(delegate{ OnClickLoginButton(); });
+        _emailInput = GetInput((int)Inputs.EmailInput);
+        _pwInput = GetInput((int)Inputs.PWInput);
+
+        // InputField
+        _emailInput.onSubmit.AddListener(delegate{ _pwInput.Select(); });
+        _pwInput.onSubmit.AddListener(delegate{ OnClickLoginButton(); });
 
         return true;
     }
@@ -50,7 +58,7 @@ public class UI_LoginScene : UI_Scene
     {
         Debug.Log("OnClickSignUpButton");
 
-        Managers.UI.ShowPopupUI<UI_SignUpPopup>();
+        Managers.UI.ShowPopupUI<UI_SignUpPopup>().RefreshUI();
     }
 
     private void OnClickGoogleButton()
@@ -66,29 +74,28 @@ public class UI_LoginScene : UI_Scene
             return;
 
         // ID와 Password 올바른 문자열 확인
-        if (IdCheck(GetInput((int)Inputs.IDInput).text) == false || PasswordCheck(GetInput((int)Inputs.PWInput).text) == false)
+        if (EmailCheck(_emailInput.text) == false || PasswordCheck(_pwInput.text) == false)
             return;
 
         // TODO : Login 정보가 서버에 저장되어 있는지 확인 후 Loby로 접속
+        var request = new LoginWithEmailAddressRequest { Email = _emailInput.text, Password = _pwInput.text };
+        PlayFabClientAPI.LoginWithEmailAddress(request, (result) => Debug.Log("로그인 성공!"), (error) => Debug.Log("로그인 실패!"));
     }
     
-    // ID 문자열 체크
-    private bool IdCheck(string str)
+    // Email 문자열 체크
+    private bool EmailCheck(string str)
     {
         if (str.IsNull() == true)
             return false;
 
-        if (str.Length <= Define.MAX_LOGIN_LENGTH && str.Length >= Define.MIN_LOGIN_LENGTH)
+        Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+        if (regex.IsMatch(str))
         {
-            Regex regex = new Regex(@"^[0-9a-zA-Z]{4,12}$");
-            if (regex.IsMatch(str))
-            {
-                Debug.Log("아이디 문자열 통과");
-                return true;
-            }
-
-            Debug.Log("IDPassCheck : 특수문자는 금지입니다.");
+            Debug.Log("이메일 문자열 통과");
+            return true;
         }
+
+        Debug.Log("EmailCheck : 불완전한 이메일입니다.");
 
         return false;
     }

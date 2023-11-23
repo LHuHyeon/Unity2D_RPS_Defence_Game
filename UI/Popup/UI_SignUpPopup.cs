@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using PlayFab;
+using PlayFab.ClientModels;
 
 public class UI_SignUpPopup : UI_Popup
 {
@@ -13,8 +16,8 @@ public class UI_SignUpPopup : UI_Popup
 
     enum Inputs
     {
+        UserNameInput,
         EmailInput,
-        IDInput,
         PWInput,
         PWCheckInput,
     }
@@ -27,18 +30,23 @@ public class UI_SignUpPopup : UI_Popup
 
     enum Texts
     {
+        UserNameHelperText,
         EmailHelperText,
-        IDHelperText,
         PWHelperText,
         PWCheckHelperText,
         SignUpHelperText,
     }
 
     // 회원가입 정보 입력 여부
-    bool _IdSuccess         = false;
-    bool _pwSuccess         = false;
-    bool _pwCheckSuccess    = false;
-    bool _emailSuccess      = false;
+    private bool _userNameSuccess   = false;
+    private bool _emailSuccess      = false;
+    private bool _pwSuccess         = false;
+    private bool _pwCheckSuccess    = false;
+
+    private TMP_InputField _userNameInput;
+    private TMP_InputField _emailInput;
+    private TMP_InputField _pwInput;
+    private TMP_InputField _pwCheckInput;
 
     public override bool Init()
     {
@@ -49,20 +57,28 @@ public class UI_SignUpPopup : UI_Popup
         BindInput(typeof(Inputs));
         BindButton(typeof(Buttons));
 
+        _userNameInput  = GetInput((int)Inputs.UserNameInput);
+        _emailInput     = GetInput((int)Inputs.EmailInput);
+        _pwInput        = GetInput((int)Inputs.PWInput);
+        _pwCheckInput   = GetInput((int)Inputs.PWCheckInput);
+
         // InputField 다음으로 넘기기
-        GetInput((int)Inputs.EmailInput).onSubmit.AddListener(delegate{ GetInput((int)Inputs.IDInput).Select(); });
-        GetInput((int)Inputs.IDInput).onSubmit.AddListener(delegate{ GetInput((int)Inputs.PWInput).Select(); });
-        GetInput((int)Inputs.PWInput).onSubmit.AddListener(delegate{ GetInput((int)Inputs.PWCheckInput).Select(); });
+        _userNameInput.onSubmit.AddListener(delegate{ _emailInput.Select(); });
+        _emailInput.onSubmit.AddListener(delegate{ _pwInput.Select(); });
+        _pwInput.onSubmit.AddListener(delegate{ _pwCheckInput.Select(); });
 
         // InputField 문자열 체크 이벤트
-        GetInput((int)Inputs.EmailInput).onValueChanged.AddListener(delegate{ EmailCheck(GetInput((int)Inputs.EmailInput).text); });
-        GetInput((int)Inputs.IDInput).onValueChanged.AddListener(delegate{ IdCheck(GetInput((int)Inputs.IDInput).text); });
-        GetInput((int)Inputs.PWInput).onValueChanged.AddListener(delegate{ PWCheck(GetInput((int)Inputs.PWInput).text); });
-        GetInput((int)Inputs.PWCheckInput).onValueChanged.AddListener(delegate{ PWDoubleCheck(GetInput((int)Inputs.PWCheckInput).text); });
+        _userNameInput.onValueChanged.AddListener(delegate{ UserNameCheck(_userNameInput.text); });
+        _emailInput.onValueChanged.AddListener(delegate{ EmailCheck(_emailInput.text); });
+        _pwInput.onValueChanged.AddListener(delegate{ PWCheck(_pwInput.text); });
+        _pwCheckInput.onValueChanged.AddListener(delegate{ PWDoubleCheck(_pwCheckInput.text); });
 
-        // Button
+        // Button Event
         GetButton((int)Buttons.ExitButton).onClick.AddListener(OnClickExitButton);
         GetButton((int)Buttons.SignUpButton).onClick.AddListener(OnClickSignUpButton);
+        GetObject((int)GameObjects.ExitBackground).BindEvent((PointerEventData eventData)=> { OnClickExitButton(); });
+
+        RefreshUI();
 
         return true;
     }
@@ -71,6 +87,8 @@ public class UI_SignUpPopup : UI_Popup
     {
         if (_init == false)
             return;
+
+        _userNameInput.Select();
     }
 
     private void OnClickExitButton()
@@ -88,35 +106,63 @@ public class UI_SignUpPopup : UI_Popup
     }
 
     // 회원가입 확인 버튼
-    void OnSignup()
+    private void OnSignup()
     {
         // 입력한 회원가입 정보 확인
-        if (!_IdSuccess || !_pwSuccess || !_pwCheckSuccess || !_emailSuccess)
-            return;
-
-        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
-    }
-
-    // ID 문자열 체크
-    void IdCheck(string str)
-    {
-        if (str != null && str.Length <= Define.MAX_LOGIN_LENGTH && str.Length >= Define.MIN_LOGIN_LENGTH)
+        if (!_userNameSuccess || !_emailSuccess || !_pwSuccess || !_pwCheckSuccess)
         {
-            Regex regex = new Regex(@"^[0-9a-zA-Z]{4,12}$");
-            if (regex.IsMatch(str))
-            {
-                // SetHelper(GetText((int)Texts.IDHelperText), Define.IdTrueText, true);
-                _IdSuccess = true;
-                return;
-            }
+            Debug.Log("원활하지 않아요 정보가!!");
+            Debug.Log("user : " + _userNameSuccess + ", email : " + _emailSuccess + ", pw : " + _pwSuccess + ", pwCheck : " + _pwCheckInput);
+            return;
         }
 
-        // SetHelper(GetText((int)Texts.IDHelperText), Define.IdFalseText, false);
-        _IdSuccess = false;
+        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
+
+        var request = new RegisterPlayFabUserRequest { Email = _emailInput.text, Password = _pwCheckInput.text, Username = _userNameInput.text };
+        PlayFabClientAPI.RegisterPlayFabUser(request, (result) => Debug.Log("회원가입 성공!"), (error) => Debug.Log("회원가입 실패!"));
+    }
+
+    // 닉네임 문자열 체크
+    private void UserNameCheck(string str)
+    {
+        // 길이 체크
+        if (str == null || str.Length > Define.MAX_NICKNAME_LENGTH || str.Length < Define.MIN_NICKNAME_LENGTH)
+        {
+            // SetHelper(GetText((int)Texts.UserNameHelperText), Define.LengthFalseText, false);
+            _userNameSuccess = false;
+            return;
+        }
+
+        // 올바른 문자열 체크
+        Regex regex = new Regex(@"^[0-9a-zA-Z가-힣]{2,8}$");
+        if (regex.IsMatch(str))
+        {
+            // SetHelper(GetText((int)Texts.UserNameHelperText), Define.NickNameTrueText, true);
+            _userNameSuccess =  true;
+            return;
+        }
+
+        // SetHelper(GetText((int)Texts.UserNameHelperText), Define.NickNameFalseText, false);
+        _userNameSuccess =  false;
+    }
+
+    // Email 문자열 체크
+    private void EmailCheck(string str)
+    {
+        Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+        if (regex.IsMatch(str))
+        {
+            // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailTrueText, true);
+            _emailSuccess = true;
+            return;
+        }
+        
+        // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailFalseText, false);
+        _emailSuccess = false;
     }
 
     // Password 문자열 체크
-    void PWCheck(string str)
+    private void PWCheck(string str)
     {
         if (str != null && str.Length <= Define.MAX_PASSWORD_LENGTH && str.Length >= Define.MIN_PASSWORD_LENGTH)
         {
@@ -134,9 +180,9 @@ public class UI_SignUpPopup : UI_Popup
     }
 
     // Password 한번더 체크
-    void PWDoubleCheck(string str)
+    private void PWDoubleCheck(string str)
     {
-        if (GetInput((int)Inputs.PWInput).text == GetInput((int)Inputs.PWCheckInput).text)
+        if (_pwInput.text == _pwCheckInput.text)
         {
             // SetHelper(GetText((int)Texts.PWCheckHelperText), Define.PasswordCheckTrueText, true);
             _pwCheckSuccess = true;
@@ -148,23 +194,8 @@ public class UI_SignUpPopup : UI_Popup
         }
     }
 
-    // Email 문자열 체크
-    void EmailCheck(string str)
-    {
-        Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
-        if (regex.IsMatch(str))
-        {
-            // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailTrueText, true);
-            _emailSuccess = true;
-            return;
-        }
-        
-        // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailFalseText, false);
-        _emailSuccess = false;
-    }
-
     // Text 효과 적용
-    public void SetHelper(TextMeshProUGUI text, int textId, bool success)
+    private void SetHelper(TextMeshProUGUI text, int textId, bool success)
     {
         text.text = Managers.GetText(textId);
         if (success == true)
@@ -177,26 +208,4 @@ public class UI_SignUpPopup : UI_Popup
     {
         Managers.UI.ClosePopupUI(this);
     }
-
-    // 닉네임 문자열 체크
-    // bool NickNameCheck(string str)
-    // {
-    //     // 길이 체크
-    //     if (str == null || str.Length > Define.MAX_NICKNAME_LENGTH || str.Length < Define.MIN_NICKNAME_LENGTH)
-    //     {
-    //         SetHelper(GetText((int)Texts.CheckHelper), Define.LengthFalseText, false);
-    //         return false;
-    //     }
-
-    //     // 올바른 문자열 체크
-    //     Regex regex = new Regex(@"^[0-9a-zA-Z가-힣]{2,8}$");
-    //     if (regex.IsMatch(str))
-    //     {
-    //         SetHelper(GetText((int)Texts.CheckHelper), Define.NickNameTrueText, true);
-    //         return true;
-    //     }
-
-    //     SetHelper(GetText((int)Texts.CheckHelper), Define.NickNameFalseText, false);
-    //     return false;
-    // }
 }
