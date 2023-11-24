@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraResolution : MonoBehaviour
 {
-    [SerializeField]
     private float resolution = ((float)9 / 19);
 
     void Start()

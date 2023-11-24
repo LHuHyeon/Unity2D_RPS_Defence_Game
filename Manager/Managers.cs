@@ -68,6 +68,6 @@ public class Managers : MonoBehaviour
 
     public static void Clear()
     {
-
+        s_uiManager.Clear();
     }
 }

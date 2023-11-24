@@ -109,7 +109,7 @@ public class UI_SignUpPopup : UI_Popup
     {
         Debug.Log("OnClickExitButton");
 
-        Clear();
+        ClosePopupUI();
     }
 
     private void OnClickSignUpButton()
@@ -128,27 +128,29 @@ public class UI_SignUpPopup : UI_Popup
 
         var request = new RegisterPlayFabUserRequest { Email = _emailInput.text, Password = _pwCheckInput.text, Username = _userNameInput.text };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailed);
-
-        // TODO : 닉네임, 이메일 중복을 확인하여 재입력 및 경고 표시해주기
-
-        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
     }
 
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
         Debug.Log("회원가입 성공!");
+
+        ClosePopupUI();
     }
 
     private void OnRegisterFailed(PlayFabError error)
     {
         Debug.Log("회원가입 실패!");
+
+        // TODO : 닉네임, 이메일 중복을 확인하여 재입력 및 경고 표시해주기
+        
+        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
     }
 
     // 닉네임 문자열 체크
     private void UserNameCheck(string str)
     {
         // 길이와 올바른 문자열 체크
-        Regex regex = new Regex(@"^[0-9a-zA-Z]{2,8}$");
+        Regex regex = new Regex(Define.RegexUserName);
         if (regex.IsMatch(str))
         {
             SetHelper(GetText((int)Texts.UserNameHelperText), true);
@@ -163,7 +165,7 @@ public class UI_SignUpPopup : UI_Popup
     // Email 문자열 체크
     private void EmailCheck(string str)
     {
-        Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+        Regex regex = new Regex(Define.RegexEmail);
         if (regex.IsMatch(str))
         {
             SetHelper(GetText((int)Texts.EmailHelperText), true);
@@ -218,10 +220,5 @@ public class UI_SignUpPopup : UI_Popup
 
         text.text = Managers.GetText(textId);
         text.color = Color.red;
-    }
-
-    public void Clear()
-    {
-        Managers.UI.ClosePopupUI(this);
     }
 }

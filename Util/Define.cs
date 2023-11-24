@@ -150,6 +150,7 @@ public class Define
 		Devil			= 6,	// 악마
 	}
 
+	// * Google Sheet 데이터 ID
 	public const string StartDataNumber			= "883832159";
 	public const string MercenaryDataNumber 	= "1983187163";
 	public const string UpgradeDataNumber 		= "2068092916";
@@ -160,11 +161,17 @@ public class Define
 	
 	public const string Stage01DataNumber		= "1279670946";
 
+	// * 최대값 최솟값
 	public const int MIN_PASSWORD_LENGTH = 8;
 	public const int MAX_PASSWORD_LENGTH = 18;
 
+	// * Regex 정규식
+	public const string RegexUserName	= @"^[0-9a-z]{2,8}$";
+	public const string	RegexEmail		= @"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$";
+
 	public const string SaleConfirmText = "판매하시겠습니까?";
 
+	// * Text Data ID
 	public const int Login			= 10000;
 	public const int SignUp			= 10001;
 	public const int GoogleLogin	= 10002;

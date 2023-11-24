@@ -103,6 +103,8 @@ public class UI_LoginScene : UI_Scene
     private void OnLoginSuccess(LoginResult result)
     {
         Debug.Log("로그인 성공!");
+
+        Managers.Scene.LoadScene(Define.Scene.Loby);
     }
 
     private void OnLoginFailed(PlayFabError error)
@@ -116,7 +118,7 @@ public class UI_LoginScene : UI_Scene
         if (str.IsNull() == true)
             return false;
 
-        Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
+        Regex regex = new Regex(Define.RegexEmail);
         if (regex.IsMatch(str))
         {
             Debug.Log("이메일 문자열 통과");
