@@ -33,6 +33,8 @@ public class DataManager : MonoBehaviour
         StartCoroutine(DataRequest(UpgradeRequest, Define.UpgradeDataNumber));
         StartCoroutine(DataRequest(AbilityRequest, Define.AbilityDataNumber));
         StartCoroutine(StageWaveRequest());
+
+        TextRequest();
     }
 
     public bool IsData()
@@ -484,6 +486,36 @@ public class DataManager : MonoBehaviour
             abilityData.name = row[1];
             abilityData.descripition = row[2];
         }
+    }
+
+    #endregion
+
+    #region 문자열 Data
+
+    // 종족 강화 데이터
+    private void TextRequest()
+    {
+        Dictionary<int, TextData> dict = new Dictionary<int, TextData>();
+
+        string[] lines = Resources.Load<TextAsset>($"Data/TextData").text.Split("\n");
+
+        for(int y = 1; y < lines.Length; y++)
+        {
+            string[] row = Row(lines[y]);
+
+            if (row.IsNull() == true)
+                continue;
+
+            TextData textData = new TextData()
+            {
+                id = int.Parse(row[0]),
+                kor = row[1],
+            };
+
+            dict.Add(textData.id, textData);
+        }
+
+        Texts = dict;
     }
 
     #endregion

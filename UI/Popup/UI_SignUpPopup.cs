@@ -30,6 +30,8 @@ public class UI_SignUpPopup : UI_Popup
 
     enum Texts
     {
+        TitleText,
+        SignUpButtonText,
         UserNameHelperText,
         EmailHelperText,
         PWHelperText,
@@ -56,7 +58,18 @@ public class UI_SignUpPopup : UI_Popup
         BindObject(typeof(GameObjects));
         BindInput(typeof(Inputs));
         BindButton(typeof(Buttons));
+        BindText(typeof(Texts));
+        
+        // Button
+        GetButton((int)Buttons.ExitButton).onClick.AddListener(OnClickExitButton);
+        GetButton((int)Buttons.SignUpButton).onClick.AddListener(OnClickSignUpButton);
+        GetObject((int)GameObjects.ExitBackground).BindEvent((PointerEventData eventData)=> { OnClickExitButton(); });
 
+        // Text
+        GetText((int)Texts.TitleText).text = Managers.GetText(Define.SignUp);
+        GetText((int)Texts.SignUpButtonText).text = Managers.GetText(Define.SignUp);
+
+        // InputField 변수에 담기
         _userNameInput  = GetInput((int)Inputs.UserNameInput);
         _emailInput     = GetInput((int)Inputs.EmailInput);
         _pwInput        = GetInput((int)Inputs.PWInput);
@@ -71,12 +84,7 @@ public class UI_SignUpPopup : UI_Popup
         _userNameInput.onValueChanged.AddListener(delegate{ UserNameCheck(_userNameInput.text); });
         _emailInput.onValueChanged.AddListener(delegate{ EmailCheck(_emailInput.text); });
         _pwInput.onValueChanged.AddListener(delegate{ PWCheck(_pwInput.text); });
-        _pwCheckInput.onValueChanged.AddListener(delegate{ PWDoubleCheck(_pwCheckInput.text); });
-
-        // Button Event
-        GetButton((int)Buttons.ExitButton).onClick.AddListener(OnClickExitButton);
-        GetButton((int)Buttons.SignUpButton).onClick.AddListener(OnClickSignUpButton);
-        GetObject((int)GameObjects.ExitBackground).BindEvent((PointerEventData eventData)=> { OnClickExitButton(); });
+        _pwCheckInput.onValueChanged.AddListener(delegate{ PWDoubleCheck(); });
 
         RefreshUI();
 
@@ -89,6 +97,12 @@ public class UI_SignUpPopup : UI_Popup
             return;
 
         _userNameInput.Select();
+
+        GetText((int)Texts.UserNameHelperText).text = "";
+        GetText((int)Texts.EmailHelperText).text = "";
+        GetText((int)Texts.PWHelperText).text = "";
+        GetText((int)Texts.PWCheckHelperText).text = "";
+        GetText((int)Texts.SignUpHelperText).text = "";
     }
 
     private void OnClickExitButton()
@@ -110,39 +124,39 @@ public class UI_SignUpPopup : UI_Popup
     {
         // 입력한 회원가입 정보 확인
         if (!_userNameSuccess || !_emailSuccess || !_pwSuccess || !_pwCheckSuccess)
-        {
-            Debug.Log("원활하지 않아요 정보가!!");
-            Debug.Log("user : " + _userNameSuccess + ", email : " + _emailSuccess + ", pw : " + _pwSuccess + ", pwCheck : " + _pwCheckInput);
             return;
-        }
-
-        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
 
         var request = new RegisterPlayFabUserRequest { Email = _emailInput.text, Password = _pwCheckInput.text, Username = _userNameInput.text };
-        PlayFabClientAPI.RegisterPlayFabUser(request, (result) => Debug.Log("회원가입 성공!"), (error) => Debug.Log("회원가입 실패!"));
+        PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailed);
+
+        // TODO : 닉네임, 이메일 중복을 확인하여 재입력 및 경고 표시해주기
+
+        // SetHelper(GetText((int)Texts.SignUpHelperText), Define.SignupFalseText, false);
+    }
+
+    private void OnRegisterSuccess(RegisterPlayFabUserResult result)
+    {
+        Debug.Log("회원가입 성공!");
+    }
+
+    private void OnRegisterFailed(PlayFabError error)
+    {
+        Debug.Log("회원가입 실패!");
     }
 
     // 닉네임 문자열 체크
     private void UserNameCheck(string str)
     {
-        // 길이 체크
-        if (str == null || str.Length > Define.MAX_NICKNAME_LENGTH || str.Length < Define.MIN_NICKNAME_LENGTH)
-        {
-            // SetHelper(GetText((int)Texts.UserNameHelperText), Define.LengthFalseText, false);
-            _userNameSuccess = false;
-            return;
-        }
-
-        // 올바른 문자열 체크
-        Regex regex = new Regex(@"^[0-9a-zA-Z가-힣]{2,8}$");
+        // 길이와 올바른 문자열 체크
+        Regex regex = new Regex(@"^[0-9a-zA-Z]{2,8}$");
         if (regex.IsMatch(str))
         {
-            // SetHelper(GetText((int)Texts.UserNameHelperText), Define.NickNameTrueText, true);
+            SetHelper(GetText((int)Texts.UserNameHelperText), true);
             _userNameSuccess =  true;
             return;
         }
 
-        // SetHelper(GetText((int)Texts.UserNameHelperText), Define.NickNameFalseText, false);
+        SetHelper(GetText((int)Texts.UserNameHelperText), false, Define.UserNameLength);
         _userNameSuccess =  false;
     }
 
@@ -152,56 +166,58 @@ public class UI_SignUpPopup : UI_Popup
         Regex regex = new Regex(@"^([0-9a-zA-Z]+)@([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+){1,}$");
         if (regex.IsMatch(str))
         {
-            // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailTrueText, true);
+            SetHelper(GetText((int)Texts.EmailHelperText), true);
             _emailSuccess = true;
             return;
         }
         
-        // SetHelper(GetText((int)Texts.EmailHelperText), Define.EmailFalseText, false);
+        SetHelper(GetText((int)Texts.EmailHelperText), false, Define.EmailCheckFalse);
         _emailSuccess = false;
     }
 
     // Password 문자열 체크
     private void PWCheck(string str)
     {
+        if (str.IsNull() == true)
+            return;
+
         if (str != null && str.Length <= Define.MAX_PASSWORD_LENGTH && str.Length >= Define.MIN_PASSWORD_LENGTH)
         {
-            Regex regex = new Regex(@"^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,18}$", RegexOptions.IgnorePatternWhitespace);
-            if (regex.IsMatch(str))
-            {
-                // SetHelper(GetText((int)Texts.PWHelperText), Define.PasswordTrueText, true);
-                _pwSuccess = true;
-                return;
-            }
+            SetHelper(GetText((int)Texts.PWHelperText), true);
+            _pwSuccess = true;
+            return;
         }
 
-        // SetHelper(GetText((int)Texts.PWHelperText), Define.PasswordFalseText, false);
+        SetHelper(GetText((int)Texts.PWHelperText), false, Define.PasswordLength);
         _pwSuccess = false;
     }
 
     // Password 한번더 체크
-    private void PWDoubleCheck(string str)
+    private void PWDoubleCheck()
     {
         if (_pwInput.text == _pwCheckInput.text)
         {
-            // SetHelper(GetText((int)Texts.PWCheckHelperText), Define.PasswordCheckTrueText, true);
+            SetHelper(GetText((int)Texts.PWCheckHelperText), true);
             _pwCheckSuccess = true;
         }
         else
         {
-            // SetHelper(GetText((int)Texts.PWCheckHelperText), Define.PasswordCheckFalseText, false);
+            SetHelper(GetText((int)Texts.PWCheckHelperText), false, Define.PasswordCheckFalse);
             _pwCheckSuccess = false;
         }
     }
 
     // Text 효과 적용
-    private void SetHelper(TextMeshProUGUI text, int textId, bool success)
+    private void SetHelper(TextMeshProUGUI text, bool success, int textId = 0)
     {
-        text.text = Managers.GetText(textId);
         if (success == true)
-            text.color = Color.green;
-        else
-            text.color = Color.red;
+        {
+            text.text = "";
+            return;
+        }
+
+        text.text = Managers.GetText(textId);
+        text.color = Color.red;
     }
 
     public void Clear()

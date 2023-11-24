@@ -15,17 +15,12 @@ public class GameScene : BaseScene
 
         SceneType = Define.Scene.Game;
 
-		StartCoroutine(OnSceneCoroutine());
-
 		Debug.Log("GameScene Init");
 		return true;
 	}
 
-	private IEnumerator OnSceneCoroutine()
+	protected override void SetScene()
 	{
-		while(Managers.Data.IsData() == false)
-			yield return null;
-
 		// 시작 기본 데이터 적용
 		StartData startData = Managers.Data.Start[currentStage];
 		startData.SetGameData();

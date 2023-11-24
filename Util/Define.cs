@@ -160,12 +160,18 @@ public class Define
 	
 	public const string Stage01DataNumber		= "1279670946";
 
-	public const int MIN_LOGIN_LENGTH = 4;
-	public const int MAX_LOGIN_LENGTH = 12;
 	public const int MIN_PASSWORD_LENGTH = 8;
 	public const int MAX_PASSWORD_LENGTH = 18;
-	public const int MIN_NICKNAME_LENGTH = 2;
-	public const int MAX_NICKNAME_LENGTH = 8;
 
 	public const string SaleConfirmText = "판매하시겠습니까?";
+
+	public const int Login			= 10000;
+	public const int SignUp			= 10001;
+	public const int GoogleLogin	= 10002;
+
+	public const int LoginFalse			= 10010;
+	public const int UserNameLength		= 10020;
+	public const int EmailCheckFalse	= 10030;
+	public const int PasswordLength		= 10040;
+	public const int PasswordCheckFalse	= 10041;
 }

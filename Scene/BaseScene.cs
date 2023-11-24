@@ -23,8 +23,21 @@ public class BaseScene : MonoBehaviour
         if (go == null)
             Managers.Resource.Instantiate("UI/EventSystem").name = "@EventSystem";
 
+        StartCoroutine(OnSceneCoroutine());
+
         return true;
     }
 
+    protected virtual void SetScene() {}
+
     public virtual void Clear() { }
+
+    // 기본 데이터를 다 가져오면 Scene 코드 진행
+    private IEnumerator OnSceneCoroutine()
+    {
+		while(Managers.Data.IsData() == false)
+			yield return null;
+
+        SetScene();
+    }
 }
