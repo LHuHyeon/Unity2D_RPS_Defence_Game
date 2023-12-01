@@ -47,7 +47,7 @@ public class UI_LoginScene : UI_Scene
         // Button
         GetButton((int)Buttons.LoginButton).onClick.AddListener(OnClickLoginButton);
         GetButton((int)Buttons.SignUpButton).onClick.AddListener(OnClickSignUpButton);
-        GetButton((int)Buttons.GoogleButton).onClick.AddListener(OnClickGoogleButton);
+        GetButton((int)Buttons.GoogleButton).onClick.AddListener(OnClickGoogleLoginButton);
 
         // Text
         GetText((int)Texts.LoginButtonText).text = Managers.GetText(Define.Login);
@@ -62,6 +62,7 @@ public class UI_LoginScene : UI_Scene
         return true;
     }
 
+    // 로그인 버튼
     private void OnClickLoginButton()
     {
         Debug.Log("OnClickLoginButton");
@@ -69,6 +70,7 @@ public class UI_LoginScene : UI_Scene
         OnLogin();
     }
 
+    // 회원가입 버튼
     private void OnClickSignUpButton()
     {
         Debug.Log("OnClickSignUpButton");
@@ -76,11 +78,17 @@ public class UI_LoginScene : UI_Scene
         Managers.UI.ShowPopupUI<UI_SignUpPopup>().RefreshUI();
     }
 
-    private void OnClickGoogleButton()
+    // 구글 로그인 버튼
+    private void OnClickGoogleLoginButton()
     {
         Debug.Log("OnClickGoogleButton");
 
-        // TODO : 구글 로그인
+        // 구글 로그인 진행
+        Managers.PlayFab.GoogleLogin(()=>
+        {
+            // Loby Scene Load
+            Managers.Scene.LoadScene(Define.Scene.Loby);
+        });
     }
 
     private void OnLogin()
