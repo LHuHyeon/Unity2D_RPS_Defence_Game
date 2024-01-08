@@ -103,21 +103,30 @@ public class UI_LoginScene : UI_Scene
             return;
         }
 
-        // TODO : Login 정보가 서버에 저장되어 있는지 확인 후 Loby로 접속
-        var request = new LoginWithEmailAddressRequest { Email = _emailInput.text, Password = _pwInput.text };
-        PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailed);
+        // PlayFab 유저 정보 요청
+        PlayFabClientAPI.LoginWithEmailAddress(new LoginWithEmailAddressRequest
+        {
+            Email       = _emailInput.text,
+            Password    = _pwInput.text,
+        },
+        OnLoginSuccess, OnLoginFailed);
     }
 
     private void OnLoginSuccess(LoginResult result)
     {
         Debug.Log("로그인 성공!");
 
+        string playFabId       = result.PlayFabId;
+        string sessionTicket   = result.SessionTicket;
+
+        // 로비 Scene 로드
         Managers.Scene.LoadScene(Define.Scene.Loby);
     }
 
     private void OnLoginFailed(PlayFabError error)
     {
         Debug.Log("로그인 실패!");
+        Debug.Log("Error Log : " + error.GenerateErrorReport());
     }
     
     // Email 문자열 체크

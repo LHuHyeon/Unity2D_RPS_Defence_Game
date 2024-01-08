@@ -99,12 +99,12 @@ public class UI_RPSPopup : UI_Popup
             Managers.Resource.Destroy(child.gameObject);
 
         GetButton((int)Buttons.ADButton).gameObject.SetActive(true);
-        GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_DarkGray");
+        GetButton((int)Buttons.CheckButton).image.sprite = Managers.Resource.Load<Sprite>("UI/Sprite/Btn_BlueGray");
 
         SetColor(GetButton((int)Buttons.ResetButton).image, 1f);
         SetColor(GetButton((int)Buttons.ADButton).image, 1f);
 
-        GetText((int)Texts.CheckButtonText).text = "뽑기";
+        GetText((int)Texts.CheckButtonText).text = "용병 뽑기";
 
         // [리셋버튼] : 리셋할 돈이 없으면 비활성화
         if (Managers.Game.GameGold < _resetPrice)

@@ -9,7 +9,11 @@ using UnityEngine;
 
 public class PlayFabManager
 {
+    public  string PlayFabId        { get { return _playFabId; } }
     private string _playFabId;
+
+    public  string SessionTicket    { get { return _sessionTicket; } }
+    private string _sessionTicket;
 
     // PlayFab Google 로그인
     public void GoogleLogin(Action onLoginSuccessAction)
@@ -44,6 +48,7 @@ public class PlayFabManager
                 // PlayFab 로그인이 성공하면
                 Debug.Log("PlayFab Google 로그인 성공!");
                 _playFabId = result.PlayFabId;
+                _sessionTicket = result.SessionTicket;
 
                 onLoginSuccessAction.Invoke();
             },

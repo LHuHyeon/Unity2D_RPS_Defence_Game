@@ -16,6 +16,8 @@ public class SceneManagerEx
 
     public void LoadScene(Define.Scene type)
     {
+        Debug.Log("Scene Load : " + type.ToString());
+
         Managers.Clear();
         SceneManager.LoadScene(GetSceneName(type));
     }

@@ -82,6 +82,8 @@ public class UI_PausePopup : UI_Popup
     {
         Debug.Log("OnClickGiveUpButton");
 
+        Application.Quit();
+
         // TODO : 게임 로비로 나가기
     }
 

@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LobyScene : MonoBehaviour
+public class LobyScene : BaseScene
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override bool Init()
     {
-        
+        if (base.Init() == false)
+            return false;
+
+        SceneType = Define.Scene.Loby;
+
+        Debug.Log("LobyScene Init");
+
+        return true;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void SetScene()
     {
-        
+        Managers.UI.ShowSceneUI<UI_LobyScene>();
     }
 }

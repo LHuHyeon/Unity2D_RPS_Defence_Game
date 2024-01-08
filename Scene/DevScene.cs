@@ -2,18 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using PlayFab;
+using PlayFab.ClientModels;
+using PlayFab.CloudScriptModels;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
-using PlayFab;
-using PlayFab.ClientModels;
-
 public class DevScene : BaseScene
 {
-    public TextMeshProUGUI googleText;
+    [HideInInspector] public string PlayerName { get; private set; }
+    [HideInInspector] public List<CharacterResult> Characters { get; private set; }
+
+    [SerializeField]
+    private GetPlayerCombinedInfoRequestParams infoRequestParams;
 
     protected override bool Init()
     {
@@ -22,16 +24,8 @@ public class DevScene : BaseScene
 
         SceneType = Define.Scene.Dev;
 
-        // 구글(GPGS) 초기화
-        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-        .AddOauthScope("profile")
-        .RequestServerAuthCode(false)
-        .Build();
-        PlayGamesPlatform.InitializeInstance(config);
-
-        PlayGamesPlatform.DebugLogEnabled = true;
-        PlayGamesPlatform.Activate();
-
+        Managers.UI.ShowSceneUI<UI_DevScene>();
+        
         Debug.Log("DevScene Init");
 
         return true;
@@ -39,55 +33,44 @@ public class DevScene : BaseScene
 
     public void OnLoginButton()
     {
-        GoogleLogin();
-    }
-
-    // 구글 연동 후 PlayFab에 전송
-    private void GoogleLogin()
-    {
-        // 구글 연동 진행
-        Social.localUser.Authenticate((bool success) =>
+        Managers.PlayFab.GoogleLogin(()=>
         {
-            googleText.text = "Google Signed In";
-
-            if (!success)
-            {
-                Debug.Log("구글 사용자 인증 실패!");
-                googleText.text = "Google Failed to Authorize your login";
-                return;
-            }
-
-            // 구글 서버 인증 코드 가져오기
-            string serverAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode();
-
-            // PlayFab 보낼 메시지 만들기
-            var request = new LoginWithGoogleAccountRequest()
-            {
-                TitleId = PlayFabSettings.TitleId,
-                ServerAuthCode = serverAuthCode,    // 구글 서버 인증 코드
-                CreateAccount = true                // 해당 Id가 없을 때 PlayFab 계정을 자동 생성할지 여부
-            };
-
-            // PlayFab 로그인 요청 보내기
-            PlayFabClientAPI.LoginWithGoogleAccount(request, OnLoginSuccess, OnLoginFailed);
-            
-            Debug.Log("Server Auth Code: " + serverAuthCode);
-            Debug.Log("Title Id : " + PlayFabSettings.TitleId);
+            CallCSharpExecuteFunction();
         });
     }
 
-    private void OnLoginSuccess(LoginResult result)
+    private void CallCSharpExecuteFunction()
     {
-        Debug.Log("로그인 성공!");
-
-        googleText.text = "Signed In as " + result.PlayFabId;
+        // Azure Cloud Script 함수 실행
+        PlayFabCloudScriptAPI.ExecuteFunction(new ExecuteFunctionRequest()
+        { 
+            Entity = new PlayFab.CloudScriptModels.EntityKey()
+            {
+                // 로그인할 때부터 가져오기 ( Id, Type )
+                Id = PlayFabSettings.staticPlayer.EntityId,
+                Type = PlayFabSettings.staticPlayer.EntityType
+            },
+            FunctionName = "HelloWorld", // Azure 함수의 이름
+            FunctionParameter = new Dictionary<string, object>() { { "inputValue", "Test" } },
+            GeneratePlayStreamEvent = true
+        },
+        CallSuccess, CallError);
     }
 
-    private void OnLoginFailed(PlayFabError error)
+    private void CallSuccess(ExecuteFunctionResult result)
     {
-        Debug.Log("로그인 실패!");
-        Debug.Log(error.ErrorMessage);
+        if (result.FunctionResultTooLarge != null && (bool)result.FunctionResultTooLarge)
+        {
+            Debug.Log("This can happen if you exceed the limit that can be returned from an Azure Function," +
+                " See PlayFab Limits Page for details.");
+            return;
+        }
+        Debug.Log($"The {result.FunctionName} function took {result.ExecutionTimeMilliseconds} to complete");
+        Debug.Log($"Result: {result.FunctionResult.ToString()}");
+    }
 
-        googleText.text = "PlayFab Login Failed";
+    private void CallError(PlayFabError error)
+    {
+        Debug.Log($"Opps Something went wrong: {error.GenerateErrorReport()}");
     }
 }

@@ -30,5 +30,21 @@ public class GameScene : BaseScene
 		Managers.Game.WaveSystem = Managers.Resource.Instantiate("Stage/Stage" + startData.stageLevel).GetComponent<WaveSystem>();
 		
 		Managers.Game.WaveSystem.SetWave(Managers.Data.Stages[currentStage]);
+
+		StageSizeSetting();
+	}
+
+	// 스테이지 크기 설정
+	private void StageSizeSetting()
+	{
+		SpriteRenderer sr = Managers.Game.WaveSystem.GetComponent<SpriteRenderer>();
+
+		float spriteX = sr.sprite.bounds.size.x;
+		float spriteY = sr.sprite.bounds.size.y;
+
+		float screenY = Camera.main.orthographicSize * 2;
+		float screenX = screenY / Screen.height * Screen.width;
+
+		sr.transform.localScale = new Vector2(Mathf.Ceil(screenX / spriteX), Mathf.Ceil(screenY / spriteY));
 	}
 }

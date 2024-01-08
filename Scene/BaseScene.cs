@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BaseScene : MonoBehaviour
 {
@@ -19,9 +20,16 @@ public class BaseScene : MonoBehaviour
             return false;
 
         _init = true;
+
+        // EvenySystem 생성
         GameObject go = GameObject.Find("EventSystem");
         if (go == null)
             Managers.Resource.Instantiate("UI/EventSystem").name = "@EventSystem";
+
+        // 카메라 기능 추가
+        GameObject camera = Camera.main.gameObject;
+        camera.GetOrAddComponent<Physics2DRaycaster>();
+        camera.GetOrAddComponent<CameraResolution>();
 
         StartCoroutine(OnSceneCoroutine());
 
