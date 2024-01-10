@@ -4,6 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_DrawAbilityPopup.cs
+ * Desc :   능력 선택 Popup
+ *          특정 Wave를 클리어하면 호출되는 Popup으로 능력을 선택하는데 사용
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [private]
+ &  : PopulateAbilityCard() - 능력 카드 채우기
+ &  : OnClickCheckButton()  - 확인 버튼
+ &  : OnClickADButton()     - 광고 버튼 (능력 카드 새로고침)
+ &  : CallPopup()           - Popup 호출 시 자연스러운 등장
+ &  : CheckButtonActive()   - 능력 카드 선택 시 확인 버튼 활성화
+ &  : SetColor()            - 컬러 설정
+ *
+ */
+ 
 public class UI_DrawAbilityPopup : UI_Popup
 {
     enum GameObjects

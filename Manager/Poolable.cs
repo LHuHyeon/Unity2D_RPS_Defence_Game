@@ -4,8 +4,7 @@ using UnityEngine;
 
 /*
  * File :   Poolable.cs
- * Desc :   Poolable 스크립트가 객체에 컴포넌트로 추가되어 있는지 확인하여 Pool 여부를 체크한다.
- *          [ Rookiss의 MMORPG Game Part 3 참고. ]
+ * Desc :   Pool 적용 확인 Class
  */
 
 public class Poolable : MonoBehaviour

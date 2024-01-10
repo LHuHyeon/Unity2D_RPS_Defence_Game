@@ -3,6 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   UI_AbilityListPopup.cs
+ * Desc :   능력 리스트 Popup
+ *          게임 중 획득한 능력들을 확인할 수 있다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [private]
+ &  : PopulateAbilitySlot() - 능력 Slot 채우기
+ &  : OnClickExitButton()   - 나가기 버튼
+ *
+ */
+ 
 public class UI_AbilityListPopup : UI_Popup
 {
     enum GameObjects

@@ -2,6 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   StartData.cs
+ * Desc :   게임 시작 Data
+ *
+ & Functions
+ &  [Public]
+ &  : SetGameData() - 게임 데이터 설정
+ *
+ */
+ 
 public class StartData
 {
     public int stageLevel;

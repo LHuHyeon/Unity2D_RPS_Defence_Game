@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
+/*
+ * File :   WaveData.cs
+ * Desc :   Wave Data
+ */
+ 
 public class WaveData
 {
     public int              waveLevel;          // 웨이브 레벨

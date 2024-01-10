@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   UpgradeData.cs
+ * Desc :   강화 Data
+ */
+ 
 public class UpgradeData
 {
     public int level;

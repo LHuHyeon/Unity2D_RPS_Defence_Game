@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   SoundManager.cs
+ * Desc :   Sound Manager
+ */
+ 
 public class SoundManager
 {
     private AudioSource[] _audioSources = new AudioSource[(int)Define.Sound.Max];

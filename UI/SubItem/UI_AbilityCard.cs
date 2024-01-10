@@ -4,6 +4,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_AbilityCard.cs
+ * Desc :   "UI_DrawAbilityPopup"의 하위 항목으로 사용
+ *          능력 카드의 역할을 맡고 선택/취소를 설정한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [Private]
+ &  : OnClickAbilityCard()  - 능력 카드 클릭(선택)
+ &  : IsChoice()            - 선택/취소 설정
+ &  : SetColor()            - 컬러 설정(투명도)
+ *
+ */
+ 
 public class UI_AbilityCard : UI_Base
 {
     enum Images

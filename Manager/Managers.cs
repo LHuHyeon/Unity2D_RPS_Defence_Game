@@ -5,6 +5,11 @@ using TMPro;
 using UnityEngine;
 using static Define;
 
+/*
+ * File :   Managers.cs
+ * Desc :   모든 매니저를 싱글톤으로 연결합니다.
+ */
+ 
 public class Managers : MonoBehaviour
 {
     private static Managers s_instance = null;

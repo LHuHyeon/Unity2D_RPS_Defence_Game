@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   LoginScene.cs
+ * Desc :   Login Scene이 시작될 때 가장먼저 호출
+ *
+ & Functions
+ &  [Protected]
+ &  : Init()		- 초기 설정
+ &	: OnScene()		- Scene 기능 실행
+ *
+ */
+
 public class LoginScene : BaseScene
 {
     protected override bool Init()
@@ -15,7 +26,7 @@ public class LoginScene : BaseScene
 		return true;
 	}
 
-	protected override void SetScene()
+	protected override void OnScene()
 	{
 		Managers.UI.ShowSceneUI<UI_LoginScene>();
 	}

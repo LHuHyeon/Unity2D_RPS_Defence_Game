@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/*
+ * File :   UIManager.cs
+ * Desc :   모든 UI를 생성 및 제거를 도와주는 Manager
+ */
+ 
 public class UIManager
 {
 	int _order = 1;

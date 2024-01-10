@@ -4,6 +4,11 @@ using System.IO;
 using DamageNumbersPro;
 using UnityEngine;
 
+/*
+ * File :   ResourceManager.cs
+ * Desc :   Resources 폴더에서 객체를 찾는 Manager
+ */
+ 
 public class ResourceManager
 {
 	public Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();

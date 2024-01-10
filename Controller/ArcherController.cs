@@ -2,6 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   ArcherController.cs
+ * Desc :   궁수 컨트롤러
+ *          궁수만 사용가능한 능력을 구현합니다.
+ *
+ & Functions
+ &  [Public]
+ &  : SetStat() - 스탯 설정
+ &
+ &  [protected]
+ &  : StartAttackEvent()    - 공격이 시작되면 호출 (Animation Event)
+ &  : StopAttack()          - 공격이 중지되면 호출 (Animation Event)
+ &
+ &  [private]
+ &  : StartMultiShot()      - 멀티샷 공격 시작
+ &  : TargetsDetection()    - 주변 타겟들 탐지 (멀티샷 사용을 위한)
+ *
+ */
+
 public class ArcherController : MercenaryController
 {
     protected ArcherStat        _archerStat;    // 궁수 스탯
@@ -9,6 +28,7 @@ public class ArcherController : MercenaryController
     protected int               _currentMultiShotCount  = 0;
     protected List<Transform>   _multiShotTargets       = new List<Transform>();
 
+    // 스탯 설정
     public override void SetStat(MercenaryStat stat)
     {
         _archerStat = stat.MercenaryClone<ArcherStat>();

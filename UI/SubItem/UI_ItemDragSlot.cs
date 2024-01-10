@@ -4,6 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   UI_ItemDragSlot.cs
+ * Desc :   드래그드랍에 사용되는 Slot이 상속받는 Class
+ *
+ & Functions
+ &  [Public]
+ &  : RefreshUI()   - UI 새로고침
+ &  : SetCount()    - 개수 설정
+ &
+ &  [Protected]
+ &  : OnBeginDragEvent()    - 드래그 시작 기능
+ &  : OnDragEvent()         - 드래그 중 기능
+ &  : OnEndDragEvent()      - 드래그 끝 기능
+ &  : OnDropEvent()         - 드래그 드랍 기능
+ &  : SetEventHandler()     - PointerEventData 설정
+ *
+ */
+ 
 public class UI_ItemDragSlot : UI_ItemSlot
 {
     public int _itemCount;

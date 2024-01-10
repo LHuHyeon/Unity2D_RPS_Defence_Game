@@ -8,6 +8,11 @@ using PlayFab.CloudScriptModels;
 using UnityEngine.Networking;
 using System.Text;
 
+/*
+ * File :   UI_DevScene.cs
+ * Desc :   Test Scene
+ */
+
 public class UI_DevScene : UI_Scene
 {
     enum Inputs

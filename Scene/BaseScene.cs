@@ -3,6 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   BaseScene.cs
+ * Desc :   Scene이 시작되고 가장 먼저 호출되는 Class
+ *
+ & Functions
+ &  [Public]
+ &  : Clear()   - 초기화
+ &
+ &  [Protected]
+ &  : Init()    - 초기 설정
+ &  : OnScene() - 씬 기능 실행
+ &
+ &  [Private]
+ &  : OnSceneCoroutine()    - 필요 데이터 확인 후 Scene 코드 진행
+ *
+ */
+
 public class BaseScene : MonoBehaviour
 {
     public Define.Scene SceneType = Define.Scene.Unknown;
@@ -36,7 +53,7 @@ public class BaseScene : MonoBehaviour
         return true;
     }
 
-    protected virtual void SetScene() {}
+    protected virtual void OnScene() {}
 
     public virtual void Clear() { }
 
@@ -46,6 +63,6 @@ public class BaseScene : MonoBehaviour
 		while(Managers.Data.IsData() == false)
 			yield return null;
 
-        SetScene();
+        OnScene();
     }
 }

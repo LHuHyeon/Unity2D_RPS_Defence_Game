@@ -4,6 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   UI_UpgradeButton.cs
+ * Desc :   "UI_GameScene"의 하위 항목으로 사용
+ *          용병의 각 종족들의 공격력을 강화하는데 사용
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ &
+ &  [Private]
+ &  : OnClickUpgradeButton()    - 강화 버튼
+ *
+ */
+ 
 public class UI_UpgradeButton : UI_Base
 {   
     enum Images

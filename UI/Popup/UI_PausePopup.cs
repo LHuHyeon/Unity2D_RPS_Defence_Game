@@ -4,6 +4,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_PausePopup.cs
+ * Desc :   설정 Popup
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [private]
+ &  : OnClickSettingButton()    - 설정 버튼
+ &  : OnClickContinueButton()   - 게임 진행 버튼
+ &  : OnClickGiveUpButton()     - 나가기 버튼
+ *
+ */
+ 
 public class UI_PausePopup : UI_Popup
 {
     enum GameObjects

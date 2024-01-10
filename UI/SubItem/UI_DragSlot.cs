@@ -6,12 +6,14 @@ using UnityEngine.EventSystems;
 
 /*
  * File :   UI_DragSlot.cs
- * Desc :   마우스로 슬롯이 옮겨지는 과정을 보여주기 위한 슬롯
+ * Desc :   용병의 드래그드랍 과정을 보여줍니다.
  *
  & Functions
  &  [Public]
- &  : DragSetImage()    - 드래그할 경우 이미지 활성화
- &  : SetColor()        - 색깔 설정
+ &  : GetMercenary()    - 드래그 중인 용병 반환
+ &  : DragSetIcon()     - 드래그 시작 시 드래그Icon 활성화
+ &  : SetColor()        - 컬러 설정(투명도)
+ &  : ClearSlot()       - 초기화
  *
  */
 

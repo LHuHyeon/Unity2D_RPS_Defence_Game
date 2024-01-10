@@ -9,6 +9,7 @@ using UnityEngine;
  & Functions
  &  [Public]
  &  : SetStat()         - 생성 설정
+ &  : RefreshObject()   - 오브젝트 새로고침
  &
  &  [Protected]
  &  : Init()            - 초기 설정
@@ -16,8 +17,8 @@ using UnityEngine;
  &  : UpdateAttack()    - 공격할 때 (적 생존 확인 후 바라보기)
  &
  &  [Private]
- &  : StartAttackEvent()    - 공격 시작 Animation Event
- &  : StopAttackEvent()     - 공격 중단 Animation Event
+ &  : StartAttackEvent()    - 공격 시작 (Animation Event)
+ &  : StopAttackEvent()     - 공격 중단 (Animation Event)
  &  : IsAttackRangeCheck()  - 대상과 거리 확인
  &  : LookTarget()          - 대상 바라보기
  &  : StopAttack()          - 공격 중단

@@ -2,6 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   AbilityData.cs
+ * Desc :   능력 Data
+ *
+ & Functions
+ &  [Public]
+ &  : AbilityClone() - 능력 복사 (DeepCopy)
+ *
+ */
+ 
 public class AbilityData
 {
     public Define.AbilityType   abilityType;    // 능력 타입

@@ -2,6 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   UI_AbilitySlot.cs
+ * Desc :   "UI_AbilityListPopup"의 하위 항목으로 사용
+ *          획득한 능력을 보여주는 역할을 맡는다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()                - 초기 설정
+ &  : SetInfo()             - 정보 설정
+ &  : RefreshDescripition() - 설명 UI 새로고침
+ &  : RefreshUI()           - UI 새로고침
+ &  : Clear()               - 초기화
+ *
+ */
+ 
 public class UI_AbilitySlot : UI_Base
 {
     enum Images

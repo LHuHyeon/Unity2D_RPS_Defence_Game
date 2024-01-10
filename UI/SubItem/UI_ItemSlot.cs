@@ -4,6 +4,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_ItemSlot.cs
+ * Desc :   용병 Slot이 상속받는 Class
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : ClearSlot()   - 초기화
+ &
+ &  [Protected]
+ &  : SetColor()        - 컬러 설정(투명도)
+ &  : OnClickEvent()    - 슬롯 클릭 기능
+ &  : SetEventHandler() - PointerEventData 설정
+ *
+ */
+ 
 public class UI_ItemSlot : UI_Base
 {
     protected Image _icon;

@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   CameraResolution.cs
+ * Desc :   카메라 해상도 설정
+ */
+
 public class CameraResolution : MonoBehaviour
 {
     private float resolution = ((float)9 / 19);

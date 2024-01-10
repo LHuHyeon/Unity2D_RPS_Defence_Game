@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-* 적의 디버프를 등록/해제한다.
-* 쿨타임은 EnemyStat에서 확인하며 쿨타임이 다 되면 해제를 호출한다.
-*/
+ * File :   DeBuff.cs
+ * Desc :   Enemy의 디버프를 등록/해제한다.
+ *          쿨타임은 EnemyStat에서 진행되며 쿨타임이 다 되면 해제를 호출한다.
+ *
+ & Functions
+ &  [Public]
+ &  : ApplyDebuff() - 디버프 등록
+ &  : EndDebuff()   - 디버프 해제
+ *
+ */
 
 public class DeBuff
 {

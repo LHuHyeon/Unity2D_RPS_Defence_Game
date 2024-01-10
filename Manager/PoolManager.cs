@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ResourceManager의 보조역할 느낌
+/*
+ * File :   PoolManager.cs
+ * Desc :   Pool 적용을 위한 Manager
+ */
+ 
 public class PoolManager
 {
     class Pool

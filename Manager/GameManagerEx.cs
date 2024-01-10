@@ -6,6 +6,34 @@ using System.Linq;
 using UnityEngine;
 using static Define;
 
+/*
+ * File :   GameManagerEx.cs
+ * Desc :   게임 매니저
+ *
+ & Functions
+ &  [Public]
+ &  : GetRaceCurrentLevel()			- 현재 종족 강화 레벨
+ &  : GetRaceAddDamage()			- 종족별 추가 데미지
+ &  : GetRaceAddDamageParcent()		- 종족별 추가 데미지 %	
+ &  : GetJobAddDamageParcent()		- 직업별 추가 데미지 %	
+ &  : GetDebuff()					- 능력 디버프 반환
+ &  : WaveReward()					- Wave 보상 지급
+ &  : RaceUpgradeDamage()			- 종족별 데미지 강화
+ &  : RefreshAbility()				- 능력 새로고침
+ &  : RefreshMercenary()			- 모든 용병 새로고침
+ &  : TakeMercenarys()				- 모든 용병 슬롯으로 가져오기
+ &  : GetMercenarys()				- 필드의 용병 List 반환
+ &  : GetMercenaryCount()			- 필드의 용병 수 반환
+ &  : Spawn()						- 캐릭터 스폰
+ &  : GetWorldObjectType()			- 캐릭터 타입 반환
+ &  : Despawn()						- 캐릭터 삭제
+ &			
+ &  [Private]			
+ &  : SetDebuff()	- 능력 디버프 설정
+ &  : StatClear()	- 능력 스탯 초기화
+ *
+ */
+ 
 // TODO : 유저 정보는 서버에서 관리
 // 게임 진행 시 저장할 데이터
 [Serializable]

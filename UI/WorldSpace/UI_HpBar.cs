@@ -3,6 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_HpBar.cs
+ * Desc :   "EnemyController"의 하위 항목으로 사용
+ *          몬스터의 체력을 표시한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ *
+ */
+ 
 public class UI_HpBar : UI_Base
 {
     enum GameObjects

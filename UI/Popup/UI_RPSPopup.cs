@@ -3,6 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_RPSPopup.cs
+ * Desc :   가위바위보 Popup
+ *          용병을 뽑는 Popup이며 가위바위보 카드의 개수에 따라 용병을 뽑습니다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [private]
+ &  : PopulateRPSCard()     - 가위바위보 카드 채우기
+ &  : OnClickHelperButton() - 도우미 버튼
+ &  : OnClickResetButton()  - 카드 리셋 버튼
+ &  : OnClickADButton()     - 광고 버튼 (리셋)
+ &  : OnClickCheckButton()  - 확인 버튼
+ &  : GetCardReward()       - 카드 보상 반환
+ &  : GetRewardMercenary()  - 카드 보상에 따른 용병 가져오기
+ *
+ */
+ 
 public class UI_RPSPopup : UI_Popup
 {
     class RPSCard

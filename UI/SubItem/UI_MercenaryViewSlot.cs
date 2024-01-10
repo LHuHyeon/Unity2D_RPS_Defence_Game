@@ -2,6 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   UI_MercenaryViewSlot.cs
+ * Desc :   "UI_RPSPopup"의 하위 항목으로 사용
+ *          가위바위보 카드를 뽑은 후 어떤 용병을 획득하는지 미리보기 기능을 수행한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ *
+ */
+ 
 public class UI_MercenaryViewSlot : UI_Base
 {
     enum Images

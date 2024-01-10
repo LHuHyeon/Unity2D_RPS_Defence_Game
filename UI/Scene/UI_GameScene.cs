@@ -7,6 +7,42 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_GameScene.cs
+ * Desc :   Game Scene
+ *          게임이 시작되면 가장 먼저 호출되며
+ *          게임 진행 정보, 용병 슬롯, 강화 등의 여러 기능을 수행
+ *
+ & Functions
+ &  [Public]
+ &  : Init()                - 초기 설정
+ &  : OnRPSPopup()          - 가위바위보 Popup 호출
+ &  : SetNextWave()         - 다음 웨이브 진행을 위한 설정
+ &  : RefreshWaveTime()     - 웨이브 시간 새로고침
+ &  : RefreshEnemyBar()     - 몬스터 정보Bar 새로고침
+ &  : RefreshBossBar()      - 보스 정보Bar  새로고침
+ &  : RefreshWaveInfo()     - 웨이브 정보 새로고침
+ &  : RefreshGold()         - 골드 정보 새로고침
+ &  : ShowTab()             - 탭 기능
+ &  : MercenaryRegister()   - 슬롯에 용병 등록
+ &  : RemoveMercenarySlot() - 슬롯 제거
+ &  : SortMercenarySlot()   - 용병 슬롯 정렬
+ &  : ActiveStartButton()   - 시작 버튼 활성화/비활성화
+ &  : GetMercenarySlot()    - 용병으로 슬롯 찾기
+ &  : IsSlotCheck()         - 슬롯이 존재하는지 확인
+ &
+ &  [private]
+ &  : PopulateUpgradeButton()       - 종족별 강화 버튼 채우기
+ &  : OnClickPauseButton()          - 설정 버튼
+ &  : OnClickGameSpeedButton()      - 게임 속도 버튼
+ &  : OnClickAbilityListButton()    - 능력 리스트 버튼
+ &  : OnClickStartButton()          - 게임 시작 버튼
+ &  : OnClickTakeMercenaryButton()  - 필드의 모든 용병 슬롯으로 가져오기 버튼
+ &  : SetBossBar()                  - 보스Bar 설정
+ &  : SetEventHandler()             - PointerEventData 설정
+ *
+ */
+
 public class UI_GameScene : UI_Scene
 {
     enum GameObjects

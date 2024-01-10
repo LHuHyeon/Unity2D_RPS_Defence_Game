@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-* Wave가 시작되면 몬스터를 생성한다.
-* Wave 시간은 여기서 계산한다.
-*/
+ * File :   SpawningPool.cs
+ * Desc :   Wave가 시작되면 몬스터를 생성 및 시간 계산
+ *
+ & Functions
+ &  [Public]
+ &  : StartWave()   - Wave 정보 적용
+ &
+ &  [private]
+ &  : SpawnMonster()        - 몬스터 스폰 코루틴
+ &  : WaveTimeCoroutine()   - Wave 시간 계산 코루틴
+ *
+ */
 
 public class SpawningPool : MonoBehaviour
 {
@@ -64,8 +73,10 @@ public class SpawningPool : MonoBehaviour
     {
         _currentWaveTime = time;
 
+        // 남은 시간이 있다면 반복
         while (_currentWaveTime >= 0f)
         {
+            // 몬스터가 다 처치되면 보상 지급
             if (Managers.Game.RemainEnemyCount == 0)
             {
                 Managers.Game.WaveReward();
@@ -73,6 +84,7 @@ public class SpawningPool : MonoBehaviour
                 yield break;
             }
 
+            // 시간 계산
             _currentWaveTime -= Time.deltaTime;
             Managers.Game.GameScene.RefreshWaveTime(isFormat, _currentWaveTime);
 

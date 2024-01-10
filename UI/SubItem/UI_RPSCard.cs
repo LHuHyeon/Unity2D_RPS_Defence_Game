@@ -3,6 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_RPSCard.cs
+ * Desc :   "UI_RPSPopup"의 하위 항목으로 사용
+ *          가위바위보 카드의 기능을 수행한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()                - 초기 설정
+ &  : GetCard()             - 카드값 반환
+ &  : SetInfo()             - 정보 설정
+ &  : RefreshUI()           - UI 새로고침
+ &  : RefreshRPSIcon()      - 가위바위보 Icon 새로고침
+ &  : RefreshResetColor()   - 리셋 버튼 컬러 새로고침(활성화/비활성화)
+ &  : OnRandomCard()        - 카드 랜덤 설정
+ &
+ &  [Private]
+ &  : CardRotation()        - 카드 랜덤 설정 시 효과 (카드 돌리기)
+ &  : SetColor()            - 컬러 설정(투명도)
+ &  : OnClickResetButton()  - 리셋 버튼
+ *
+ */
+ 
 public class UI_RPSCard : UI_Base
 {
     enum GameObjects

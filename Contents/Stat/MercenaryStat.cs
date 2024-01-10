@@ -7,6 +7,22 @@ using UnityEngine.U2D.Animation;
 /*
  * File :   MercenaryStat.cs
  * Desc :   용병 스탯
+ *          용병의 능력치, 버프 등의 기능을 수행
+ *
+ & Functions
+ &  [Public]
+ &  : IsSameMercenary() - 다른 용병과 일치 여부
+ &  : RefreshAddData()  - 추가 능력치 새로고침
+ &  : MercenaryClone()  - 깊은 복사 (DeepCopy)
+ &
+ &  [protected]
+ &  : OriginalBuff()    - 고정적인 버프 적용
+ &
+ &  [private]
+ &  : OnAbility()       - 진화에 따른 능력 적용
+ &  : InstantBuff()     - 일시적인 버프 적용
+ &  : StatClear()       - 스탯 초기화
+ *
  */
 
 public class MercenaryStat

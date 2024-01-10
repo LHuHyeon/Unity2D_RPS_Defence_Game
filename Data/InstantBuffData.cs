@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 일시적인 버프
+/*
+ * File :   InstantBuffData.cs
+ * Desc :   일시적인 버프 Data
+ */
+
 public class InstantBuffData : BuffData
 {
     public bool                     isDeBuff;       // 디버프인가?

@@ -5,6 +5,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.U2D.Animation;
 
+/*
+ * File :   DataManager.cs
+ * Desc :   게임 시작 시 필요 데이터를 불러옵니다.
+ */
+ 
 public class DataManager : MonoBehaviour
 {
     // 구글 스프레드 주소

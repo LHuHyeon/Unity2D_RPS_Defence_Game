@@ -6,6 +6,7 @@ using UnityEngine.U2D.Animation;
 /*
  * File :   BaseController.cs
  * Desc :   캐릭터의 기본 기능
+ *          모든 캐릭터는 애니메이션을 코드로 관리합니다.
  *
  & Functions
  &  [Protected]

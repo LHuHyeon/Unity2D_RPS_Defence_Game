@@ -8,7 +8,8 @@ using UnityEngine;
  *
  & Functions
  &  [Public]
- &  : SetUp()       - 생성 위치 설정
+ &  : SetWave()         - Wave에 맞는 몬스터 정보 설정
+ &  : SetWayPoint()     - 생성 위치 설정
  &
  &  [Protected]
  &  : Init()            - 초기 설정
@@ -17,6 +18,7 @@ using UnityEngine;
  &
  &  [Private]
  &  : NextMoveTo()  - 다음 위치 설정
+ &  : Clear()       - 초기화
  *
  */
 

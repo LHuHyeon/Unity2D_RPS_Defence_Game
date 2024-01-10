@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-* Wave 관리한다.
-* 다음 Wave 정보를 넘겨주고 Wave 시작을 맡는다.
-*/
+ * File :   WaveSystem.cs
+ * Desc :   Wave를 관리
+ *          다음 Wave 정보를 넘겨주고 Wave 시작을 맡는다.
+ *
+ & Functions
+ &  [Public]
+ &  : WaveStart()       - Wave 시작
+ &  : NextWaveCheck()   - 다음 Wave 확인
+ *
+ */
 
 public class WaveSystem : MonoBehaviour
 {
@@ -43,7 +50,7 @@ public class WaveSystem : MonoBehaviour
         // 다음 진행할 Wave 가져오기
         WaveData wave = _waves[_currentWaveIndex];
 
-        // 보스 확인
+        // 보스 확인 (몬스터 최대 수가 1명이라면 보스 판정)
         if (wave.maxEnemyCount == 1)
             Managers.Game.IsBoss = true;
 

@@ -3,6 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   UI_MercenarySlot.cs
+ * Desc :   "UI_GameScene"의 하위 항목으로 사용
+ *          용병을 담는 역할을 한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : ClearSlot()   - 초기화
+ &
+ &  [Private]
+ &  : OnClickEvent()        - 클릭 기능
+ &  : OnBeginDragEvent()    - 드래그 시작 기능 (용병 이동 or 용병 List 이동 결정)
+ &  : OnDragEvent()         - 드래그 중 기능
+ &  : OnEndDragEvent()      - 드래그 끝 기능
+ &  : OnDropEvent()         - 드래그 드랍 기능
+ *
+ */
+ 
 public class UI_MercenarySlot : UI_ItemDragSlot
 {
     enum GameObjects

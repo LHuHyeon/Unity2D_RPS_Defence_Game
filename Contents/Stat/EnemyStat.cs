@@ -5,7 +5,19 @@ using UnityEngine;
 
 /*
  * File :   EnemyStat.cs
- * Desc :   적 스탯
+ * Desc :   몬스터 스탯
+ *          몬스터의 능력치, 디버프, 피격 적용 등의 기능을 수행
+ *
+ & Functions
+ &  [Public]
+ &  : SetWaveStat()     - 웨이브에 맞게 스탯을 설정
+ &  : OnAttacked()      - 피격 받을 시 디버프, 크리티컬 여부를 확인 후 적용
+ &
+ &  [private]
+ &  : OnDeBuff()            - 디버프 활성화
+ &  : DeBuffCoroutine()     - 디버프 코루틴
+ &  : DamageTextEffect()    - 데미지 이펙트 생성
+ *
  */
 
 public class EnemyStat : MonoBehaviour
@@ -139,12 +151,16 @@ public class EnemyStat : MonoBehaviour
     {
         _isDebuffActive = true;
 
+        // 디버프가 존재하면 반복문 진행
         while(Debuffs.Count > 0)
         {
+            // 받은 디버프 개수만큼 반복
             foreach(DeBuff debuff in Debuffs.Values)
             {
+                // 디버프 쿨타임 계산
                 debuff._elapsedTime -= Time.deltaTime;
 
+                // 디버프가 끝나면 삭제
                 if (debuff._elapsedTime <= 0)
                 {
                     debuff.EndDebuff();

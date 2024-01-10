@@ -3,6 +3,20 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/*
+ * File :   GameScene.cs
+ * Desc :   Game Scene이 시작될 때 가장먼저 호출
+ *
+ & Functions
+ &  [Protected]
+ &  : Init()		- 초기 설정
+ &	: OnScene()		- Scene 기능 실행
+ &
+ &  [Private]
+ &  : StageSizeSetting()	- Stage 크기 설정
+ *
+ */
+
 public class GameScene : BaseScene
 {
 	// TODO : 게임을 로비에서 시작한다면 그 곳에서 결정하기
@@ -19,7 +33,7 @@ public class GameScene : BaseScene
 		return true;
 	}
 
-	protected override void SetScene()
+	protected override void OnScene()
 	{
 		// 시작 기본 데이터 적용
 		StartData startData = Managers.Data.Start[currentStage];

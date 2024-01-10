@@ -4,6 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+ * File :   UI_ConfirmPopup.cs
+ * Desc :   확인 Popup
+ *          확인/취소를 결정 하는데에 사용
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ &  : Clear()       - 초기화
+ &
+ &  [private]
+ &  : OnClickConfirmButton() - 확인 버튼
+ &  : OnClickCloseButton()   - 취소 버튼
+ *
+ */
+ 
 public class UI_ConfirmPopup : UI_Popup
 {
     enum GameObjects

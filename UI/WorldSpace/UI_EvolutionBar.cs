@@ -2,6 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * File :   UI_EvolutionBar.cs
+ * Desc :   "MercenaryController"의 하위 항목으로 사용
+ *          용병의 진화 정보를 표시한다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : SetInfo()     - 정보 설정
+ &  : RefreshUI()   - UI 새로고침
+ *
+ */
+ 
 public class UI_EvolutionBar : UI_Base
 {
     enum GameObjects

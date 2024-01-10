@@ -7,6 +7,11 @@ using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
 
+/*
+ * File :   PlayFabManager.cs
+ * Desc :   PlayFab 연결 Manager
+ */
+
 public class PlayFabManager
 {
     public  string PlayFabId        { get { return _playFabId; } }

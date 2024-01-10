@@ -7,6 +7,30 @@ using UnityEngine.EventSystems;
 using PlayFab;
 using PlayFab.ClientModels;
 
+/*
+ * File :   UI_SignUpPopup.cs
+ * Desc :   가위바위보 Popup
+ *          용병을 뽑는 Popup이며 가위바위보 카드의 개수에 따라 용병을 뽑습니다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()        - 초기 설정
+ &  : RefreshUI()   - UI 새로고침
+ &
+ &  [private]
+ &  : OnClickExitButton()       - 나가기 버튼
+ &  : OnClickSignUpButton()     - 회원가입 확인 버튼
+ &  : OnSignup()                - 회원가입 진행
+ &  : OnRegisterSuccess()       - 회원가입 성공 호출 함수
+ &  : OnRegisterFailed()        - 회원가입 실패 호출 함수
+ &  : UserNameCheck()           - 사용자 이름 길이 확인
+ &  : EmailCheck()              - Email 길이 확인
+ &  : PWCheck()                 - 비밀번호 길이 확인
+ &  : PWDoubleCheck()           - 비밀번호 재확인
+ &  : SetHelper()               - 도움말 설정
+ *
+ */
+
 public class UI_SignUpPopup : UI_Popup
 {
     enum GameObjects

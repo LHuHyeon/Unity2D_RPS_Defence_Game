@@ -5,6 +5,32 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
+/*
+ * File :   UI_MercenaryInfoPopup.cs
+ * Desc :   용병 정보 Popup
+ *          용병이나 Slot을 클릭 시 용병 정보를 활성화
+ *
+ & Functions
+ &  [Public]
+ &  : Init()            - 초기 설정
+ &  : SetInfoTile()     - 타일을 눌렀을 때 정보 설정
+ &  : SetInfoSlot()     - 슬롯을 눌렀을 때 정보 설정
+ &  : RefreshUI()       - UI 새로고침
+ &  : RefreshInfo()     - 정보 새로고침
+ &  : OnFold()          - 접기/펼치기
+ &  : Clear()           - 초기화
+ &
+ &  [private]
+ &  : PopulateEvolution()   - 진화 정보를 토대로 "★" 채우기
+ &  : OnClickSaleButton()   - 판매 버튼
+ &  : OnClickFoldButton()   - 접기/펼치기 버튼
+ &  : OnFoldSetting()       - 접기/펼치기 설정
+ &  : OnClickExitButton()   - 나가기 버튼
+ &  : CallPopup()           - 자연스러운 Popup 호출
+ &  : ExitPopup()           - 자연스러운 Popup 종료
+ *
+ */
+ 
 public class UI_MercenaryInfoPopup : UI_Popup
 {
     enum GameObjects

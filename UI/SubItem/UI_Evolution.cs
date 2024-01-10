@@ -5,6 +5,27 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+ * File :   UI_Evolution.cs
+ * Desc :   "UI_MercenaryInfoPopup"의 하위 항목으로 사용
+ *          용병의 진화 정보를 확인하고 [진화 버튼]을 클릭하여 진화할 수 있다.
+ *
+ & Functions
+ &  [Public]
+ &  : Init()                - 초기 설정
+ &  : SetInfo()             - 정보 설정
+ &  : RefreshEvolution()    - 진화 정보 UI 새로고침
+ &
+ &  [Private]
+ &  : OnClickEvolutionButton()  - 진화 버튼
+ &  : EvolutionSlot()           - Slot에서 진화 진행
+ &  : EvolutionTile()           - Tile에서 진화 진행
+ &  : SubSlotMercenary()        - 진화 시 Slot에 있는 용병 차감
+ &  : SubTileMercenary()        - 진화 시 Tile에 있는 용병 차감
+ &  : SetColor()                - 컬러 설정(투명도)
+ *
+ */
+
 public class UI_Evolution : UI_Base
 {
     enum GameObjects

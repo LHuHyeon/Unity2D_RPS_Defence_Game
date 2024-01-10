@@ -4,9 +4,21 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /*
-* 용병을 담아주는 필드의 Tile이다.
-* 용병을 다른 Tile로 넘기거나 받는다.
-*/
+ * File :   MercenaryTile.cs
+ * Desc :   용병을 담아주는 필드의 Tile
+ *          용병을 다른 Tile로 이동시키거나 받아준다.
+ *
+ & Functions
+ &  [Public]
+ &  : SetMercenary()    - 용병을 현재 Tile로 설정
+ &  : Clear()           - 초기화
+ &
+ &  [private]
+ &  : ChangeTile()          - 타일과 타일의 용병 교체
+ &  : ChangeTileAndSlot()   - 타일과 슬롯의 용병 교체
+ &  : SetEventHandler()     - PointerEventData 관련 함수
+ *
+ */
 
 public class MercenaryTile : MonoBehaviour
 {
