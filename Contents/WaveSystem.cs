@@ -16,6 +16,7 @@ using UnityEngine;
 
 public class WaveSystem : MonoBehaviour
 {
+    [SerializeField]
     private int             _currentWaveIndex = 0;
 
     [SerializeField]

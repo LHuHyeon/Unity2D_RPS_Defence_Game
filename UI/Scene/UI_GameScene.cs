@@ -137,7 +137,7 @@ public class UI_GameScene : UI_Scene
 
         // Test 버튼
         GetButton((int)Buttons.TestRegistarButton).onClick.AddListener(()=>{
-            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(21, 30)].MercenaryClone<MercenaryStat>(), 2);
+            MercenaryRegister(Managers.Data.Mercenarys[UnityEngine.Random.Range(1, 42)].MercenaryClone<MercenaryStat>(), 2);
         });
 
         _game.GameScene.ActiveStartButton(false);

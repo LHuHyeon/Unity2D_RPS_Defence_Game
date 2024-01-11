@@ -23,6 +23,8 @@ public class Projectile : MonoBehaviour
 
     protected   MercenaryStat   _stat;
 
+    private     float           _contactDistance = 0.3f;
+
     private     float           _attackSpeed = 7f;
     private     Transform       _attackTarget;
 
@@ -50,7 +52,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // 방향 구하기
+        // 몬스터 방향 구하기
         Vector3 direction   = (_attackTarget.position - transform.position).normalized;
 
         // 방향으로 이동
@@ -61,7 +63,7 @@ public class Projectile : MonoBehaviour
         transform.rotation  = Quaternion.AngleAxis(angle, Vector3.forward);
 
         // 접촉하면 공격
-        if ((_attackTarget.position - transform.position).magnitude < 0.3f)
+        if ((_attackTarget.position - transform.position).magnitude < _contactDistance)
         {
             TouchAbility();
             _attackTarget.GetComponent<EnemyStat>().OnAttacked(_stat, _stat.DebuffAbility);
