@@ -21,6 +21,7 @@ public class Define
 		Game,
 		Login,
 		Loby,
+		Load,
 	}
 
 	public enum Sound

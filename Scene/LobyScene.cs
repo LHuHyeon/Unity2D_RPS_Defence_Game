@@ -22,13 +22,10 @@ public class LobyScene : BaseScene
 
         SceneType = Define.Scene.Loby;
 
+        Managers.UI.ShowSceneUI<UI_LobyScene>();
+
         Debug.Log("LobyScene Init");
 
         return true;
-    }
-
-    protected override void OnScene()
-    {
-        Managers.UI.ShowSceneUI<UI_LobyScene>();
     }
 }

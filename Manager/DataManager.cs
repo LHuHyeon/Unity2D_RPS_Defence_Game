@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.U2D;
 using UnityEngine.U2D.Animation;
 
 /*
@@ -286,7 +287,6 @@ public class DataManager : MonoBehaviour
             MercenaryStat mercenaryStat = dict[id];
 
             mercenaryStat.SpriteLibrary  = Managers.Resource.Load<SpriteLibraryAsset>("UI/SpriteLibrary/Mercenary/"+row[1]);
-            mercenaryStat.ProjectileIcon = Managers.Resource.Load<Sprite>("UI/Sprite/Projectile/"+row[2]);
 
             string projectilePath;
 
@@ -296,12 +296,14 @@ public class DataManager : MonoBehaviour
             {
                 switch (mercenaryStat.Job)
                 {
-                    case Define.JobType.Warrior: projectilePath = "Slash"; break;
-                    case Define.JobType.Archer: projectilePath = "Arrow"; break;
-                    case Define.JobType.Wizard: projectilePath = "Sphere"; break;
-                    default:    projectilePath = ""; break;
+                    case Define.JobType.Warrior:    projectilePath = "Slash";   break;
+                    case Define.JobType.Archer:     projectilePath = "Arrow";   break;
+                    case Define.JobType.Wizard:     projectilePath = "Sphere";  break;
+                    default:                        projectilePath = "";        break;
                 }
             }
+            
+            mercenaryStat.ProjectileIcon = Managers.Resource.Load<SpriteAtlas>("UI/Sprite/Projectile/" + projectilePath).GetSprite(row[2]);
 
             // 발사체 Prefab 가져오기
             mercenaryStat.Projectile = Managers.Resource.Load<GameObject>("Prefabs/Projectile/" + projectilePath);

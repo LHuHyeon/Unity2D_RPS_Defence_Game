@@ -21,13 +21,11 @@ public class LoginScene : BaseScene
 			return false;
 
         SceneType = Define.Scene.Login;
+		
+		Managers.UI.ShowSceneUI<UI_LoginScene>();
 
 		Debug.Log("LoginScene Init");
+		
 		return true;
-	}
-
-	protected override void OnScene()
-	{
-		Managers.UI.ShowSceneUI<UI_LoginScene>();
 	}
 }

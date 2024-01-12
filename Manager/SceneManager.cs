@@ -24,6 +24,8 @@ public class SceneManagerEx
     public AsyncOperation LoadAsynScene(Define.Scene type)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(Managers.Scene.GetSceneName(type));
+
+        // Load가 끝나면 바로 불러올 지 선택
         operation.allowSceneActivation = false;
 
         return operation;

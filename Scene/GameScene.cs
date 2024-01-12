@@ -29,12 +29,9 @@ public class GameScene : BaseScene
 
         SceneType = Define.Scene.Game;
 
-		Debug.Log("GameScene Init");
-		return true;
-	}
+		// 적정 프레임 설정
+		Application.targetFrameRate = 45;
 
-	protected override void OnScene()
-	{
 		// 시작 기본 데이터 적용
 		StartData startData = Managers.Data.Start[currentStage];
 		startData.SetGameData();
@@ -46,6 +43,9 @@ public class GameScene : BaseScene
 		Managers.Game.WaveSystem.SetWave(Managers.Data.Stages[currentStage]);
 
 		StageSizeSetting();
+
+		Debug.Log("GameScene Init");
+		return true;
 	}
 
 	// 스테이지 크기 설정

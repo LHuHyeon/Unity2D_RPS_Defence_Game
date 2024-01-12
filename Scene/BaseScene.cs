@@ -48,21 +48,8 @@ public class BaseScene : MonoBehaviour
         camera.GetOrAddComponent<Physics2DRaycaster>();
         camera.GetOrAddComponent<CameraResolution>();
 
-        StartCoroutine(OnSceneCoroutine());
-
         return true;
     }
 
-    protected virtual void OnScene() {}
-
     public virtual void Clear() { }
-
-    // 기본 데이터를 다 가져오면 Scene 코드 진행
-    private IEnumerator OnSceneCoroutine()
-    {
-		while(Managers.Data.IsData() == false)
-			yield return null;
-
-        OnScene();
-    }
 }
