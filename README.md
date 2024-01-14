@@ -5,6 +5,7 @@
 
   <img src="https://github.com/LHuHyeon/LHuHyeon.github.io/assets/110723307/09e4606a-c51b-42d8-b2ab-04dc2c243251" width="30%" height="450"/>
   <img src="https://github.com/LHuHyeon/LHuHyeon.github.io/assets/110723307/03214ec5-f71e-40be-9241-09d47ec24904" width="30%" height="450"/>
+  <img src="https://github.com/LHuHyeon/LHuHyeon.github.io/assets/110723307/3fcad092-fd95-4c08-87ac-b6498a395df0" width="30%" height="450"/>
 
   < 게임 플레이 사진 >
 
